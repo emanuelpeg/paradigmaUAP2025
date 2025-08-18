@@ -83,7 +83,6 @@ class Contador {
         this._numero = valor;
     }
 }
-
 const contador = new Contador(0);
 // contador.incrementar();
 
