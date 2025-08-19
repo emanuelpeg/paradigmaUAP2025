@@ -17,7 +17,7 @@ class Biblioteca {
     }
 
     buscarSocio(id: number): Socio | null {
-        return this.socios.find(socio => socio.id == id) ?? null;
+        return this.socios.find(socio => socio.id === id) ?? null;
     }
 
     retrarLibro(socioId: number, libroISBN: string) {
@@ -27,13 +27,18 @@ class Biblioteca {
         if (!socio || !libro) {
             throw new Error("Socio o libro no existe");
         }
-        /** HACER SISTEMA DE RESERVA SI ESTA reservado */
-
-        for (const socio of this.socios) {
-            if (socio.tienePrestadoLibro(libro)) {
-                throw new Error("Libro no esta disponible");
-            }
+        /** HACER SISTEMA DE RESERVA SI ESTA RESERVADO */
+        if (!libro.disponible) {
+            console.log("Este libro ya esta prestado. Agregando a cola de espera para devolucion de libro...")
+            libro.agregarAColaReserva(socio);
+            return;
         }
+
+        // for (const socio of this.socios) {
+        //     if (socio.tienePrestadoLibro(libro)) {
+        //         throw new Error("Libro no esta disponible");
+        //     }
+        // }
 
         socio.retirar(libro, this.DURACION);
     }
@@ -47,18 +52,23 @@ class Biblioteca {
         }
 
         socio.devolver(libro);
+        this.tomarProximo(libro, socio);
     }
 
-    agregarSocio(nombre: string, apellido: string) {
-        // conseguir el ultimo id
-        const ultimoSocio: Socio | undefined = this.socios.shift();
-        const id = ultimoSocio ? ultimoSocio.id + 1 : 1;
+    tomarProximo(libro: Libro, socio: Socio) {
+        /** TOMAR PROXIMO EN COLA DE RESERVA */
+        const proximoSocio: Socio = libro.colaReserva[0];
+        libro.eliminarDeColaReserva(proximoSocio);
+        proximoSocio.retirar(libro, this.DURACION);
+    }
 
+    agregarSocio(id: number, nombre: string, apellido: string) {
         const socio: Socio = new Socio(id, nombre, apellido);
         this.socios.push(socio);
         return socio;
     }
 
+    get libros() { return this.inventario }
 
 }
 

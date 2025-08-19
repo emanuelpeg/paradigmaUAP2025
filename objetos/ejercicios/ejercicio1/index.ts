@@ -7,7 +7,20 @@ biblioteca.agregarLibro("El quijote", "Cervantes", "jd923");
 biblioteca.agregarLibro("Habitos atomicos", "James Clean", "osif2");
 biblioteca.agregarLibro("1984", "George Orwell", "m391j");
 
-biblioteca.agregarSocio("Jared", "Peter");
-biblioteca.agregarSocio("Lenny", "Martinez");
-biblioteca.agregarSocio("Abiel", "Morenoo");
-biblioteca.agregarSocio("Christian", "Montero");
+const yo = biblioteca.agregarSocio(36046, "Jared", "Peter");
+const Lenny = biblioteca.agregarSocio(37909, "Lenny", "Martinez");
+const Abiel = biblioteca.agregarSocio(21070, "Abiel", "Morenoo");
+biblioteca.agregarSocio(45023, "Christian", "Montero");
+
+biblioteca.retrarLibro(yo.id, biblioteca.libros[0].isbn);
+biblioteca.retrarLibro(yo.id, biblioteca.libros[1].isbn);
+
+biblioteca.retrarLibro(Lenny.id, biblioteca.libros[1].isbn);
+biblioteca.retrarLibro(Abiel.id, biblioteca.libros[1].isbn);
+
+console.log(yo.librosPrestados);
+
+biblioteca.devolverLibro(yo.id, biblioteca.libros[1].isbn)
+
+console.log(yo.librosPrestados);
+console.log(Lenny.librosPrestados);

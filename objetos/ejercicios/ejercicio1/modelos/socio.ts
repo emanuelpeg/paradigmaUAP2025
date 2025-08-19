@@ -33,7 +33,7 @@ export class Socio {
 
         const idx = this.prestamos.indexOf(prestamo);
         this.prestamos.splice(idx, 1); // removes one element starting from the provided index
-
+        
         return prestamo;
     }
     
@@ -45,4 +45,11 @@ export class Socio {
     get nombre() { return this._nombre; }
     get apellido() { return this._apellido; }
     get nombreCompleto() { return this._nombre + " " + this._apellido; }
+    get librosPrestados() {
+        const libros: Libro[] = [];
+        this.prestamos.map(prestamo => {
+            libros.push(prestamo.libro)
+        });
+        return libros;
+    }
 }
