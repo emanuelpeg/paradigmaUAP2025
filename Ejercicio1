@@ -1,0 +1,72 @@
+import { Biblioteca, biblioteca } from "./Biblioteca";
+
+// Extensión de Biblioteca para sistema de reservas
+class BibliotecaConReservas extends Biblioteca {
+	private reservas: Map<string, number[]> = new Map(); // ISBN -> cola de IDs de socios
+
+	retirarLibro(socioId: number, libroISBN: string): void {
+		const socio = this.buscarSocio(socioId);
+		const libro = this.buscarLibro(libroISBN);
+		if (!socio || !libro) {
+			throw new Error("No se encontro");
+		}
+		for (const s of (this as any).socios) {
+			if (s.tienePrestadoLibro(libro)) {
+				this.reservarLibro(socioId, libroISBN);
+				throw new Error("Libro no disponible, se ha reservado");
+			}
+		}
+		socio.retirar(libro, (this as any).DURACION);
+	}
+
+	devolverLibro(socioId: number, libroISBN: string) {
+		const socio = this.buscarSocio(socioId);
+		const libro = this.buscarLibro(libroISBN);
+		if (!socio || !libro) {
+			throw new Error("No se encontro");
+		}
+		socio.devolver(libro);
+		this.notificarReserva(libroISBN);
+	}
+
+	reservarLibro(socioId: number, libroISBN: string) {
+		if (!this.reservas.has(libroISBN)) {
+			this.reservas.set(libroISBN, []);
+		}
+		const cola = this.reservas.get(libroISBN)!;
+		if (!cola.includes(socioId)) {
+			cola.push(socioId);
+		}
+	}
+
+	notificarReserva(libroISBN: string) {
+		const cola = this.reservas.get(libroISBN);
+		if (cola && cola.length > 0) {
+			const siguienteSocioId = cola.shift();
+			if (siguienteSocioId !== undefined) {
+				const socio = this.buscarSocio(siguienteSocioId);
+				if (socio) {
+					console.log(`Socio ${socio.nombreCompleto} ha sido notificado: el libro ${libroISBN} está disponible para retirar.`);
+				}
+			}
+			this.reservas.set(libroISBN, cola);
+		}
+	}
+}
+
+// Ejemplo de uso
+const bibliotecaReservas = new BibliotecaConReservas();
+bibliotecaReservas.agregarLibro("El quijote", "Cervantes", "1234");
+bibliotecaReservas.registrarSocio(1, "Juan", "Perez");
+bibliotecaReservas.registrarSocio(2, "Ana", "Gomez");
+
+// Juan retira el libro
+bibliotecaReservas.retirarLibro(1, "1234");
+// Ana intenta retirar y lo reserva
+try {
+	bibliotecaReservas.retirarLibro(2, "1234");
+} catch (e) {
+	console.log(e.message);
+}
+// Juan devuelve el libro, Ana es notificada
+bibliotecaReservas.devolverLibro(1, "1234");
