@@ -5,7 +5,8 @@ export interface Bien {
 
 export class Mueble implements Bien{
 
-    public constructor(private nombre:string, private valor:number, private porcentage:number){
+    public constructor(private nombre:string, private valor:number, 
+        private porcentage:number){
     }
 
     public amortizar(): number {
