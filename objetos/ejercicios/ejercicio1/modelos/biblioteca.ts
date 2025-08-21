@@ -1,3 +1,4 @@
+import { Autor } from "./Autor";
 import { Libro } from "./libro";
 import { Socio } from "./socio";
 
@@ -6,7 +7,7 @@ class Biblioteca {
     private socios: Socio[] = [];
     private DURACION = 14;
 
-    agregarLibro(titulo: string, autor: string, isbn: string) {
+    agregarLibro(titulo: string, autor: Autor, isbn: string) {
         const libro: Libro = new Libro(titulo, autor, isbn);
         this.inventario.push(libro);
         return libro;

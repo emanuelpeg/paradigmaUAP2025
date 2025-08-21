@@ -13,6 +13,7 @@ export class Socio {
         private _id: number,
         private _nombre: string,
         private _apellido: string,
+        private _multa: number = 0,
     ) {}
 
     retirar(libro: Libro, duracion: Duracion) {
@@ -44,7 +45,12 @@ export class Socio {
     get id() { return this._id; }
     get nombre() { return this._nombre; }
     get apellido() { return this._apellido; }
+    
+    get multa() { return this._multa; }
+    set multa(multa: number) { this._multa = multa; }
+
     get nombreCompleto() { return this._nombre + " " + this._apellido; }
+
     get librosPrestados() {
         const libros: Libro[] = [];
         this.prestamos.map(prestamo => {
