@@ -1,5 +1,6 @@
 import { Autor } from "./modelos/Autor";
 import { biblioteca } from "./modelos/biblioteca";
+import { EventoBiblioteca } from "./modelos/EventoBiblioteca";
 
 const muchos = new Autor("Muchos", "muchos autores que escriben el libro", 578)
 const tolkien = new Autor("JRR Tolkien", "el autor de el senor de los anillos", 1918)
@@ -25,11 +26,15 @@ biblioteca.retrarLibro(yo.id, biblioteca.libros[1].isbn);
 biblioteca.retrarLibro(Lenny.id, biblioteca.libros[1].isbn);
 biblioteca.retrarLibro(Abiel.id, biblioteca.libros[1].isbn);
 
-// console.log(yo.librosPrestados);
+const evento = new EventoBiblioteca('lectura');
 
-// biblioteca.devolverLibro(yo.id, biblioteca.libros[1].isbn)
+yo.subscribirseEvento(evento);
 
-// console.log(yo.librosPrestados);
-// console.log(Lenny.librosPrestados);
+const ahora = new Date();
+ahora.setHours(ahora.getHours() + 10)
+evento.agregarNotificacion('lectura de tolkien en 5', ahora);
 
-console.log(tolkien.listarLibros());
+yo.listarNotificaciones();
+
+// yo.salirEvento(evento);
+// yo.listarNotificaciones();

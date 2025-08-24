@@ -1,21 +1,14 @@
+import { Notificacion } from "./Notificacion";
 import { Socio } from "./socio";
 
-class Notificacion {
-    constructor(
-        private _mensaje: string,
-        private _fecha: Date
-    ) {}
 
-    get mensaje() { return this._mensaje };
-    get fecha() { return this._fecha };
-}
 
 export class EventoBiblioteca {
+    private _notificaciones: Notificacion[] = [];
+    private _sociosEnEvento: Socio[] = [];
     constructor(
         private _nombreEvento: string,
-        private _notificacion: Notificacion,
-        private _sociosEnEvento: Socio[],
-    ) {}
+    ) { }
 
     registrarSocio(socio: Socio) {
         this.sociosEnEvento.push(socio);
@@ -28,6 +21,30 @@ export class EventoBiblioteca {
         this._sociosEnEvento.splice(idxSocio, 1);
     }
 
+    agregarNotificacion(mensaje: string, fechaVencimiento: Date) {
+        const ahora = new Date();
+        const notificacion = new Notificacion(mensaje, ahora, fechaVencimiento, this);
+        this._notificaciones.push(notificacion);
+
+        this._sociosEnEvento.forEach(socio => {
+            socio.agregarNotificacion(notificacion);
+        });
+    }
+
+    eliminarNotificacion(notificacion: Notificacion) {
+        const idx = this._notificaciones.indexOf(notificacion);
+
+        if (idx !== -1) {
+            this._notificaciones.splice(idx, 1);
+
+            this._sociosEnEvento.forEach(socio => {
+                socio.eliminarNotificacion(notificacion);
+            })
+        }
+    }
+
+
     get nombreEvento() { return this._nombreEvento }
     get sociosEnEvento() { return this._sociosEnEvento }
+    get notificaciones() { return this._notificaciones }
 }
