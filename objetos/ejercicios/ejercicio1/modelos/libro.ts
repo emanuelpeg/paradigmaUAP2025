@@ -45,16 +45,3 @@ export class Libro {
     get colaReserva() { return this._colaReserva; }
     set disponible(disponible: boolean) { this._disponible = disponible; }
 }
-
-export class LibroPrioridad extends Libro {
-    constructor(private _libro: Libro, private _prioridad: number) {
-        super(_libro.titulo, _libro.autor, _libro.isbn, _libro.disponible, _libro.categoria); // copy Libro properties
-    }
-
-    incrementarPrioridad(numero: number) {
-        this._prioridad += numero
-    }
-
-    get tituloLibro() { return this._libro.titulo };
-    get prioridad() { return this._prioridad };
-}

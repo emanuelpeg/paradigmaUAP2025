@@ -1,7 +1,7 @@
 import { Autor } from "./Autor";
 import { biblioteca } from "./biblioteca";
 import { EventoBiblioteca } from "./EventoBiblioteca";
-import { Libro, LibroPrioridad } from "./libro";
+import { Libro } from "./libro";
 import { Notificacion } from "./Notificacion";
 
 // duracion en dias de un prestamo
@@ -9,6 +9,17 @@ type Duracion = number;
 
 class Prestamo {
     constructor(public libro: Libro, public vencimiento: Date) { }
+}
+
+class Recomendacion {
+    constructor(private _libro: Libro, private _prioridad: number) {}
+
+    incrementarPrioridad(numero: number) {
+        this._prioridad += numero
+    }
+
+    get libro() { return this._libro };
+    get prioridad() { return this._prioridad };
 }
 
 export class Socio {
@@ -114,7 +125,7 @@ export class Socio {
 
     recomendar() {
         const bibliotecaSinPrestados = biblioteca.libros.filter(libro => !this.librosPrestados.some(l => l === libro));
-        const libros: LibroPrioridad[] = [];
+        const recomendaciones: Recomendacion[] = [];
         const autores = {};
         const categorias = {};
 
@@ -130,8 +141,8 @@ export class Socio {
         for (const nombreAutor in autores) {
             bibliotecaSinPrestados.forEach(libro => {
                 if (libro.autor.nombre == nombreAutor) {
-                    const libroPrioridad: LibroPrioridad = new LibroPrioridad(libro, autores[nombreAutor]);
-                    libros.push(libroPrioridad);
+                    const recomendacion: Recomendacion = new Recomendacion(libro, autores[nombreAutor]);
+                    recomendaciones.push(recomendacion);
                 }
             });
         }
@@ -141,19 +152,19 @@ export class Socio {
             bibliotecaSinPrestados.forEach(libro => {
                 if (libro.categoria === categoria) {
                     // si el libroprioridad ya esta en el array, incrementar 
-                    if (libros.some(l => l.isbn === libro.isbn)) {
-                        libros.filter(l => l.isbn === libro.isbn)[0].incrementarPrioridad(categorias[categoria]);
+                    if (recomendaciones.some(recomendacion => recomendacion.libro.isbn === libro.isbn)) {
+                        recomendaciones.filter(recomendacion => recomendacion.libro.isbn === libro.isbn)[0].incrementarPrioridad(categorias[categoria]);
                     } else {
                         // crear nuevo libro prioridad
-                        const libroPrioridad: LibroPrioridad = new LibroPrioridad(libro, categorias[categoria]);
-                        libros.push(libroPrioridad);
+                        const recomendacion: Recomendacion = new Recomendacion(libro, categorias[categoria]);
+                        recomendaciones.push(recomendacion);
                     }
                 }
             });
         }
 
-        for (const libro of libros) {
-            console.log(`${libro.tituloLibro} - ${libro.prioridad}`)
+        for (const recomendacion of recomendaciones) {
+            console.log(`${recomendacion.libro.titulo} - ${recomendacion.prioridad}`)
         }
     }
 
