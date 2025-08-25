@@ -32,6 +32,10 @@ class Biblioteca {
         this.socios.push(socio);
         return socio;
     }
+
+    buscarSocio(id: number): Socio | null{
+        return this.socios.find((socio) => socio.id == id) ?? null;
+    }
 }
 
 export const biblioteca = new Biblioteca();
