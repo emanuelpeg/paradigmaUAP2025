@@ -1,6 +1,6 @@
 
 
-class Autor{
+export class Autor{
     nombre: string;
     biografia: string;
     añoNacimiento?: Date;

@@ -1,5 +1,6 @@
 import { Libro } from './Libro';
 import { Socio } from './Socio';
+import { Autor } from './Autor';
 
 export class Biblioteca {
     private inventario: Libro[];
@@ -14,8 +15,8 @@ export class Biblioteca {
     }
 
     //Funciones de Libro
-    agregarLibro(titulo: string, _autor: string, isbn: string){
-        const libro = new Libro(titulo, _autor, isbn);
+    agregarLibro(titulo: string, autor: Autor, isbn: string){
+        const libro = new Libro(titulo, autor, isbn);
         this.inventario.push(libro);
         return libro;
     }
@@ -40,6 +41,7 @@ export class Biblioteca {
         return this.socios.find((socio) => socio.id == id) ?? null;
     }
 
+    //Funciones de Libros
     retirarLibro(socioId: number, libroISBN: string): void {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
@@ -71,14 +73,14 @@ export class Biblioteca {
 
     socio.devolver(libro);
 
-      // Verificar si hay reservas para este libro
+      // Verificar si hay reservas para un libro
       const cola = this.reservas.get(libroISBN);
       if (cola && cola.length > 0) {
         const siguienteSocio = cola.shift();
         if (siguienteSocio) {
           siguienteSocio.notificar(`El libro '${libro.titulo}' ahora está disponible para ti.`);
           // El socio puede retirar el libro automáticamente si se desea
-          // this.retirarLibro(siguienteSocio.id, libroISBN);
+          // this.retirarLibro(siguienteSocio.id, libroISBN); ------- No va
         }
         // Actualizar la cola
         this.reservas.set(libroISBN, cola);
@@ -96,6 +98,26 @@ export class Biblioteca {
         this.reservas.set(libroISBN, cola);
         socio.notificar(`Has reservado el libro con ISBN ${libroISBN}. Se te avisará cuando esté disponible.`);
       }
+    }
+    
+     //Funciones de Autor
+    private autores: Autor[] = [];
+    registrarAutor(autor: Autor) {
+      this.autores.push(autor);
+    }
+
+    buscarAutorPorNombre(nombre: string): Autor | undefined {
+      return this.autores.find(a => a.nombre === nombre);
+    }
+
+    //Funciones varias
+    buscarLibrosPorAutor(autor: Autor): Libro[] {
+      return this.inventario.filter(libro => libro.autor === autor);
+    }
+
+    // Buscar libros por nombre de autor
+    buscarLibrosPorNombreAutor(nombre: string): Libro[] {
+      return this.inventario.filter(libro => libro.autor.nombre === nombre);
     }
 }
 
