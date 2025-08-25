@@ -27,11 +27,11 @@ biblioteca.agregarSocio(socio1);
 biblioteca.agregarSocio(socio2);
 
 // Préstamo
-console.log(biblioteca.prestarLibro("ISBN001", 1, new Date("2025-08-01")));
-console.log(biblioteca.prestarLibro("ISBN001", 2, new Date("2025-08-02"))); // reserva
+console.log(biblioteca.prestarLibro("ISBN002", 1, new Date("2025-08-01")));
+console.log(biblioteca.prestarLibro("ISBN002", 2, new Date("2025-08-02"))); // reserva
 
 // Devolución (con multa si se pasó del plazo)
-console.log(biblioteca.devolverLibro("ISBN001", 1, new Date("2025-08-20")));
+console.log(biblioteca.devolverLibro("ISBN002", 1, new Date("2025-08-20")));
 
 // Evento
 const evento = new EventoBiblioteca("Club de Lectura", new Date("2025-09-01"), "Discusión sobre realismo mágico");
