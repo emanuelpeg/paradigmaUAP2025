@@ -4,6 +4,7 @@ import { Socio } from './Socio';
 class Biblioteca {
     private inventario: Libro[];
     private socios: Socio[];
+    private duracion: number = 7;
 
     constructor() {
         this.inventario = [];
@@ -25,7 +26,6 @@ class Biblioteca {
         return libroEncontrado;
     }
 
-
         //Funciones de Socio
     registrarSocio(id: number, nombre: string, apellido: string): Socio{
         const socio = new Socio(id, nombre, apellido);
@@ -36,6 +36,34 @@ class Biblioteca {
     buscarSocio(id: number): Socio | null{
         return this.socios.find((socio) => socio.id == id) ?? null;
     }
+
+    retirarLibro(socioId: number, libroISBN: string): void {
+    const socio = this.buscarSocio(socioId);
+    const libro = this.buscarLibro(libroISBN);
+
+    if (!socio || !libro) {
+      throw new Error("No se encontro");
+    }
+    // fijarse si esta disponible
+    for (const socio of this.socios) {
+      if (socio.tienePrestadoLibro(libro)) {
+        throw new Error("Libro no esta disponible");
+      }
+    }
+
+    socio.retirar(libro, this.duracion);
+  }
+
+  devolverLibro(socioId: number, libroISBN: string) {
+    const socio = this.buscarSocio(socioId);
+    const libro = this.buscarLibro(libroISBN);
+
+    if (!socio || !libro) {
+      throw new Error("No se encontro");
+    }
+
+    socio.devolver(libro);
+  }
 }
 
 export const biblioteca = new Biblioteca();
