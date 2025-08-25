@@ -8,10 +8,10 @@ type Duracion = number;
 
 export class Socio {
     private prestamos: Prestamo[] = [];
-    private _multas: number = 0;   // total de multas acumuladas
+    private _multas: number = 0;   
     private notificaciones: string[] = [];
-    private eventosRegistrados: EventoBiblioteca[] = []; // eventos del socio
-    private historial: Libro[] = []; // libros que ha retirado alguna vez
+    private eventosRegistrados: EventoBiblioteca[] = []; 
+    private historial: Libro[] = [];
 
     constructor(
         private _id: number,
@@ -23,7 +23,7 @@ export class Socio {
     get nombre() { return this._nombre }
     get apellido() { return this._apellido }
     get nombreCompleto() { return `${this._nombre} ${this._apellido}` }
-    get multas() { return this._multas }  //poder consultar multas
+    get multas() { return this._multas }  
 
     retirar(libro: Libro, duracion : Duracion){
         const vencimiento = new Date(); 
@@ -76,17 +76,7 @@ export class Socio {
         return this._multas > 0;
     }
 
-    notificar(mensaje: string) {
-        this.notificaciones.push(mensaje);
-    }
-
-    verNotificaciones(): string[] {
-        const pendientes = [...this.notificaciones];
-        this.notificaciones = []; // se vacía después de verlas
-        return pendientes;
-    }
-
-    registrarEvento(evento: EventoBiblioteca) {
+        registrarEvento(evento: EventoBiblioteca) {
         this.eventosRegistrados.push(evento);
         this.notificar(`Te registraste al evento "${evento.titulo}" (${evento.fecha.toDateString()})`);
     }
@@ -94,4 +84,16 @@ export class Socio {
     getEventos(): EventoBiblioteca[] {
         return this.eventosRegistrados;
     }
+
+    notificar(mensaje: string) {
+        this.notificaciones.push(mensaje);
+    }
+
+    verNotificaciones(): string[] {
+        const pendientes = [...this.notificaciones];
+        this.notificaciones = []; 
+        return pendientes;
+    }
+
+
 }

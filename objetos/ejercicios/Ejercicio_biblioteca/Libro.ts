@@ -1,16 +1,16 @@
 import { Autor } from "./Autor";
 
 export class Libro {
-    private reservas: any[] = []; // mantengo lo de reservas de la tarea 1
+    private reservas: any[] = [];
 
     constructor(
         private _titulo: string,
-        private _autor: Autor,   // ahora es un objeto Autor
-        private _isbn: string
+        private _autor: Autor,   
+        private _isbn: string 
     ) {}
 
     get titulo() { return this._titulo }
-    get autor() { return this._autor }  // devuelve el objeto
+    get autor() { return this._autor }  
     get isbn() { return this._isbn }
 
     agregarReserva(socio: any): void {
