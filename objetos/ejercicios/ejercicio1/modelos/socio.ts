@@ -23,6 +23,10 @@ export class Socio {
     ) { }
 
     retirar(libro: Libro, duracion: Duracion) {
+        if (this.multa > 0) {
+            throw new Error("No puede retirar libros con multas pendientes");
+        }
+
         libro.disponible = false;
 
         const vencimiento = new Date();
@@ -36,6 +40,15 @@ export class Socio {
 
         if (!prestamo) {
             throw new Error("No esta prestado");
+        }
+
+        // calcular multa
+        const ahora = new Date();
+        if (ahora > prestamo.vencimiento) {
+            const diasAtraso = Math.ceil((ahora.getTime() - prestamo.vencimiento.getTime()) / (1000 * 60 * 60 * 24));
+            const multaTotal = diasAtraso * 50;
+            this._multa += multaTotal;
+            console.log(`Libro devuelto con ${diasAtraso} dias de atraso. Multa: $${multaTotal}. Total multa: $${this._multa}`);
         }
 
         const idx = this.prestamos.indexOf(prestamo);
