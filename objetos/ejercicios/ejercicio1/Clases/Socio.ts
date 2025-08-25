@@ -27,6 +27,10 @@ export class Socio {
         return `${this._nombre} ${this._apellido}`;
     }
 
+    notificar(mensaje: string) {
+      console.log(`Notificación para ${this.nombreCompleto}: ${mensaje}`);
+    }
+
     retirar(libro: Libro, duracion: Duracion) {
     const vencimiento = new Date();
     vencimiento.setDate(vencimiento.getDate() + duracion);
@@ -49,5 +53,21 @@ export class Socio {
 
   tienePrestadoLibro(libro: Libro): Prestamo | null {
     return this.prestamos.find((p) => p.libro === libro) ?? null;
+  }
+
+  calcularMulta(fechaDevolucion: Date): number {
+    let totalMulta = 0;
+    const multaPorDia = 50; // $ fijos por cada día de retraso
+
+    for (const prestamo of this.prestamos) {
+      if (fechaDevolucion > prestamo.vencimiento) {
+        const diasRetraso = Math.ceil(
+          (fechaDevolucion.getTime() - prestamo.vencimiento.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        totalMulta += diasRetraso * multaPorDia;
+      }
+    }
+
+    return totalMulta;
   }
 }
