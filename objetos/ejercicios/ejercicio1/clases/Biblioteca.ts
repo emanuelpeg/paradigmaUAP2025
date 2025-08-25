@@ -1,5 +1,9 @@
 import { Libro } from "./Libro";
 import { Socio } from "./Socio";
+import { Autor } from "./Autor";
+import { EventosBiblioteca } from "./EventosBiblioteca";
+
+
 
 class Biblioteca {
   private inventario: Libro[] = [];
@@ -8,13 +12,21 @@ class Biblioteca {
   private reservas: { [isbn: string]: number[] } = {}; 
   private prestamosActivos: { [isbn: string]: number } = {}; 
   private multas: { [socioId: number]: number } = {};
+  private eventos: EventosBiblioteca[] = [];
 
 
 
   // Funciones de libros
-  agregarLibro(titulo: string, autor: string, isbn: string): Libro {
+  agregarLibro(titulo: string, nombreAutor: string, isbn: string): Libro{
+
+    const autor = this.buscarAutor(nombreAutor);
+    if(!autor){
+    throw new Error(`No se pudo agregar el libro "${titulo}": autor "${nombreAutor}" no encontrado`);
+    }
     const libroCreado = new Libro(titulo, autor, isbn);
     this.inventario.push(libroCreado);
+
+    
     return libroCreado;
   }
 
@@ -40,10 +52,29 @@ class Biblioteca {
     return this.socios.find((socio) => socio.id === id) ?? null;
   }
 
+  buscarAutor(nombre: String): Autor | null {
+    const autores: Autor[] = [
+      new Autor("Cervantes", "Biografia de Cervantes", 1547),
+      new Autor("James Clear", "Biografia de James Clear", 1986),
+      new Autor("Orwell", "Biografia de Orwell", 1903),
+    ];
+
+    const autorEncontrado = autores.find(
+      (autor) => autor.nombre.toLowerCase() === nombre.toLowerCase()
+    );
+    
+    if (!autorEncontrado) {
+      console.log(`Autor "${nombre}" no encontrado`);
+      return null;
+    }
+    return autorEncontrado;
+
+  }
+
   retirarLibro(socioId: number, libroISBN: string): void {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
-
+    
     if (this.multas[socioId] && this.multas[socioId] > 0) {
   console.log(`El socio ${socioId} tiene una multa pendiente de ${this.multas[socioId]}. No puede retirar libros.`);
   return;
@@ -88,7 +119,7 @@ class Biblioteca {
     console.log(`Socio ${socioId} devolvio el libro  ${libroISBN}`);
 
     if (cola && cola.length > 0) {
-      const siguienteSocioId = cola.shift();
+      const siguienteSocioId = cola[0];
       console.log(`Notificando al socio ${siguienteSocioId}`); 
       this.reservas[libroISBN] = cola;
     }
@@ -131,6 +162,81 @@ calculoMulta(socioId: number, libroISBN: string): boolean{
 
 }
 
+  getLibrosPorAutor(autor: string): Libro[] {
+    const autorVerificacion = this.buscarAutor(autor);
+    if (!autorVerificacion) {
+      console.log(`Autor "${autor}" no encontrado`);
+      return [];
+    }
+
+    console.log("Buscando libros de", autor+"...");
+    const librosEncontrados = this.inventario.filter(libro => libro.autor.nombre === autor);
+    if(librosEncontrados.length === 0) {
+     
+       console.log("No se encontraron libros para este autor");
+
+    } 
+ 
+
+      else {
+      console.log("¡Libros Encontrados!");
+      console.log("Libros del autor", autor, ":");
+      librosEncontrados.forEach(libro => {
+        console.log(`- ${libro.titulo} (ISBN: ${libro.isbn})`);
+      });
+    } 
+
+    return librosEncontrados;
+
+    }
+
+    agregarEvento(titulo: string, descripcion: string, fecha: Date, tipo: string, librosRelacionados: Libro[], sociosRegistrados: number[]) {
+        const nuevoEvento = new EventosBiblioteca(titulo, descripcion, fecha, tipo, librosRelacionados, sociosRegistrados);
+        this.eventos.push(nuevoEvento);
+    }
+  
+    listarEventos(){
+      if(this.eventos.length === 0) {
+      console.log("No hay eventos programados.");  
+      }
+      this.eventos.forEach(evento => {
+        console.log(`Título: ${evento.titulo}, Fecha: ${evento.fecha.toLocaleDateString()}, Tipo: ${evento.tipo}`);
+        
+    });
+    }
+
+    notificarSocios(){
+
+
+      this.socios.forEach(socio => {
+        const librosVencidos = this.inventario.filter(libro => 
+            this.prestamosActivos[libro.isbn] === socio.id && socio.diasRetrasoLibro(libro) > 0
+        );
+        if(librosVencidos.length > 0) {
+              librosVencidos.forEach(libro => {
+
+          console.log(`Notificando a ${socio.nombreCompleto} sobre el libro vencido "${libro.titulo}"`);
+              });
+      }
+           Object.entries(this.reservas).forEach(([isbn, cola]) => {
+            if(cola[0] === socio.id){
+              const libro = this.buscarLibro(isbn);
+              if(libro && !this.prestamosActivos[isbn]){
+                console.log(`Notificando a ${socio.nombreCompleto} que el libro "${libro.titulo}" está disponible para retiro.`);
+              }
+            } 
+            
+        });
+
+            this.eventos.forEach(evento => {
+              if(evento.sociosRegistrados.includes(socio.id)){
+                console.log(`Notificando a ${socio.nombreCompleto} sobre el evento "${evento.titulo}" programado para el ${evento.fecha.toLocaleDateString()}.`);
+              }
+      });
+    }
+
+ 
+)}
 }
 
 export const biblioteca = new Biblioteca();

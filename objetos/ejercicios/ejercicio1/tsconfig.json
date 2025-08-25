@@ -18,7 +18,7 @@
   },
   "include": [
     "*"
-  ],
+, "clases/EventosBiblioteca.ts"  ],
   "exclude": [
     "node_modules",
     "dist"

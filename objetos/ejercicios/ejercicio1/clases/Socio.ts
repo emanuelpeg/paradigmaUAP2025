@@ -59,12 +59,12 @@ export class Socio {
   }
 
   diasRetrasoLibro(libro: Libro): number {
-  const hoy = new Date();
   const prestamo = this.prestamos.find(p => p.libro.isbn === libro.isbn);
 
-  hoy.setDate(hoy.getDate() + 15); // aumento 15 dias para pasar los de 'duracion' que son 14
 
   if (!prestamo) return 0;
+  const hoy = new Date();
+  hoy.setDate(hoy.getDate() + 15); // aumento 15 dia para pasar los de 'duracion' que son 14
 
   if (hoy > prestamo.vencimiento) {
     const diferencia = hoy.getTime() - prestamo.vencimiento.getTime();
