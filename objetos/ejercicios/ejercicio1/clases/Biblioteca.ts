@@ -16,7 +16,6 @@ class Biblioteca {
 
 
 
-  // Funciones de libros
   agregarLibro(titulo: string, nombreAutor: string, isbn: string): Libro{
 
     const autor = this.buscarAutor(nombreAutor);
@@ -31,7 +30,6 @@ class Biblioteca {
   }
 
   buscarLibro(isbn: string): Libro | null {
-    // return this.inventario.find(libro => libro.isbn === isbn) ?? null;
     const libroEncontrado = this.inventario.find(
       (libro) => libro.isbn === isbn
     );
@@ -84,7 +82,6 @@ class Biblioteca {
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-    // fijarse si esta disponible
   
       if (this.prestamosActivos[libroISBN]) {
         
@@ -102,6 +99,7 @@ class Biblioteca {
     socio.retirar(libro, this.DURACION);
     this.prestamosActivos[libroISBN] = socioId
     console.log(`Socio ${socioId} retiro el libro  ${libroISBN}`);
+    
   }
 
   devolverLibro(socioId: number, libroISBN: string) {
@@ -237,6 +235,29 @@ calculoMulta(socioId: number, libroISBN: string): boolean{
 
  
 )}
+
+   RastrearHistorialSocio(socioId?: number): void {
+  if (socioId) {
+       const socio = this.buscarSocio(socioId);
+    if (!socio) {
+      console.log(`Socio con ID ${socioId} no encontrado.`);
+      return;
+    }
+    socio.mostrarHistorial();
+  } else {
+    console.log('\n=== HISTORIAL DE TODOS LOS SOCIOS ===');
+    
+    if (this.socios.length === 0) {
+      console.log("No hay socios registrados.");
+      return;
+    }
+
+    this.socios.forEach(socio => {
+      socio.mostrarHistorial();
+      console.log('\n' + '=============================='+ '\n');
+    });
+  }
+}
 }
 
 export const biblioteca = new Biblioteca();

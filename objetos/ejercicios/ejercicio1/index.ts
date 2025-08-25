@@ -1,6 +1,5 @@
 import { biblioteca } from "./clases/Biblioteca";
 
-//agregamos libros
  biblioteca.agregarLibro("El quijote", "Cervantes", "1234");
 const libro =biblioteca.agregarLibro("Hábitos Atómicos", "James Clear", "2345");
 biblioteca.agregarLibro("1984", "Orwell", "1984");
@@ -38,11 +37,13 @@ biblioteca.devolverLibro(32451, libro.isbn); // notifica al socio 32451
 biblioteca.retirarLibro(32451, libro.isbn); // socio 32451 lo toma
 
 biblioteca.retirarLibro(37023, libro2.isbn); // socio 37023 lo toma tambien simule que tenga un retraso de 15 dias para el prestamo
+biblioteca.devolverLibro(37023, libro2.isbn); // notifica al socio 32451
+biblioteca.retirarLibro(37023, libro.isbn); // socio 37023 lo toma tambien simule que tenga un retraso de 15 dias para el prestamo
+biblioteca.devolverLibro(37023, libro.isbn); // notifica al socio 32451
 
 console.log("==============")
 
-biblioteca.getLibrosPorAutor("James Clear"); //buscamos un
-//libro actual
+biblioteca.getLibrosPorAutor("Cervantes"); 
 console.log("==============")
 biblioteca.agregarEvento("Presentación de 'El quijote'", "Evento de presentación del libro 'El quijote'", new Date(), "Presentación", [libro], [31882, 20321]);
 biblioteca.agregarEvento("Presentación de 'James Clear'", "Evento de presentación del libro 'Atomicos 2'", new Date(), "Presentación", [libro], [32451, 20321]);
@@ -51,5 +52,10 @@ biblioteca.listarEventos();
 
 biblioteca.notificarSocios();
 console.log("==============")
+biblioteca.RastrearHistorialSocio(37023);
+//sin nada entre los parentesis para llamar a todos los socios
+//biblioteca.RastrearHistorialSocio() 
+console.log("==============")
+
 
 console.log("Libro actual: ",libro.titulo, libro.autor.nombre, libro.isbn);
