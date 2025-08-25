@@ -7,8 +7,8 @@ class Biblioteca {
     private socios: Socio[] = [];
     private DURACION = 14;
 
-    agregarLibro(titulo: string, autor: Autor, isbn: string) {
-        const libro: Libro = new Libro(titulo, autor, isbn);
+    agregarLibro(titulo: string, autor: Autor, isbn: string, categoria: string) {
+        const libro: Libro = new Libro(titulo, autor, isbn, true, categoria);
         this.inventario.push(libro);
         return libro;
     }

@@ -1,13 +1,16 @@
 import { Autor } from "./Autor";
 import { Socio } from "./socio";
 
+
+
 export class Libro {
     private _colaReserva: Socio[] = [];
     constructor(
         private _titulo: string,
         private _autor: Autor,
         private _isbn: string,
-        private _disponible: boolean = true
+        private _disponible: boolean = true,
+        private _categoria: string
     ) { }
 
     estaDisponible(libroISBN: number) {
@@ -38,6 +41,20 @@ export class Libro {
     get autor() { return this._autor; }
     get isbn() { return this._isbn; }
     get disponible() { return this._disponible; }
+    get categoria() { return this._categoria; }
     get colaReserva() { return this._colaReserva; }
     set disponible(disponible: boolean) { this._disponible = disponible; }
+}
+
+export class LibroPrioridad extends Libro {
+    constructor(private _libro: Libro, private _prioridad: number) {
+        super(_libro.titulo, _libro.autor, _libro.isbn, _libro.disponible, _libro.categoria); // copy Libro properties
+    }
+
+    incrementarPrioridad(numero: number) {
+        this._prioridad += numero
+    }
+
+    get tituloLibro() { return this._libro.titulo };
+    get prioridad() { return this._prioridad };
 }

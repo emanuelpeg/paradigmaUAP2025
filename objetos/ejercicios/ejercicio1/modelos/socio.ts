@@ -1,5 +1,7 @@
+import { Autor } from "./Autor";
+import { biblioteca } from "./biblioteca";
 import { EventoBiblioteca } from "./EventoBiblioteca";
-import { Libro } from "./libro";
+import { Libro, LibroPrioridad } from "./libro";
 import { Notificacion } from "./Notificacion";
 
 // duracion en dias de un prestamo
@@ -94,6 +96,51 @@ export class Socio {
             })
         } else {
             console.log('--NO TIENE NOTIFICACIONES--');
+        }
+    }
+
+    recomendar() {
+        const bibliotecaSinPrestados = biblioteca.libros.filter(libro => !this.librosPrestados.some(l => l === libro));
+        const libros: LibroPrioridad[] = [];
+        const autores = {};
+        const categorias = {};
+
+        this.librosPrestados.forEach(libro => {
+            // establecer importancia de autor
+            const nombreAutor: string = libro.autor.nombre;
+            autores[nombreAutor] = autores[nombreAutor] ? autores[nombreAutor] + 1 : 1;
+            // establecer importancia de categoria
+            const categoria: string = libro.categoria;
+            categorias[categoria] = categorias[categoria] ? categorias[categoria] + 1 : 1;
+        });
+
+        for (const nombreAutor in autores) {
+            bibliotecaSinPrestados.forEach(libro => {
+                if (libro.autor.nombre == nombreAutor) {
+                    const libroPrioridad: LibroPrioridad = new LibroPrioridad(libro, autores[nombreAutor]);
+                    libros.push(libroPrioridad);
+                }
+            });
+        }
+
+        // buscar por categoria
+        for (const categoria in categorias) {
+            bibliotecaSinPrestados.forEach(libro => {
+                if (libro.categoria === categoria) {
+                    // si el libroprioridad ya esta en el array, incrementar 
+                    if (libros.some(l => l.isbn === libro.isbn)) {
+                        libros.filter(l => l.isbn === libro.isbn)[0].incrementarPrioridad(categorias[categoria]);
+                    } else {
+                        // crear nuevo libro prioridad
+                        const libroPrioridad: LibroPrioridad = new LibroPrioridad(libro, categorias[categoria]);
+                        libros.push(libroPrioridad);
+                    }
+                }
+            });
+        }
+
+        for (const libro of libros) {
+            console.log(`${libro.tituloLibro} - ${libro.prioridad}`)
         }
     }
 
