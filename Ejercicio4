@@ -1,0 +1,19 @@
+// Clase EventoBiblioteca
+export class EventoBiblioteca {
+    nombre: string;
+    descripcion: string;
+    fecha: Date;
+    sociosRegistrados: number[] = [];
+
+    constructor(nombre: string, descripcion: string, fecha: Date) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.fecha = fecha;
+    }
+
+    registrarSocio(socioId: number) {
+        if (!this.sociosRegistrados.includes(socioId)) {
+            this.sociosRegistrados.push(socioId);
+        }
+    }
+}
