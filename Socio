@@ -1,0 +1,26 @@
+import { Libro } from "./Libro";
+
+export class Socio {
+  id: number;
+  nombre: string;
+  apellido: string;
+  librosPrestados: Libro[] = [];
+
+  constructor(id: number, nombre: string, apellido: string) {
+    this.id = id;
+    this.nombre = nombre;
+    this.apellido = apellido;
+  }
+
+  retirar(libro: Libro, duracionDias: number): void {
+    libro.prestado = true;
+    libro.fechaVencimiento = new Date(Date.now() + duracionDias * 24 * 60 * 60 * 1000);
+    this.librosPrestados.push(libro);
+  }
+
+  devolver(libro: Libro): void {
+    libro.prestado = false;
+    libro.fechaVencimiento = undefined;
+    this.librosPrestados = this.librosPrestados.filter(l => l.isbn !== libro.isbn);
+  }
+}
