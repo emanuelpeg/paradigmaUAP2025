@@ -16,7 +16,7 @@ export class Socio {
     constructor(
         private _id: number,
         private _nombre: string,
-        private _apellido: string
+        private _apellido: string //No necesito inicializar las listas porque ya lo hice arriba, multas empieza en 0
     ) {}
 
     get id() { return this._id }
