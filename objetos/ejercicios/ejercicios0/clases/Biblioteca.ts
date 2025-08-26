@@ -1,12 +1,14 @@
 import { Libro } from "./Libro";
 import { Socio } from "./Socio";
+import { Autor } from "./Autor";
 
 class Biblioteca {
     private inventario: Libro[] = [];
     private socios: Socio[] = [];
+    private autores: Autor[] = [];
 
-    agregarLibro(titulo: string, autor: string, isbn: string): Libro {
-        const libro = new Libro(titulo, autor, isbn);
+    agregarLibro(titulo: string, autorId: number, isbn: string): Libro {
+        const libro = new Libro(titulo, autorId, isbn);
         this.inventario.push(libro);
         return libro;
     }
@@ -15,12 +17,20 @@ class Biblioteca {
         this.socios.push(socio);
         return socio;
     }
+    agregarAutor(id: number, nombre: string, apellido: string, nacionalidad: string, fechaNacimiento: Date): Autor {
+        const autor = new Autor(id, nombre, apellido, nacionalidad, fechaNacimiento);
+        this.autores.push(autor);
+        return autor;
+    }
     buscarLibro(isbn: string): Libro | null {
         const libroEncontrado = this.inventario.find(libro => libro.getIsbn === isbn);
         if (libroEncontrado) {
             return libroEncontrado;
         }
         return null;
+    }
+    buscarLibroPorAutor(autorId: number): Libro[] {
+        return this.inventario.filter(libro => libro.getAutor === autorId);
     }
     buscarSocio(id: number): Socio | null {
         const socioEncontrado = this.socios.find(socio => socio.id === id);
@@ -48,7 +58,6 @@ class Biblioteca {
         }
         return "Libro o socio no encontrado.";
     }
-
     verificaraAtraso(socioId: number)
     {
         const socio = this.buscarSocio(socioId);
@@ -64,14 +73,9 @@ class Biblioteca {
             });
         }
     }
-
     calcularMulta(socio: Socio, diasAtraso: number): number {
         const multaPorDia = 50;
         return diasAtraso * multaPorDia;
     }
-
-
-
 }
-
 export const biblioteca = new Biblioteca();

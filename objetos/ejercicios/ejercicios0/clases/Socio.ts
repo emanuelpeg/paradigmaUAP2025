@@ -19,13 +19,15 @@ export class Socio {
         private _nombre: string,
         private _apellido: string,
         public librosRetirados: Prestamo[] = [],
-        public _multa: number = 0
+        public _multa: number = 0,
+        public _historial: Libro[] = []
     ){}
 
     get id() {return this._id;}
     get nombre() {return this._nombre;}
     get apellido() {return this._apellido;}
     get nombreCompleto() {return `${this._nombre} ${this._apellido}`;}
+    get historial() {return this._historial;}
 
     retirar(libro: Libro, duracion: Duracion, usurio: Socio) {
         usurio.librosRetirados.push(new Prestamo(libro, duracion)); 
@@ -46,6 +48,8 @@ export class Socio {
 
         var primerSocio = libro.getCola[0];
         biblioteca.notificarDisponibilidad(primerSocio, libro);
+
+        this._historial.push(libro);
 
         return prestamo;
     }
