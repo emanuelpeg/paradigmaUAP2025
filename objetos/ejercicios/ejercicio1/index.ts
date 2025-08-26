@@ -30,6 +30,7 @@ biblioteca.retrarLibro(Lenny.id, biblioteca.libros[1].isbn);
 biblioteca.retrarLibro(Abiel.id, biblioteca.libros[1].isbn);
 
 const evento = new EventoBiblioteca('lectura');
+const nuevoEvento = new EventoBiblioteca('biblioteca');
 
 yo.subscribirseEvento(evento);
 
