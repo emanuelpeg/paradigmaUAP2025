@@ -8,4 +8,4 @@ biblioteca.registrarSocio(31882, "Lucciano", "Curotto");
 biblioteca.registrarSocio(20321, "Luca", "Giordana");
 biblioteca.registrarSocio(32451, "Samuel", "Olmos");
 
-console.log(libro.titulo, libro.autor, libro.isbn);
+console.log(libro.titulo, libro.autor, libro.isbn); 
