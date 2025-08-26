@@ -1,0 +1,12 @@
+// Clase Autor
+export class Autor {
+    nombre: string;
+    biografia: string;
+    anioNacimiento: number;
+
+    constructor(nombre: string, biografia: string, anioNacimiento: number) {
+        this.nombre = nombre;
+        this.biografia = biografia;
+        this.anioNacimiento = anioNacimiento;
+    }
+}

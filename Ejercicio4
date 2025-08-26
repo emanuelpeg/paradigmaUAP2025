@@ -1,0 +1,41 @@
+// Clase EventoBiblioteca
+export class EventoBiblioteca {
+    nombre: string;
+    descripcion: string;
+    fecha: Date;
+    sociosRegistrados: number[] = [];
+    historialNotificaciones: string[] = [];
+
+    constructor(nombre: string, descripcion: string, fecha: Date) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.fecha = fecha;
+    }
+
+    registrarSocio(socioId: number) {
+        if (!this.sociosRegistrados.includes(socioId)) {
+            this.sociosRegistrados.push(socioId);
+            this.agregarNotificacion(`Socio ${socioId} registrado en el evento '${this.nombre}'.`);
+        }
+    }
+
+    agregarNotificacion(mensaje: string) {
+        const fechaHora = new Date().toLocaleString();
+        this.historialNotificaciones.push(`[${fechaHora}] ${mensaje}`);
+    }
+
+    notificarEvento() {
+        this.sociosRegistrados.forEach(socioId => {
+            this.agregarNotificacion(`Notificación enviada a socio ${socioId} por el evento '${this.nombre}' el ${this.fecha.toLocaleDateString()}.`);
+        });
+    }
+
+    // Ejemplo de método para notificar libro vencido
+    notificarLibroVencido(socioId: number, libroTitulo: string) {
+        this.agregarNotificacion(`Socio ${socioId} notificado por vencimiento del libro '${libroTitulo}'.`);
+    }
+
+    verHistorialNotificaciones(): string[] {
+        return this.historialNotificaciones;
+    }
+}
