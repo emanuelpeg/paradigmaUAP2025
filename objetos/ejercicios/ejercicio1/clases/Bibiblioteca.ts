@@ -30,40 +30,31 @@ export class Biblioteca {
         }
         return null;
     }
-    retirarLibro(libroISBN: string, socioId: number): Libro | null {
-        const libro = this.buscarLibro(libroISBN);
-        const socio = this.buscarSocio(socioId);
+    retirarLibro(libro: Libro, socio: Socio): void {
+        // const libro = this.buscarLibro(libroISBN);
+        // const socio = this.buscarSocio(socioId);
+        socio.retirar(libro, 14, socio); // Duración fija de 14 días para el ejemplo
+        //return libro;
         
-        if (libro && socio) {
-            socio.retirar(libro, 14, socio); // Duración fija de 14 días para el ejemplo
-            return libro;
-        }
-        return null;
+        //return null;
     }
-    devolverLibro(libroISBN: string, socioId: number): Libro | null {
-        const libro = this.buscarLibro(libroISBN);
-        const socio = this.buscarSocio(socioId);
-        
-        if (libro && socio) {
-            // Aquí podrías implementar la lógica para devolver el libro
-            // Por ejemplo, podrías agregarlo de nuevo al inventario
-            return libro;
-        }
-        return null;
-    } 
+    notificarDisponibilidad(libro: Libro) {
+        var socio = libro.colaEspera[0];
+        console.log(`Notificación: Hola ${socio.nombreCompleto}, el libro "${libro.titulo}" ya está disponible para ti.`);
+    }
     generarReserva(libroISBN: string, socioId: number): string {
         const libro = this.buscarLibro(libroISBN);
         const socio = this.buscarSocio(socioId);
         
         if (libro && socio) {
             if (libro.isDisponible) {
-                return `El libro "${libro.titulo}" está disponible para retiro.`;
+                this.retirarLibro(libro, socio);
             } else {
                 libro.colaEspera.push(socio);
                 return `El libro "${libro.titulo}" no está disponible. Has sido agregado a la cola de espera.`;
             }
         }
-        return `No se pudo generar la reserva. Verifica el ISBN del libro y el ID del socio.`;
+        return "Libro o socio no encontrado.";
     }
 
 }

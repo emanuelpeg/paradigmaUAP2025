@@ -15,7 +15,7 @@ export class Libro {
                 private _autor: string, 
                 private _isbn: string, 
                 private _cola: Socio[]=[],
-                private _disponible: boolean = true) {}
+                public _disponible: boolean = true) {}
 
     get titulo() {return this._titulo;}
     get autor() {return this._autor;} 

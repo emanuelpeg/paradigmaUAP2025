@@ -1,3 +1,4 @@
+import { biblioteca } from "./Bibiblioteca";
 import { Libro } from "./Libro";
 
 type Duracion = number;
@@ -32,7 +33,7 @@ export class Socio {
         //eliminar el socio de la cola de espera del libro
         const i = libro.colaEspera.indexOf(usurio);
         libro.colaEspera.splice(i, 1); // Elimina 1 elemento en la posición 'index'
-        return libro;
+        libro._disponible = false;
     }
 
     devolver(libro: Libro, usurio: Socio): Prestamo {
@@ -42,6 +43,9 @@ export class Socio {
         } 
         const index = this.librosRetirados.indexOf(prestamo);
         usurio.librosRetirados.splice(index, 1);
+
+        biblioteca.notificarDisponibilidad(libro);
+        libro._disponible = true;
 
         return prestamo;
     }
