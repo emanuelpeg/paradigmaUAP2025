@@ -1,3 +1,5 @@
+import { Socio } from "./Socio";
+
 export class Libro {
     // private _titulo: string;
     // private _autor: string;
@@ -9,9 +11,15 @@ export class Libro {
     //     this._isbn = isbn;   
     // }
     
-    constructor(private _titulo: string, private _autor: string, private _isbn: string) {}
+    constructor(private _titulo: string, 
+                private _autor: string, 
+                private _isbn: string, 
+                private _cola: Socio[]=[],
+                private _disponible: boolean = true) {}
 
     get titulo() {return this._titulo;}
-    get autor() {return this._autor;}
+    get autor() {return this._autor;} 
     get isbn() {return this._isbn;}
+    get isDisponible() {return this._disponible;}
+    get colaEspera() {return this._cola;}
 }

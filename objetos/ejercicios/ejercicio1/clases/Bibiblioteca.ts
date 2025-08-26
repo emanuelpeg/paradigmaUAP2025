@@ -35,8 +35,7 @@ export class Biblioteca {
         const socio = this.buscarSocio(socioId);
         
         if (libro && socio) {
-            // Aquí podrías implementar la lógica para retirar el libro
-            // Por ejemplo, podrías eliminarlo del inventario o marcarlo como retirado
+            socio.retirar(libro, 14, socio); // Duración fija de 14 días para el ejemplo
             return libro;
         }
         return null;
@@ -51,7 +50,22 @@ export class Biblioteca {
             return libro;
         }
         return null;
+    } 
+    generarReserva(libroISBN: string, socioId: number): string {
+        const libro = this.buscarLibro(libroISBN);
+        const socio = this.buscarSocio(socioId);
+        
+        if (libro && socio) {
+            if (libro.isDisponible) {
+                return `El libro "${libro.titulo}" está disponible para retiro.`;
+            } else {
+                libro.colaEspera.push(socio);
+                return `El libro "${libro.titulo}" no está disponible. Has sido agregado a la cola de espera.`;
+            }
+        }
+        return `No se pudo generar la reserva. Verifica el ISBN del libro y el ID del socio.`;
     }
+
 }
 
 export const biblioteca = new Biblioteca();
