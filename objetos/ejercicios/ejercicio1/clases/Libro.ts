@@ -1,7 +1,12 @@
+import { Socio } from "./Socio";
+import { Autor } from "./Autor";
+
 export class Libro {
+  private reservas:Socio[] = [];
+
   constructor(
     private _titulo: string,
-    private _autor: string,
+    private _autor: Autor,
     private _isbn: string
   ) {}
 
@@ -14,4 +19,11 @@ export class Libro {
   get isbn() {
     return this._isbn;
   }
+  get reservasSocios() {
+    return this.reservas;
+  }
+  reservar(socio:Socio){
+    this.reservas.push(socio);
+  }
+
 }
