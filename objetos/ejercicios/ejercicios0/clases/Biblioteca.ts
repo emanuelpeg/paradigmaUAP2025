@@ -22,6 +22,12 @@ class Biblioteca {
         this.autores.push(autor);
         return autor;
     }
+    agregarLibroAHistorial(socioId: number, libro: Libro): void {
+        const socio = this.buscarSocio(socioId);
+        if (socio) {
+            socio._historial.push(libro);
+        }
+    }
     buscarLibro(isbn: string): Libro | null {
         const libroEncontrado = this.inventario.find(libro => libro.getIsbn === isbn);
         if (libroEncontrado) {
