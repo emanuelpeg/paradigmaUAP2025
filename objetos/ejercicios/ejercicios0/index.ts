@@ -18,3 +18,7 @@ biblioteca.agregarAutor(2, "Miguel", "de Cervantes", "Española", new Date("1547
 biblioteca.agregarAutor(3, "Carlos", "Ruiz Zafón", "Española", new Date("1964-09-25"));
 biblioteca.agregarAutor(4, "Isabel", "Allende", "Chilena", new Date("1942-08-02"));
 biblioteca.agregarAutor(5, "Jorge Luis", "Borges", "Argentina", new Date("1899-08-24"));
+
+
+//cambiar en el index la creacion de socios. Ahora tiene mas atributos
+//cambiar en el index la creacion de libros. Ahora tiene mas atributos

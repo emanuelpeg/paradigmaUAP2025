@@ -12,15 +12,15 @@ class Prestamo{
 }
 
 export class Socio {
-    
-
     constructor(
         private _id: number,
         private _nombre: string,
         private _apellido: string,
         public librosRetirados: Prestamo[] = [],
         public _multa: number = 0,
-        public _historial: Libro[] = []
+        public _historial: Libro[] = [],
+        public _recomendaciones: string[] = [],
+        public _notificaciones: string[] = []
     ){}
 
     get id() {return this._id;}
@@ -37,7 +37,6 @@ export class Socio {
         libro.getCola.splice(i, 1); // Elimina 1 elemento en la posición 'index'
         libro._disponible = false;
     }
-
     devolver(libro: Libro, usuario: Socio): Prestamo {
         const prestamo = usuario.librosRetirados.find(p => p.libro === libro);
         if (!prestamo) {
