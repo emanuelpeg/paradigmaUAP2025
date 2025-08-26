@@ -56,7 +56,23 @@ export class Biblioteca {
         }
         return "Libro o socio no encontrado.";
     }
+    verificarAtraso(socioId: number): void{
+        const socio = this.buscarSocio(socioId);
+        const hoy = new Date();
+        hoy.setDate(hoy.getDate());
 
+        if (socio){
+            socio.librosRetirados.forEach(prestamo => {
+                if (prestamo.fechaVencimiento < hoy) {
+                    const multa = this.calcularMulta(socio, hoy.getDate() - prestamo.fechaVencimiento.getDate());
+                    socio.multa += multa;
+                }
+            });
+        }
+    }
+    calcularMulta(socio: Socio, atraso: number): number {
+        const multaPorDia = 50;
+        return atraso * multaPorDia;
+    }
 }
-
 export const biblioteca = new Biblioteca();

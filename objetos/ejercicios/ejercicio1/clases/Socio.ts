@@ -6,8 +6,8 @@ type Duracion = number;
 class Prestamo{
     constructor(
         public libro: Libro,
-        private duracion: Duracion
-    ){}
+        private duracion: Duracion,
+        public fechaVencimiento: Date = new Date(new Date().setDate(new Date().getDate() + duracion))){}
 }
 
 export class Socio {
@@ -17,17 +17,19 @@ export class Socio {
         private _id: number,
         private _nombre: string,
         private _apellido: string,
-        private librosRetirados: Prestamo[] = []
+        public librosRetirados: Prestamo[] = [],
+        public multa: number = 0
     ){}
 
     get id() {return this._id;}
     get nombre() {return this._nombre;}
     get apellido() {return this._apellido;}
     get nombreCompleto() {return `${this._nombre} ${this._apellido}`;}
+    //get multa() {return this._multa;}
 
     retirar(libro: Libro, duracion: Duracion, usurio: Socio) {
-        const vencimiento = new Date();
-        vencimiento.setDate(vencimiento.getDate() + duracion);
+        //const vencimiento = new Date();
+        //vencimiento.setDate(vencimiento.getDate() + duracion);
         usurio.librosRetirados.push(new Prestamo(libro, duracion)); 
         
         //eliminar el socio de la cola de espera del libro
