@@ -1,6 +1,7 @@
 import { Libro } from "./Libro";
 import { Socio } from "./Socio";
 import { Autor } from "./Autor";
+import { EventoBiblioteca } from "./EventoBiblioteca";
 
 class Biblioteca {
     private inventario: Libro[] = [];
@@ -27,6 +28,12 @@ class Biblioteca {
         if (socio) {
             socio._historial.push(libro);
         }
+    }
+    agregarEvento(nombre: string, fecha: Date, descripcion: string): EventoBiblioteca {
+        return new EventoBiblioteca(nombre, fecha, descripcion);
+    }
+    notificarEventoASocios(evento: EventoBiblioteca): void {
+        this.socios.forEach(socio => { evento.notificarEvento(socio); });
     }
     buscarLibro(isbn: string): Libro | null {
         const libroEncontrado = this.inventario.find(libro => libro.getIsbn === isbn);
