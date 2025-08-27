@@ -38,9 +38,9 @@ export class Biblioteca {
         
         //return null;
     }
-    notificarDisponibilidad(libro: Libro) {
-        var socio = libro.colaEspera[0];
-        console.log(`Notificación: Hola ${socio.nombreCompleto}, el libro "${libro.titulo}" ya está disponible para ti.`);
+    notificar(mensaje: string,socio: Socio): void {
+        //logica para notificar al socio (email, sms, etc.)
+        console.log(`Notificación: ${mensaje}`);
     }
     generarReserva(libroISBN: string, socioId: number): string {
         const libro = this.buscarLibro(libroISBN);
@@ -66,6 +66,7 @@ export class Biblioteca {
                 if (prestamo.fechaVencimiento < hoy) {
                     const multa = this.calcularMulta(socio, hoy.getDate() - prestamo.fechaVencimiento.getDate());
                     socio.multa += multa;
+                    this.notificar(`Tienes una multa de $${multa} por el libro "${prestamo.libro.titulo}".`, socio);
                 }
             });
         }

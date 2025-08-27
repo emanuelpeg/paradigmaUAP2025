@@ -46,8 +46,10 @@ export class Socio {
         const index = this.librosRetirados.indexOf(prestamo);
         usurio.librosRetirados.splice(index, 1);
 
-        biblioteca.notificarDisponibilidad(libro);
+        if (libro.colaEspera.length > 0){
+        biblioteca.notificar("El libro " + libro.titulo + " ya está disponible.", libro.colaEspera[0]);
         libro._disponible = true;
+        }
 
         return prestamo;
     }
