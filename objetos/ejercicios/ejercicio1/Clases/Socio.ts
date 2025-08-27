@@ -1,4 +1,5 @@
 import { Libro } from "./Libro";
+import { Notificacion } from "./Notificacion";
 
 class Prestamo {
     constructor(public libro: Libro, public vencimiento: Date) {}
@@ -9,6 +10,7 @@ type Duracion = number;
 export class Socio {
     private prestamos: Prestamo[] = [];
     public historialLectura: Libro[] = [];
+    public historialNotificaciones: Notificacion[] = [];
 
     constructor(private _id: number, private _nombre: string, private _apellido: string) {}
 
@@ -28,8 +30,8 @@ export class Socio {
         return `${this._nombre} ${this._apellido}`;
     }
 
-    notificar(mensaje: string) {
-      console.log(`Notificación para ${this.nombreCompleto}: ${mensaje}`);
+    notificar(mensaje: string, tipo: string = "General") {
+      this.historialNotificaciones.push(new Notificacion(mensaje, tipo));
     }
 
     agregarAlHistorial(libro: Libro) {

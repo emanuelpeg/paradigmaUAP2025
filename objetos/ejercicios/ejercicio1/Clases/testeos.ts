@@ -31,7 +31,7 @@ biblioteca.devolverLibro(1, '123');
 // Simular préstamo vencido para socio1
 socio1.retirar(libro2, -3); // Préstamo vencido hace 3 días
 const multa = socio1.calcularMulta(new Date());
-console.log(`Multa de ${socio1.nombreCompleto}: $${multa}`);
+console.log(`\nMulta de ${socio1.nombreCompleto}: $${multa}`);
 
 // Tarea 3: Buscar libros por autor
 const librosDeCortazar = biblioteca.buscarLibrosPorAutor(autor2);
@@ -46,9 +46,18 @@ const eventoBiblioteca = new EventoBiblioteca(
 eventoBiblioteca.socios.push(socio1, socio2);
 eventoBiblioteca.socios.forEach(socio => {
   EventoBiblioteca.notificarEventoProximo(
-    socio.nombreCompleto,
+    socio,
     eventoBiblioteca.nombreEvento,
     eventoBiblioteca.fecha
   );
 });
 
+console.log("\n--- Historial de notificaciones ---");
+[biblioteca.buscarSocio(1), biblioteca.buscarSocio(2)].forEach(socio => {
+  if (socio) {
+    console.log(`\nNotificaciones de ${socio.nombreCompleto}:`);
+    socio.historialNotificaciones.forEach((notif, i) => {
+      console.log(`  ${i + 1}. [${notif.tipo}] ${notif.mensaje} (${notif.fecha.toLocaleString()})`);
+    });
+  }
+});

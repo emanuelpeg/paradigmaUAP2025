@@ -7,7 +7,7 @@ export class Biblioteca {
     private inventario: Libro[];
     private socios: Socio[];
     private duracion: number = 7;
-    private reservas: Map<string, Socio[]> = new Map(); // isbn -> cola de reservas
+    private reservas: Map<string, Socio[]> = new Map(); // isbn -> fila de reservas
 
     constructor() {
         this.inventario = [];
@@ -23,7 +23,7 @@ export class Biblioteca {
     }
 
     buscarLibro(isbn: string): Libro | null {
-        //return this.inventario.find(libro => libro.titulo === titulo);
+        //return this.inventario.find(libro => libro.titulo === titulo); --------Nono
         const libroEncontrado = this.inventario.find((libro) => libro.isbn === isbn);
         if (!libroEncontrado) {
             return null;
@@ -48,29 +48,31 @@ export class Biblioteca {
     const libro = this.buscarLibro(libroISBN);
 
     if (!socio || !libro) {
-      throw new Error("No se encontro");
+      throw new Error("No se encontró");
     }
     if (socio.calcularMulta(new Date()) > 0) {
-      throw new Error("No puedes retirar libros hasta saldar tus multas.");
+      throw new Error("No podés retirar libros hasta saldar tus multas.");
     }
-    // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
-      // Si el libro no está disponible, reservar
+
+    // Verificar si el libro está prestado
+    const libroPrestado = this.socios.some(s => s.tienePrestadoLibro(libro));
+    if (libroPrestado) {
+      // Si el libro no está disponible, reservar y notificar
       this.reservarLibro(socioId, libroISBN);
       EventoBiblioteca.notificarReserva(
-        this.buscarSocio(socioId)?.nombreCompleto ?? "Socio",
+        socio,
         libro.titulo
       );
-      throw new Error("Libro no está disponible. Se ha realizado una reserva si no existía previamente.");
-      }
+      throw new Error("El libro no está disponible. Se ha realizado una reserva");
     }
-      socio.retirar(libro, this.duracion);
-      EventoBiblioteca.notificarPrestamo(
-        socio.nombreCompleto,
-        libro.titulo,
-        new Date(Date.now() + this.duracion * 24 * 60 * 60 * 1000)
-      );
+
+    // Si está disponible, realizar el préstamo y notificar
+    socio.retirar(libro, this.duracion);
+    EventoBiblioteca.notificarPrestamo(
+      socio,
+      libro.titulo,
+      new Date(Date.now() + this.duracion * 24 * 60 * 60 * 1000)
+    );
   }
 
   devolverLibro(socioId: number, libroISBN: string) {
@@ -78,12 +80,12 @@ export class Biblioteca {
     const libro = this.buscarLibro(libroISBN);
 
     if (!socio || !libro) {
-      throw new Error("No se encontro");
+      throw new Error("No se encontró");
     }
 
       socio.devolver(libro);
       EventoBiblioteca.notificarDevolucion(
-        socio.nombreCompleto,
+        socio,
         libro.titulo
       );
 
@@ -93,13 +95,13 @@ export class Biblioteca {
         const siguienteSocio = cola.shift();
         if (siguienteSocio) {
             EventoBiblioteca.notificarReserva(
-              siguienteSocio.nombreCompleto,
+              siguienteSocio,
               libro.titulo
             );
           // El socio puede retirar el libro automáticamente si se desea
           // this.retirarLibro(siguienteSocio.id, libroISBN); ------- No va
         }
-        // Actualizar la cola
+        // Actualizar la fila de reservas
         this.reservas.set(libroISBN, cola);
       }
   }
@@ -113,10 +115,7 @@ export class Biblioteca {
       if (!cola.some(s => s.id === socioId)) {
         cola.push(socio);
         this.reservas.set(libroISBN, cola);
-          EventoBiblioteca.notificarReserva(
-            socio.nombreCompleto,
-            this.buscarLibro(libroISBN)?.titulo ?? "Libro"
-          );
+        // La notificación de reserva solo se hace cuando el libro no está disponible, no aquí
       }
     }
     
