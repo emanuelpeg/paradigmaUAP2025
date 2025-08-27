@@ -9,8 +9,8 @@ import { Autor } from "./autor";
 
 const biblioteca = new Biblioteca();
 
-const autor = new Autor("J.K. Rowling", "Autora de Harry Potter", 1965);
-const libro1 = new Libro("Harry Potter y la Piedra Filosofal", autor, "ISBN123");
+const autor = new Autor("Antoine de Saint-Exupéry", "Autor de El principito", 1943);
+const libro1 = new Libro("El principito", autor, "ISBN123");
 
 const socio1 = new Socio("Jeremías");
 const socio2 = new Socio("Jordan");

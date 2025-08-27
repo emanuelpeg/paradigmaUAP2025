@@ -41,7 +41,7 @@ export class Biblioteca {
             socio.recibirNotificacion(`Multa de $${multa} por devolución tardía.`);
         }
 
-        // Ver si hay reservas en cola
+        // para ver si hay reservas en cola
         const reserva = this.reservas.find(r => r.libro === libro);
         if (reserva) {
             reserva.socio.recibirNotificacion(`El libro '${libro.titulo}' ya está disponible para retiro.`);
