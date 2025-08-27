@@ -1,3 +1,4 @@
+import { Autor } from "./Autor";
 import { Socio } from "./Socio";
 
 export class Libro {
@@ -12,7 +13,7 @@ export class Libro {
     // }
     
     constructor(private _titulo: string, 
-                private _autor: string, 
+                private _autor: Autor, 
                 private _isbn: string, 
                 private _cola: Socio[]=[],
                 public _disponible: boolean = true) {}

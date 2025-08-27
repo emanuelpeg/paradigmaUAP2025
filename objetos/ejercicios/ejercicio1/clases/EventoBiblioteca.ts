@@ -1,4 +1,5 @@
 import { Socio } from "./Socio";
+import { biblioteca } from "./Bibiblioteca";
 
 export class EventoBiblioteca {
     constructor(
@@ -18,6 +19,9 @@ export class EventoBiblioteca {
         const index = this.participantes.indexOf(socio);
         this.participantes.splice(index, 1);
     }
-    
-
+    notificarParticipantes(mensaje: string): void {
+        this.participantes.forEach(socio => {
+            biblioteca.notificar(mensaje, socio);
+        });
+    }
 }

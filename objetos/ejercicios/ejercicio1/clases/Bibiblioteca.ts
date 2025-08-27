@@ -1,13 +1,17 @@
 import { Libro } from "./Libro";
 import { Socio } from "./Socio";
+import { EventoBiblioteca } from "./EventoBiblioteca";
+import { Autor } from "./Autor";
 
 export class Biblioteca {
     private inventario: Libro[] = [];
     private socios: Socio[] = [];
+    private eventos: EventoBiblioteca[] = [];
 
-    agregarLibro(titulo: string, autor: string, isbn: string): Libro {
+    agregarLibro(titulo: string, autor: Autor, isbn: string): Libro {
         const libro = new Libro(titulo, autor, isbn);
         this.inventario.push(libro);
+        autor.libros.push(libro);
         return libro;
     }
     agregarSocio(id: number, nombre: string, apellido: string): Socio {
@@ -64,16 +68,26 @@ export class Biblioteca {
         if (socio){
             socio.librosRetirados.forEach(prestamo => {
                 if (prestamo.fechaVencimiento < hoy) {
-                    const multa = this.calcularMulta(socio, hoy.getDate() - prestamo.fechaVencimiento.getDate());
+                    const multa = this.calcularMulta(hoy.getDate() - prestamo.fechaVencimiento.getDate());
                     socio.multa += multa;
                     this.notificar(`Tienes una multa de $${multa} por el libro "${prestamo.libro.titulo}".`, socio);
                 }
             });
         }
     }
-    calcularMulta(socio: Socio, atraso: number): number {
+    calcularMulta(atraso: number): number {
         const multaPorDia = 50;
         return atraso * multaPorDia;
     }
+    agregarEvento(descripcion: string, fecha: Date, ubicacion: string): EventoBiblioteca {
+        const evento = new EventoBiblioteca(descripcion, fecha, ubicacion);
+        this.eventos.push(evento);
+        return evento;
+    }
+    agregarAutor(nombre: string, biografia: string, fechaNacimiento: Date): Autor {
+        const autor = new Autor(nombre, biografia, fechaNacimiento);
+        return autor;
+    }
+    
 }
 export const biblioteca = new Biblioteca();
