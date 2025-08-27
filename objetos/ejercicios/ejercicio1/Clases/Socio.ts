@@ -8,6 +8,7 @@ type Duracion = number;
 
 export class Socio {
     private prestamos: Prestamo[] = [];
+    public historialLectura: Libro[] = [];
 
     constructor(private _id: number, private _nombre: string, private _apellido: string) {}
 
@@ -31,11 +32,17 @@ export class Socio {
       console.log(`Notificación para ${this.nombreCompleto}: ${mensaje}`);
     }
 
+    agregarAlHistorial(libro: Libro) {
+    if (!this.historialLectura.includes(libro)) {
+      this.historialLectura.push(libro);
+      }
+    }
+
     retirar(libro: Libro, duracion: Duracion) {
     const vencimiento = new Date();
     vencimiento.setDate(vencimiento.getDate() + duracion);
     this.prestamos.push(new Prestamo(libro, vencimiento));
-  }
+    }
 
   devolver(libro: Libro) {
     const prestamo = this.tienePrestadoLibro(libro);
@@ -47,6 +54,8 @@ export class Socio {
     const indice = this.prestamos.indexOf(prestamo);
     // Eliminar el elemento en el indice
     this.prestamos.splice(indice, 1);
+
+    this.agregarAlHistorial(libro);
 
     return prestamo;
   }

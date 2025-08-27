@@ -1,6 +1,7 @@
 import { Libro } from './Libro';
 import { Socio } from './Socio';
 import { Autor } from './Autor';
+import { EventoBiblioteca } from './EventoBiblioteca';
 
 export class Biblioteca {
     private inventario: Libro[];
@@ -55,12 +56,21 @@ export class Biblioteca {
     // fijarse si esta disponible
     for (const socio of this.socios) {
       if (socio.tienePrestadoLibro(libro)) {
-    // Si el libro no está disponible, reservar
-    this.reservarLibro(socioId, libroISBN);
-    throw new Error("Libro no está disponible. Se ha realizado una reserva si no existía previamente.");
+      // Si el libro no está disponible, reservar
+      this.reservarLibro(socioId, libroISBN);
+      EventoBiblioteca.notificarReserva(
+        this.buscarSocio(socioId)?.nombreCompleto ?? "Socio",
+        libro.titulo
+      );
+      throw new Error("Libro no está disponible. Se ha realizado una reserva si no existía previamente.");
       }
     }
-    socio.retirar(libro, this.duracion);
+      socio.retirar(libro, this.duracion);
+      EventoBiblioteca.notificarPrestamo(
+        socio.nombreCompleto,
+        libro.titulo,
+        new Date(Date.now() + this.duracion * 24 * 60 * 60 * 1000)
+      );
   }
 
   devolverLibro(socioId: number, libroISBN: string) {
@@ -71,14 +81,21 @@ export class Biblioteca {
       throw new Error("No se encontro");
     }
 
-    socio.devolver(libro);
+      socio.devolver(libro);
+      EventoBiblioteca.notificarDevolucion(
+        socio.nombreCompleto,
+        libro.titulo
+      );
 
       // Verificar si hay reservas para un libro
       const cola = this.reservas.get(libroISBN);
       if (cola && cola.length > 0) {
         const siguienteSocio = cola.shift();
         if (siguienteSocio) {
-          siguienteSocio.notificar(`El libro '${libro.titulo}' ahora está disponible para ti.`);
+            EventoBiblioteca.notificarReserva(
+              siguienteSocio.nombreCompleto,
+              libro.titulo
+            );
           // El socio puede retirar el libro automáticamente si se desea
           // this.retirarLibro(siguienteSocio.id, libroISBN); ------- No va
         }
@@ -96,7 +113,10 @@ export class Biblioteca {
       if (!cola.some(s => s.id === socioId)) {
         cola.push(socio);
         this.reservas.set(libroISBN, cola);
-        socio.notificar(`Has reservado el libro con ISBN ${libroISBN}. Se te avisará cuando esté disponible.`);
+          EventoBiblioteca.notificarReserva(
+            socio.nombreCompleto,
+            this.buscarLibro(libroISBN)?.titulo ?? "Libro"
+          );
       }
     }
     
@@ -119,6 +139,12 @@ export class Biblioteca {
     buscarLibrosPorNombreAutor(nombre: string): Libro[] {
       return this.inventario.filter(libro => libro.autor.nombre === nombre);
     }
-}
 
+    recomendarLibros(socio: Socio): Libro[] {
+    const autoresLeidos = socio.historialLectura.map(l => l.autor);
+    return this.inventario.filter(libro =>
+      autoresLeidos.includes(libro.autor) && !socio.historialLectura.includes(libro)
+    );
+    }
+}
 export const biblioteca = new Biblioteca();
