@@ -5,7 +5,7 @@ import { Autor } from "./Autor";
 class Biblioteca {
     private inventario: Libro[] = [];
     private socios: Socio[] = [];
-    private autores: Autor[] = [];
+    public autores: Autor[] = [];
 
     agregarLibro(titulo: string, autorId: number, isbn: string): Libro {
         const libro = new Libro(titulo, autorId, isbn);
@@ -44,6 +44,10 @@ class Biblioteca {
             return socioEncontrado;
         }
         return null;
+    }
+    verRecomendaciones(socioId: number): string[] {
+        const socio = this.buscarSocio(socioId);
+        return socio ? socio.recomendaciones : [];
     }
     retirarLibro(libro: Libro, socio: Socio):void {
         socio.retirar(libro, 14, socio);

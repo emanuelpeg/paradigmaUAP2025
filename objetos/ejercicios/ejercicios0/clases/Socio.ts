@@ -28,6 +28,7 @@ export class Socio {
     get apellido() {return this._apellido;}
     get nombreCompleto() {return `${this._nombre} ${this._apellido}`;}
     get historial() {return this._historial;}
+    get recomendaciones() {return this._recomendaciones;}
 
     retirar(libro: Libro, duracion: Duracion, usurio: Socio) {
         usurio.librosRetirados.push(new Prestamo(libro, duracion)); 
@@ -48,6 +49,10 @@ export class Socio {
         var primerSocio = libro.getCola[0];
         biblioteca.notificarDisponibilidad(primerSocio, libro);
 
+        var autor = biblioteca.autores.find(a => a.id === libro.getAutor);
+        var librosDelAutor = biblioteca.buscarLibroPorAutor(autor?.id || -1);
+        this._recomendaciones.push(`Te recomendamos leer mas libros de "${autor}".`);
+        this._recomendaciones.push(librosDelAutor.map(l => l.getTitulo).join(", "));
         this._historial.push(libro);
 
         return prestamo;
