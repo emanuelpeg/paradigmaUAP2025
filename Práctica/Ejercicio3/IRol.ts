@@ -1,0 +1,3 @@
+interface IRol {
+    transferir(): void;
+}
