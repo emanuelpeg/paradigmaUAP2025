@@ -6,14 +6,17 @@ export class Biblioteca
 {
     private libros   : Libro[] = [];
     private socios      : Socio[] = [];
-    private reservas    : Reserva[] = [];
+    private autores     : Autor[] = [];
 
-    public agregarLibro(titulo: string, autor: string,  isbn: string): Libro
+    public static enviarNotificacionASocio(socioId: number, mensaje: string): void {
+        console.log(`Notificación para el socio ${socioId}: ${mensaje}`);
+    }
+
+    public agregarLibro(titulo: string, autor: Autor,  isbn: string): Libro
     {
         const nuevoLibro = new Libro(titulo, autor, isbn);
         this.libros.push(nuevoLibro);
         return nuevoLibro;
-
     }
 
     public buscarLibro(isbn: string): Libro | null{
@@ -33,66 +36,122 @@ export class Biblioteca
         return socio ? socio : null;
     }
 
-    public CrearReserva( socio : Socio, libro : Libro , fecha: Date ): void {
-        const nuevaReserva = new Reserva(this.reservas.length + 1, libro, fecha, new Date(fecha.getTime() + 7 * 24 * 60 * 60 * 1000), socio.getId());
-        this.reservas.push(nuevaReserva);
+    agregarAutor(idAutor:number, nombre:string, apellido:string): Autor
+    {
+        const nuevoAutor = new Autor(idAutor, nombre, apellido);
+        this.autores.push(nuevoAutor);
+        return nuevoAutor;
     }
 
-    public listarReservas(): Reserva[] {
-        return this.reservas;
+    listarAutores():Autor[]{
+        return this.autores.filter(a => a.getNombre());  
     }
 
     public listarLibros(): Libro[] {
         return this.libros;
     }
-    public listarSociosPorNombreYApellido(): void {
-        this.socios.forEach(element => {
-            console.log(`${element.getId()} ${element.getNombre()} ${element.getApellido()}`);
-        });
-        while (true) {
-            let IdSocio: number = parseInt(prompt("Ingrese el ID del socio:") || "0", 10);
-            if (isNaN(IdSocio)) {
-                console.log("ID inválido. Intente nuevamente.");
-                continue;
-            } else if (IdSocio > 0 && IdSocio <= this.socios.length) {
-                const socio = this.socios.find(socio => socio.getId() === IdSocio);
-                if (socio) {
-                    console.log(`Socio encontrado: ${socio.getNombre() + " " + socio.getApellido()} (ID: ${socio.getId()})`);
-                    return;
-                } else {
-                    console.log("Socio no encontrado.");
-                }
-            }
-            else {
-                console.log("ID fuera de rango. Intente nuevamente.");
-            }
-        }
-    }
 
-    private listarLibrosPorLista(ListaLibros: Libro[]): void {
-        ListaLibros.forEach(libro => {
-                
-                console.log(`Título: ${libro.getTitulo()}, Autor: ${libro.getAutor()}, ISBN: ${libro.getIsbn()}`);
+
+    //crear una reserva 
+    ReservarLibro(socioId: number, isbn: string, fechaDevolucion: Date): void  { 
+        const socio = this.buscarSocio(socioId);
+        const libro = this.buscarLibro(isbn);
+        let fechaLibroDisponible = new Date();
+        
+        if (!socio || !libro){
+            throw new Error('Socio o libro no encontrado');
+        }
+        
+        if(socio.getMultaPendiente() > 0){
+            Biblioteca.enviarNotificacionASocio(socioId, 'Tiene multas pendientes. No puede hacer reservas hasta que las pague. Debe abonar' + socio.getMultaPendiente().toString());
+            throw new Error('El socio tiene multas pendientes y no puede hacer reservas hasta que las pague');
             
-        });
-    } 
+        }
+        if(libro.Disponible() != null){
+           fechaLibroDisponible = libro.Disponible()!;
+        }
 
-    public SeleccionarLibrosPorAutor(): void {
-        while (true) {
-            const autorLibro = prompt("Ingrese el nombre del autor:") || "";
-            if (autorLibro.trim() === "") {
-                console.log("Autor inválido. Intente nuevamente.");
-                continue;
-            }else if (this.libros.find(libro => libro.getAutor().toLowerCase() === autorLibro.toLowerCase())) {
-                const librosPorAutor = this.libros.filter(libro => libro.getAutor().toLowerCase() === autorLibro.toLowerCase());
-                console.log(`Libros encontrados del autor ${autorLibro}:`);
-                this.listarLibrosPorLista(librosPorAutor);
-                
+        // el préstamo empieza cuando el libro está disponible:
+        const fechaEntrega = new Date(fechaLibroDisponible);
+        fechaEntrega.setDate(fechaEntrega.getDate() + 14);
+
+        const reserva:Reserva = new Reserva(libro, fechaLibroDisponible, fechaEntrega,socioId);
+        Biblioteca.enviarNotificacionASocio(socioId, `Reserva realizada para el libro "${libro.getTitulo()}". Estará disponible a partir del ${fechaLibroDisponible.toDateString()}. Fecha de devolución: ${fechaEntrega.toDateString()}.`);
+        
+        this.buscarSocio(socioId)?.ActualizarAutoresFavoritos(libro.getAutor());// actualizamos la lista de autores favoritos del socio que hizo la reserva.
+        this.buscarSocio(socioId)?.ActualizarHistoriaLibros(libro);// actualizamos el historial de libros buscados
+
+        libro.setListaReservas(reserva);
+        // notificar al socio la notificacion
+    }
+
+    devolucionLibro(isbn:string, socioId:number):void{
+        const libro = this.buscarLibro(isbn);
+        
+        if(!libro || libro === null){
+            throw new Error('Libro no encontrado');
+        }
+        const socio = this.buscarSocio(socioId);
+        if(!socio || socio === null){
+            throw new Error('Socio no encontrado');
+        }
+
+        // buscar la reserva activa del socio para el libro
+        const reserva = libro.getListaReservas().find(reserva => reserva.SocioId === socioId && reserva.Libro.getIsbn() === isbn);
+        
+        if(!reserva){
+            throw new Error('No hay una reserva activa para este socio y libro');
+        }
+        else {
+            // actualizar la lista de reservas del libro y obtener la multa si existe
+            const multa = libro.updateListaReserva(reserva);
+       
+            if( multa > 0 ){
+                console.log(`El socio ${socio.gitNombreCompleto()} tiene una multa de ${multa} por la devolución tardía del libro ${libro.getTitulo()}.`);
+                // actualizar la multa del socio
+                socio.setMultaPendiente(multa); 
             }
         }
 
     }
+    BuscarLibrosPorAutor(autor:Autor) : Libro[]{
+        return this.listarLibros().filter(l=> l.getAutor() == autor); 
+    }
+
+    BusquedaRecomendada(socio: Socio): Libro[] {
+    let librosARecomendar: Libro[] = [];
+    
+    // 1. Filtrar libros no leídos por el socio
+    const librosNoLeidos = this.libros.filter(libro => 
+        !socio.getHistorialLectura().some(libroLeido => 
+            libroLeido.getIsbn() === libro.getIsbn()
+        )
+    );
+    
+    // 2. Obtener autores favoritos del socio (autores que ha leído)
+    const autoresLeidos = socio.getHistorialLectura().map(libro => libro.getAutor());
+    const autoresUnicos = [...new Set(autoresLeidos)]; // Eliminar duplicados
+    
+    // 3. Priorizar libros de autores que el socio ya ha leído
+    const librosDeAutoresConocidos = librosNoLeidos.filter(libro =>
+        autoresUnicos.includes(libro.getAutor())
+    );
+    
+    // 4. Libros de autores nuevos (no leídos por el socio)
+    const librosDeAutoresNuevos = librosNoLeidos.filter(libro =>
+        !autoresUnicos.includes(libro.getAutor())
+    );
+    
+    // 5. Combinar: primero libros de autores conocidos, luego autores nuevos
+    librosARecomendar = [...librosDeAutoresConocidos, ...librosDeAutoresNuevos];
+    
+    // 6. Limitar a un número razonable de recomendaciones (ej: 10)
+    return librosARecomendar.slice(0, 10);
 }
 
+}
+
+
+
 export const bibliotecaInstance = new Biblioteca();
-export type { bibliotecaInstance as biblioteca };
+export { bibliotecaInstance as biblioteca };
