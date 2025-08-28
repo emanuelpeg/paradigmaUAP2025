@@ -64,6 +64,7 @@ class Program
         empresa.LiquidarAfiliado(ana, 3000);
         */
 
+        /*
         Bicicleta bici1 = new Bicicleta(1, "Bicicleta de montaña");
         Bicicleta bici2 = new Bicicleta(2, "Bicicleta de ruta");
 
@@ -94,5 +95,23 @@ class Program
         oferta2.AgregarItem(bici2);
         oferta2.AgregarItem(cadena);
         oferta2.AgregarItem(pedal);
+        */
+
+        Biblioteca biblio = new Biblioteca();
+
+        biblio.libros.Add("Harry Potter");
+        biblio.libros.Add("El principito");
+        biblio.libros.Add("Mi vida, soy yo");
+
+        Estudiante estu1 = new Estudiante("Gianna");
+        Profesor profe1 = new Profesor("Malena");
+
+        estu1.PedirPrestamo(5, 2);
+        estu1.PedirPrestamo(2, 3);
+
+        profe1.PedirPrestamo(7, 3);
+        
+
+
     }
 }
