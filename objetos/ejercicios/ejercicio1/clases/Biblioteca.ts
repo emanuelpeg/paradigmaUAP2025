@@ -1,10 +1,13 @@
 import { Libro } from "./Libro";
 import { Socio } from "./Socio";
 import { Autor } from "./Autor";
+import { EventoBiblioteca } from "./EventoBiblioteca";
+
 class Biblioteca {
   private inventario: Libro[] = [];
   private socios: Socio[] = [];
   private DURACION = 14;
+  private eventos: EventoBiblioteca[] = [];
 
    /**
    * Agrega un libro al inventario.
@@ -17,6 +20,17 @@ class Biblioteca {
     const libroCreado = new Libro(titulo, autor, isbn);
     this.inventario.push(libroCreado);
     return libroCreado;
+  }
+
+  agregarEvento(evento: EventoBiblioteca) {
+    this.eventos.push(evento);
+    // Notifica a los socios registrados
+    evento.sociosRegistrados.forEach(id => {
+      const socio = this.buscarSocio(id);
+      if (socio) {
+        socio.agregarNotificacion(`Tienes un evento próximo: ${evento.nombre} el ${evento.fecha.toLocaleDateString()}`);
+      }
+    });
   }
 
   buscarLibro(isbn: string): Libro | null {
@@ -61,7 +75,7 @@ class Biblioteca {
     }
   }
   //Intenta agregar la reserva. Si es exitosa, muestra un mensaje; si no, indica que el socio ya reservó ese libro.
-    devolverLibro1(socioId: number, libroISBN: string) {
+  devolverLibro1(socioId: number, libroISBN: string) {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
 
@@ -75,7 +89,9 @@ class Biblioteca {
     if (libro.tieneReservas()) {
       const siguienteSocio = libro.quitarReserva();
       if (siguienteSocio) {
-        console.log(`Notificación: El libro "${libro.titulo}" está disponible para ${siguienteSocio.nombreCompleto}`);
+        const mensaje = `El libro "${libro.titulo}" está disponible para ti.`;
+        console.log(`Notificación: ${mensaje}`);
+        siguienteSocio.agregarNotificacion(mensaje);
       }
     }
   }
@@ -125,6 +141,20 @@ class Biblioteca {
     }
 
     socio.devolver(libro);
+  }
+
+  recomendarLibros(socioId: number): Libro[] {
+    const socio = this.buscarSocio(socioId);
+    if (!socio) return [];
+
+    // Obtiene autores del historial de lectura
+    const autoresLeidos = socio.historialLectura.map(libro => libro.autor);
+
+    // Recomienda libros del mismo autor que no estén en el historial
+    return this.inventario.filter(libro =>
+      autoresLeidos.includes(libro.autor) &&
+      !socio.historialLectura.includes(libro)
+    );
   }
 
   
