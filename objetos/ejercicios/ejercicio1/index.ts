@@ -1,5 +1,5 @@
 import { biblioteca } from "./clases/Bibiblioteca";
-import { Autor } from "./clases/Autor";
+//import { Autor } from "./clases/Autor";
 
 //crear autores
 
@@ -15,3 +15,4 @@ biblioteca.agregarSocio(2, "Ana", "Gómez");
 biblioteca.agregarSocio(3, "Luis", "Martínez");
 
 console.log(libro.titulo + " de " + libro.autor + " (ISBN: " + libro.isbn + ")");
+
