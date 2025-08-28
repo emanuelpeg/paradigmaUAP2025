@@ -4,11 +4,15 @@ class Prestamo {
   constructor(public libro: Libro, public vencimiento: Date) {}
 }
 
-/** Duracion en dias de un prestamo */
+// Duracion en dias de un prestmo
 type Duracion = number;
 
 export class Socio {
-  private prestamos: Prestamo[] = [];
+  private _notificaciones: string[] = [];
+ 
+  private _prestamos: Prestamo[] = [];
+  private _historialLectura: Libro[] = [];
+
 
   constructor(
     private _id: number,
@@ -23,19 +27,39 @@ export class Socio {
   get nombre() {
     return this._nombre;
   }
+  set nombre(value: string) {
+    this._nombre = value;
+  }
 
   get apellido() {
     return this._apellido;
+  }
+  set apellido(value: string) {
+    this._apellido = value;
   }
 
   get nombreCompleto() {
     return `${this.nombre} ${this.apellido}`;
   }
+  public get prestamos(): Prestamo[] {
+    return [...this._prestamos];
+  }
+  public get historial(): Libro[] {
+    return [...this._historialLectura];
+  }
+  public get notificaciones(): string[] {
+    return [...this._notificaciones];
+  }
 
+
+  
+  public notificar(mensaje: string): void {
+    this._notificaciones.push(mensaje);
+  }
   retirar(libro: Libro, duracion: Duracion) {
     const vencimiento = new Date();
     vencimiento.setDate(vencimiento.getDate() + duracion);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+  this._prestamos.push(new Prestamo(libro, vencimiento));
   }
 
   devolver(libro: Libro) {
@@ -45,14 +69,15 @@ export class Socio {
       throw new Error("No esta prestado");
     }
 
-    const indice = this.prestamos.indexOf(prestamo);
-    // Eliminar el elemento en el indice
-    this.prestamos.splice(indice, 1);
+  const indice = this._prestamos.indexOf(prestamo);
+  this._prestamos.splice(indice, 1);
 
-    return prestamo;
+  this._historialLectura.push(prestamo.libro);
+  return prestamo;
   }
 
   tienePrestadoLibro(libro: Libro): Prestamo | null {
-    return this.prestamos.find((p) => p.libro === libro) ?? null;
+  return this._prestamos.find((p) => p.libro === libro) ?? null;
   }
+  
 }

@@ -1,21 +1,41 @@
 import { Libro } from "./Libro";
 import { Socio } from "./Socio";
+import { Autor } from "./Autor";
 
-class Biblioteca {
-  private inventario: Libro[] = [];
-  private socios: Socio[] = [];
-  private DURACION = 14;
+export class Biblioteca {
+  private _inventario: Libro[] = [];
+  private _socios: Socio[] = [];
+  private _autores: Autor[] = [];
+  private _duracion = 14;
 
-  // Funciones de libros
+  public get inventario(): Libro[] {
+    return [...this._inventario];
+  }
+  public get socios(): Socio[] {
+    return [...this._socios];
+  }
+  public get autores(): Autor[] {
+    return [...this._autores];
+  }
+  public get duracion(): number {
+    return this._duracion;
+  }
+
+
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
-    const libroCreado = new Libro(titulo, autor, isbn);
-    this.inventario.push(libroCreado);
+    // Buscar o crear el autor
+  let autorObj = this._autores.find(a => a.nombre === autor);
+    if (!autorObj) {
+      autorObj = new Autor(autor, '', 0);
+      this._autores.push(autorObj);
+    }
+    const libroCreado = new Libro(titulo, autorObj, isbn);
+    this._inventario.push(libroCreado);
     return libroCreado;
   }
 
   buscarLibro(isbn: string): Libro | null {
-    // return this.inventario.find(libro => libro.isbn === isbn) ?? null;
-    const libroEncontrado = this.inventario.find(
+  const libroEncontrado = this._inventario.find(
       (libro) => libro.isbn === isbn
     );
     if (libroEncontrado) {
@@ -24,15 +44,20 @@ class Biblioteca {
     return null;
   }
 
-  // Funciones de socios
+    librosPorAutor(nombreAutor: string): Libro[] {
+  return this._inventario.filter(l => l.autor && l.autor.nombre === nombreAutor);
+    }
+
+
+  
   registrarSocio(id: number, nombre: string, apellido: string): Socio {
-    const socioCreado = new Socio(id, nombre, apellido);
-    this.socios.push(socioCreado);
+  const socioCreado = new Socio(id, nombre, apellido);
+  this._socios.push(socioCreado);
     return socioCreado;
   }
 
   buscarSocio(id: number): Socio | null {
-    return this.socios.find((socio) => socio.id === id) ?? null;
+  return this._socios.find((socio) => socio.id === id) ?? null;
   }
 
   retirarLibro(socioId: number, libroISBN: string): void {
@@ -43,13 +68,13 @@ class Biblioteca {
       throw new Error("No se encontro");
     }
     // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
+    for (const s of this._socios) {
+      if (s.tienePrestadoLibro(libro)) {
         throw new Error("Libro no esta disponible");
       }
     }
 
-    socio.retirar(libro, this.DURACION);
+  socio.retirar(libro, this._duracion);
   }
 
   devolverLibro(socioId: number, libroISBN: string) {
@@ -64,5 +89,3 @@ class Biblioteca {
   }
 }
 
-export const biblioteca = new Biblioteca();
-export type { Biblioteca };
