@@ -18,6 +18,7 @@ export class Socio {
         private _nombre: string,
         private _apellido: string,
         public librosRetirados: Prestamo[] = [],
+        public historial: Libro[] = [],
         public multa: number = 0
     ){}
 
@@ -36,8 +37,13 @@ export class Socio {
         const i = libro.colaEspera.indexOf(usurio);
         libro.colaEspera.splice(i, 1); // Elimina 1 elemento en la posición 'index'
         libro._disponible = false;
-    }
 
+        //agregar libro al historial del socio
+        //validar que no este ya en el historial
+        if (!usurio.historial.find(l => l.isbn === libro.isbn)){
+            usurio.historial.push(libro);
+        }
+    }
     devolver(libro: Libro, usurio: Socio): Prestamo {
         const prestamo = this.librosRetirados.find(p => p.libro === libro);
         if (!prestamo) {
@@ -51,10 +57,12 @@ export class Socio {
         libro._disponible = true;
         }
 
+        biblioteca.recomendarLibros(usurio.id);
         return prestamo;
     }
     tienePrestadoLibro(libro: Libro): Prestamo | null {
         return this.librosRetirados.find(p => p.libro.isbn === libro.isbn) || null ;
     }
+
     
 }

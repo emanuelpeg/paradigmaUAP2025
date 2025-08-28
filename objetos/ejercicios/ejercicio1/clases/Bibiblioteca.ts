@@ -88,6 +88,25 @@ export class Biblioteca {
         const autor = new Autor(nombre, biografia, fechaNacimiento);
         return autor;
     }
-    
+    buscarPorAutor(nombre: string): Libro[] {
+        return this.inventario.filter(libro => libro.autor.nombre === nombre);
+    }
+    recomendarLibros(socioId: number): void {
+        const socio = this.buscarSocio(socioId);
+        
+        if (socio){
+            //recomendar libros basados en el ultimo libro retirado
+            const ultimoAutor = socio.historial[0].autor
+            const recomendaciones = this.buscarPorAutor(ultimoAutor.nombre).filter(libro => !socio.historial.includes(libro));
+            const mensaje : string = "Tambien te puede interesar: "
+
+            for (const libro of recomendaciones) {
+                mensaje.concat(libro.titulo + ", ");
+            }
+            this.notificar(mensaje, socio);
+        }else{
+            console.log("Socio no encontrado");
+        }
+    }
 }
 export const biblioteca = new Biblioteca();
