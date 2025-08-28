@@ -96,7 +96,7 @@ export class Biblioteca {
         
         if (socio){
             //recomendar libros basados en el ultimo libro retirado
-            const ultimoAutor = socio.historial[0].autor
+            const ultimoAutor = socio.historial[socio.historial.length].autor
             const recomendaciones = this.buscarPorAutor(ultimoAutor.nombre).filter(libro => !socio.historial.includes(libro));
             const mensaje : string = "Tambien te puede interesar: "
 
