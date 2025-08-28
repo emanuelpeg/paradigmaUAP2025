@@ -1,0 +1,5 @@
+C:\paradigmaUAP2025\objetos\practicas_teoria\Ejercicios_Diseño\obj\Debug\net9.0\Ejercicios_Diseño.GeneratedMSBuildEditorConfig.editorconfig
+C:\paradigmaUAP2025\objetos\practicas_teoria\Ejercicios_Diseño\obj\Debug\net9.0\Ejercicios_Diseño.AssemblyInfoInputs.cache
+C:\paradigmaUAP2025\objetos\practicas_teoria\Ejercicios_Diseño\obj\Debug\net9.0\Ejercicios_Diseño.AssemblyInfo.cs
+C:\paradigmaUAP2025\objetos\practicas_teoria\Ejercicios_Diseño\obj\Debug\net9.0\Ejercicios_Diseño.csproj.CoreCompileInputs.cache
+C:\paradigmaUAP2025\objetos\practicas_teoria\Ejercicios_Diseño\obj\Debug\net9.0\Ejercicios_Diseño.sourcelink.json

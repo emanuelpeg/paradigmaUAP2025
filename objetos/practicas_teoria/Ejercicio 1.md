@@ -42,3 +42,23 @@ Una persona es considerada para el proceso de nacionalidad Italiana, si es Itali
 Realice un diseño que permita resolver dicho problema y permita saber si una persona es apta para el proceso de ciudadanía.
 
 
+# CHAT GPT
+# Ejercicio 5 - Biblioteca digital
+
+Una biblioteca digital maneja Usuarios que pueden ser de tipo Estudiante o Profesor. Los estudiantes tienen un límite de 3 libros en préstamo a la vez. Los profesores no tienen límite, pero deben devolverlos en menos de 60 días.
+Tanto Estudiante como Profesor pueden consultar el catálogo y pedir préstamos.
+Además, la biblioteca tiene un módulo de Notificaciones que envía avisos por mail a cualquier usuario que se atrase.
+
+# Ejercicio 2: Empresa de transporte
+
+Una empresa tiene Vehículos (autos, colectivos y camiones).Cada vehículo tiene patente, marca, modelo.
+Los colectivos tienen una cantidad de asientos. Los camiones tienen una capacidad de carga.
+Los autos tienen un número de puertas. Todos los vehículos comparten el método CalcularCostoViaje(), pero la lógica depende del tipo de vehículo (polimorfismo). Además, algunos vehículos pueden tener un GPS instalado, otros no.
+
+# Ejercicio 3: Sistema de pedidos de comida
+
+Una app de delivery gestiona Pedidos que pueden contener Platos o Combos. Un Plato tiene nombre y precio fijo.
+Un Combo está compuesto por varios Platos y tiene un descuento del 15%. Los pedidos calculan el total sumando Platos y Combos (polimorfismo). Además, los Pedidos pueden pagarse con diferentes métodos de pago: tarjeta, efectivo, billetera virtual. Cada uno procesa el pago de manera distinta.
+
+
+
