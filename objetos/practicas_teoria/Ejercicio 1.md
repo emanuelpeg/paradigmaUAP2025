@@ -43,6 +43,7 @@ Realice un diseño que permita resolver dicho problema y permita saber si una pe
 
 # Ejercicio 5
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 ## Descripción del Ejercicio
 La empresa CursoSys lo contrata para desarrollar un software que permita registrar el dictado de su curso. La empresa dicta un curso y tiene diferentes tipos de alumnos:
@@ -55,6 +56,9 @@ El alumno tiene un código, nombre y apellido y las notas dependientes del tipo.
   b) Realice una función que liste los alumnos que aprobaron el curso
   c) La empresa necesita una funcionalidad que permita al usuario invitado cambiar a usuario medio o premium.
 =======
+=======
+
+>>>>>>> dfb793b (Subo Ejercicio 2 - Biblioteca)
 ## Descripción del Ejercicio
 La empresa CursoSys lo contrata para desarrollar un software que permita registrar el dictado de su curso. La empresa dicta un curso y tiene diferentes tipos de alumnos: 
 a) Alumno invitado: es gratuito y aprueba el curso con una nota mayor a 60 en el examen. 
@@ -84,8 +88,11 @@ Los autos tienen un número de puertas. Todos los vehículos comparten el métod
 
 Una app de delivery gestiona Pedidos que pueden contener Platos o Combos. Un Plato tiene nombre y precio fijo.
 Un Combo está compuesto por varios Platos y tiene un descuento del 15%. Los pedidos calculan el total sumando Platos y Combos (polimorfismo). Además, los Pedidos pueden pagarse con diferentes métodos de pago: tarjeta, efectivo, billetera virtual. Cada uno procesa el pago de manera distinta.
+<<<<<<< HEAD
 
 
 
 
 
+=======
+>>>>>>> dfb793b (Subo Ejercicio 2 - Biblioteca)

@@ -1,9 +1,16 @@
 import { Libro } from "./Libro";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
+import { PoliticaPrestamo, PoliticaEstricta } from "./Politica";
+
 
 class Biblioteca {
   private inventario: Libro[] = [];
   private socios: Socio[] = [];
+  private politica: PoliticaPrestamo = new PoliticaEstricta(); 
+
+  cambiarPolitica(nuevaPolitica: PoliticaPrestamo) {
+    this.politica = nuevaPolitica;
+  }
 
   // Funciones de libros
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
@@ -34,21 +41,22 @@ class Biblioteca {
     return this.socios.find((socio) => socio.id === id) ?? null;
   }
 
-  retirarLibro(socioId: number, libroISBN: string): void {
+    retirarLibro(socioId: number, libroISBN: string): void {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
 
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-    // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
-        throw new Error("Libro no esta disponible");
-      }
+
+    // Validación por política
+    if (!this.politica.puedePrestar(socio)) {
+      throw new Error("El socio no puede retirar libros según la política actual");
     }
 
-    socio.retirar(libro);
+    const duracion = this.politica.calcularDuracion(socio);
+
+    socio.retirar(libro, duracion);
   }
 
   devolverLibro(socioId: number, libroISBN: string) {
