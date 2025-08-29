@@ -17,15 +17,17 @@ Mi opicion de las elecciones es la siguiente:
 implemente los meotodos de la interfaz segun corresponda.
 
 */
+
+/*
 using System.Numerics;
 
-interface Item  // Una lista de Items puede contener partes, bicicletas y ofertas.
+interface IItem  // Una lista de Items puede contener partes, bicicletas y ofertas.
 {
     double CalcularPrecio();  // No es lo mismo calcular el precio de una parte que el de una bicicleta o una oferta. 
                          // Por eso se usa una interfaz para que cada clase implemente su propia forma de calcular el precio.
 }
 
-class Parte : Item
+class Parte : IItem
 {
     private int numero;
     private string descripcion;
@@ -45,7 +47,7 @@ class Parte : Item
     // Y si el enunciado no lo pide, no lo hago.
 }
 
-class Bicicleta : Item
+class Bicicleta : IItem
 {
     private int numero;
     private string descripcion;
@@ -75,7 +77,7 @@ class Bicicleta : Item
     }
 }
 
-class Oferta : Item
+class Oferta : IItem
 {
     private int numero;
     private string descripcion;
@@ -86,7 +88,7 @@ class Oferta : Item
         double total = 0;
         foreach (var i in items)
         {
-            total += i.CalcularPrecio(); // si es una bicicleta, se calcula su precio sumando sus partes.
+            //total += i.CalcularPrecio(); // si es una bicicleta, se calcula su precio sumando sus partes.
         }
         return total * 0.8; // Aplica un descuento del 20%
     }
@@ -96,9 +98,10 @@ class Oferta : Item
         this.numero = numero;
         this.descripcion = descripcion;
     }
-    
+
     public void AgregarItem(Item item) // recibe el item (parte o bicicleta) a agregar
     {
         items.Add(item);
     }
 }
+*/

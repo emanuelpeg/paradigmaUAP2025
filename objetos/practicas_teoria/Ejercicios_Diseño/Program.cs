@@ -97,6 +97,8 @@ class Program
         oferta2.AgregarItem(pedal);
         */
 
+        /*
+
         Biblioteca biblio = new Biblioteca();
 
         biblio.libros.Add("Harry Potter");
@@ -110,8 +112,82 @@ class Program
         estu1.PedirPrestamo(2, 3);
 
         profe1.PedirPrestamo(7, 3);
-        
+        */
 
+        /*
+        Plato tacos = new Plato("Tacos de pollo"); // es el plato principal.
+        Plato pollo_saborizado = new Plato("Pollo Saborizado"); // el plato secundario dentro del plato principal.
+        tacos.items.Add(pollo_saborizado); // los tacos están compuestos por pollo Saborizado
+        Ingrediente finas_hiebras = new Ingrediente("Finas Hierbas", 1300);
+        Ingrediente pechuga_pollo = new Ingrediente("Pechuga de pollo", 9000);
+        pollo_saborizado.items.Add(finas_hiebras); // el pollo saborizado (plato secundario) está compuesto por ingredientes.
+        pollo_saborizado.items.Add(pechuga_pollo);
+
+        double costo = tacos.CalcularCosto();
+        Console.WriteLine($"El costo del plato {tacos.Nombre} es de {costo}");
+        Console.ReadKey();
+        */
+
+        /*
+
+        Biblioteca_digital biblio = new Biblioteca_digital();
+        Profesor profe1 = new Profesor("Ana", "García", 12345678);
+        Estudiante est1 = new Estudiante("Juan", "Pérez", 45678901);
+        Jefe jefe = new Jefe("Carlos", "López", 11223344); // no tiene utilizad el jefe. Xq no pude hacer los notificaciones.
+
+        profe1.PedirPrestamo(6); // pide 6 libros
+        est1.PedirPrestamo(5);
+        est1.PedirPrestamo(2);
+        biblio.ObtenerPrestamosAtrasados();
+        Console.ReadKey();
+        */
+
+        // Creamos Tipos
+        ITipo invitado = new TipoInvitado();
+        ITipo medio = new TipoMedio();
+        ITipo premium = new TipoPremium();
+
+        // Creamos alumnos
+        Alumno alumno1 = new Alumno
+        {
+            Codigo = 1,
+            Nombre = "Juan Pérez",
+            Tipo = invitado,
+            Notas = new List<int> { 90 }  // Invitado aprueba si tiene una nota > 60
+        };
+
+        Alumno alumno2 = new Alumno
+        {
+            Codigo = 2,
+            Nombre = "María López",
+            Tipo = medio,
+            Notas = new List<int> { 70, 65, 80 }  // Media: 3 notas, promedio > 70
+        };
+
+        Alumno alumno3 = new Alumno
+        {
+            Codigo = 3,
+            Nombre = "Pedro Gómez",
+            Tipo = premium,
+            Notas = new List<int> { 90, 85, 88, 92, 95 }  // Premium: todas > 70 y promedio > 80
+        };
+
+        Alumno alumno4 = new Alumno
+        {
+            Codigo = 4,
+            Nombre = "Ana Torres",
+            Tipo = premium,
+            Notas = new List<int> { 70, 60, 65, 80, 90 }  // Premium: falla porque no todas son > 70
+        };
+
+        Console.WriteLine($"{alumno4.Tipo}");
+        alumno4.CambiarTipo(medio);
+        Console.WriteLine($"{alumno4.Tipo}");
+      
+        Console.WriteLine($"{alumno1.Nombre} aprobó? {alumno1.Aprobo()}");
+        Console.WriteLine($"{alumno2.Nombre} aprobó? {alumno2.Aprobo()}");
+        Console.WriteLine($"{alumno3.Nombre} aprobó? {alumno3.Aprobo()}");
+        Console.WriteLine($"{alumno4.Nombre} aprobó? {alumno4.Aprobo()}");
 
     }
 }

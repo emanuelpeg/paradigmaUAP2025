@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 //Actividad 1
 /*
 El restaurante “San Martín” nos contrata para hacer un software que controle los costos de sus platos. Los platos están compuestos 
@@ -8,10 +9,54 @@ por panqueques (que es un plato) y dulce de leche que es un ingrediente básico.
 y el costo está dado por la suma de los costos de los ingredientes (básicos o platos).
 */
 
-// Este es un caso de uso del patrón de diseño Composite, que permite tratar objetos individuales y compuestos de la misma manera.
-// Se aplica el polimorfismo para que tanto los ingredientes básicos como los platos puedan ser tratados como componentes de un plato.
-// Evita duplicar lógica: no tenés un método especial “sumarIngredientes” para platos y otro para subplatos; 
-// el mismo código sirve para ambos.
+
+/*
+class Plato : Item
+{
+    public List<Item> items { get; set; } = new List<Item>(); // inicializar la lista
+
+    public Plato(string nombre) : base(nombre) { }  //  Llama al constructor de Item
+
+    public override double CalcularCosto()
+    {
+        double total = 0;
+        foreach (var item in items) // recorre los items del plato que se llamó (dulceDeLeche.CalcularCosto())
+        {
+            double costo = CalcularCosto();
+            total += costo;
+            Console.WriteLine($"Item {item.Nombre}. Precio: {costo}");
+        }
+        return total;
+    }
+}
+
+class Ingrediente: Item
+{
+    public double Precio;
+    // El constructor del padre al tener parametros, entones aqui debemos llamar al constructor del padre tmb
+    public Ingrediente(string nombre, double precio) : base(nombre)
+    {
+        Precio = precio;
+    } 
+    public override double CalcularCosto()
+    {
+        return Precio;
+    }
+}
+
+abstract class Item
+{
+    public string Nombre { get; set; }
+    public abstract double CalcularCosto();
+    public Item(string nombre)
+    {
+        Nombre = nombre;
+    } // constructor vacío. La hija no necesita crear constructor.
+}
+*/
+
+
+/*
 
 interface IComponente //cualquier cosa que pueda formar parte de un plato. Gracias a esta interfaz, podemos tener una lista de ingredientes básicos y platos dentro de un plato.
 {
@@ -46,3 +91,4 @@ class Plato : IComponente
 
     public string getNombre() => nombre;
 }
+*/

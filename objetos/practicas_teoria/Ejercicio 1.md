@@ -42,6 +42,7 @@ Una persona es considerada para el proceso de nacionalidad Italiana, si es Itali
 Realice un diseño que permita resolver dicho problema y permita saber si una persona es apta para el proceso de ciudadanía.
 
 # Ejercicio 5
+<<<<<<< HEAD
 
 ## Descripción del Ejercicio
 La empresa CursoSys lo contrata para desarrollar un software que permita registrar el dictado de su curso. La empresa dicta un curso y tiene diferentes tipos de alumnos:
@@ -53,25 +54,38 @@ El alumno tiene un código, nombre y apellido y las notas dependientes del tipo.
   a) Realice un diseño orientado a objetos
   b) Realice una función que liste los alumnos que aprobaron el curso
   c) La empresa necesita una funcionalidad que permita al usuario invitado cambiar a usuario medio o premium.
+=======
+## Descripción del Ejercicio
+La empresa CursoSys lo contrata para desarrollar un software que permita registrar el dictado de su curso. La empresa dicta un curso y tiene diferentes tipos de alumnos: 
+a) Alumno invitado: es gratuito y aprueba el curso con una nota mayor a 60 en el examen. 
+b) Alumno medio: el cual paga una suscripción y aprueba el curso con 3 exámenes los cuales tienen que tener un promedio mayor a 70. 
+c) Alumnos premium: el cual paga una suscripción y aprueba el curso con 5 exámenes los cuales tienen que ser mayores a 70 y tener un promedio mayor a 80%
+
+El alumno tiene un código, nombre y apellido y las notas dependientes del tipo. 
+a) Realice un diseño orientado a objetos
+b) Realice una función que liste los alumnos que aprobaron el curso 
+c) La empresa necesita una funcionalidad que permita al usuario invitado cambiar a usuario medio o premium.
+>>>>>>> 45beffd (Cambios locales)
 
 
 # CHAT GPT
 # Ejercicio 5 - Biblioteca digital
+La Biblioteca Digital UAP desea un software para gestionar préstamos y notificaciones. Los usuarios de la biblioteca pueden ser estudiantes o profesores. Ambos comparten datos comunes como nombre y apellido. Los estudiantes pueden retirar hasta 3 libros y tienen un máximo de 15 días de préstamo. Los profesores pueden retirar hasta 10 libros y tienen un máximo de 30 días de préstamo. Además, existe una entidad llamada Jefe de Biblioteca, que no es un usuario (no pide préstamos ni pertenece al grupo de estudiantes/profesores). Sin embargo, el jefe debe ser notificado cuando hay atrasos en devoluciones, al igual que los usuarios que tienen préstamos pendientes.
 
-Una biblioteca digital maneja Usuarios que pueden ser de tipo Estudiante o Profesor. Los estudiantes tienen un límite de 3 libros en préstamo a la vez. Los profesores no tienen límite, pero deben devolverlos en menos de 60 días.
-Tanto Estudiante como Profesor pueden consultar el catálogo y pedir préstamos.
-Además, la biblioteca tiene un módulo de Notificaciones que envía avisos por mail a cualquier usuario que se atrase.
+El sistema debe: Permitir que estudiantes y profesores soliciten préstamos según sus reglas. Guardar la información de cada préstamo (fecha de inicio, fecha límite, cantidad de libros). Revisar si existen préstamos vencidos. Notificar a los estudiantes, profesores y también al jefe de biblioteca en caso de atrasos.
 
-# Ejercicio 2: Empresa de transporte
+# Ejercicio 6: Empresa de transporte
 
 Una empresa tiene Vehículos (autos, colectivos y camiones).Cada vehículo tiene patente, marca, modelo.
 Los colectivos tienen una cantidad de asientos. Los camiones tienen una capacidad de carga.
 Los autos tienen un número de puertas. Todos los vehículos comparten el método CalcularCostoViaje(), pero la lógica depende del tipo de vehículo (polimorfismo). Además, algunos vehículos pueden tener un GPS instalado, otros no.
 
-# Ejercicio 3: Sistema de pedidos de comida
+# Ejercicio 7: Sistema de pedidos de comida
 
 Una app de delivery gestiona Pedidos que pueden contener Platos o Combos. Un Plato tiene nombre y precio fijo.
 Un Combo está compuesto por varios Platos y tiene un descuento del 15%. Los pedidos calculan el total sumando Platos y Combos (polimorfismo). Además, los Pedidos pueden pagarse con diferentes métodos de pago: tarjeta, efectivo, billetera virtual. Cada uno procesa el pago de manera distinta.
+
+
 
 
 
