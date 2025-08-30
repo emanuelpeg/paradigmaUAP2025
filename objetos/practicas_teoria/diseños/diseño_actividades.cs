@@ -1,4 +1,6 @@
 //Actividad 1
+using System.Diagnostics.Metrics;
+
 interface IComponente  //cualquier cosa que pueda formar parte de un plato
 {
     double getCosto(); //El objetivo de esta interfaz es que cualquier clase que implemente IComponente obligatoriamente implemente estos 2 metodos. Ademas, sirve para que la clase Plato pueda tener una lista de IComponente, ya sea de ingredientes básicos o de otros platos para poder calcular el precio final por si un plato contiene otro plato dentro (explicado debajo)
@@ -165,19 +167,155 @@ class Afiliado : Cliente
 }
 
 //Actividad 4
-class Persona
+interface ITipo
 {
-    private string dni;
+    bool Aprobo(Alumno alumno);
+}
+
+class Alumno
+{
     private string nombre;
     private string apellido;
-    private string nacionalidad;
+    private List<double> notas;
+    private ITipo tipo;
+    public bool Aprobado;
 
-    public Persona(string dni, string nombre, string apellido, string nacionalidad)
+    public List<double> GetNotas()
     {
-        this.dni = dni;
+        return notas;
+    }
+
+    public Alumno(string nombre, string apellido, ITipo tipo)
+    {
         this.nombre = nombre;
         this.apellido = apellido;
-        this.nacionalidad = nacionalidad;
+        this.tipo = tipo;
+        this.notas = new List<double>();
+    }
+
+    public void EstaAprobado()
+    {
+        if (tipo.Aprobo(this))
+        {
+            Aprobado = true;
+            Console.WriteLine($"El alumno {nombre} {apellido} está aprobado");
+        }
+        else
+        {
+            Aprobado = false;
+            Console.WriteLine($"El alumno {nombre} {apellido} no está aprobado");
+        }
+    }
+
+    public void CambiarAMedio()
+    {
+        if (this.tipo is AlumnoInvitado)
+        {
+            this.tipo = new AlumnoMedio();
+        }
+    }
+
+    public void CambiarAPremiun()
+    {
+        if (this.tipo is AlumnoInvitado)
+        {
+            this.tipo = new AlumnoPremium();
+        }
+    }
+    public string GetNombreCompleto()
+    {
+        return $"{nombre} {apellido}";
+    }
+}
+
+class AlumnoInvitado : ITipo
+{
+    public bool Aprobo(Alumno alumno)
+    {
+        if (alumno.GetNotas().Count != 1) return false;
+
+        foreach (var nota in alumno.GetNotas())
+        {
+            if (nota >= 60)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+class AlumnoMedio : ITipo
+{
+    public bool Aprobo(Alumno alumno)
+    {
+        if (alumno.GetNotas().Count != 3) return false;
+
+        double sum = 0;
+        double cant = 0;
+
+        foreach (var nota in alumno.GetNotas())
+        {
+            sum += nota;
+            cant++;
+        }
+        double promedio = sum / cant;
+        if (promedio >= 70)
+        {
+            return true;
+        }
+        return false;
+    }
+}
+
+class AlumnoPremium : ITipo
+{
+    public bool Aprobo(Alumno alumno)
+    {
+        if (alumno.GetNotas().Count != 5) return false;
+
+        double sum = 0;
+        double cant = 0;
+
+        foreach (var nota in alumno.GetNotas())
+        {
+            if (nota >= 70)
+            {
+                sum += nota;
+                cant++;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        double promedio = sum / cant;
+        if (promedio >= 80)
+        {
+            return true;
+        }
+        return false;
+    }
+}
+
+class Curso
+{
+    private List<Alumno> alumnos = new List<Alumno>();
+
+    public void AgregarAlumno(Alumno a)
+    {
+        alumnos.Add(a);
+    }
+
+    public List<Alumno> ListarAprobados()
+    {
+        List<Alumno> aprobados = new List<Alumno>();
+        foreach (var a in alumnos)
+        {
+            a.EstaAprobado();
+            if (a.Aprobado) aprobados.Add(a);
+        }
+        return aprobados;
     }
 }
 
@@ -228,5 +366,39 @@ class Program
 
         ben.mostrarDatos();
         afi.mostrarDatos();
+
+        // ----- Actividad 4 -----
+        Console.WriteLine("\n=== Actividad 4 ===");
+
+        Alumno alumno1 = new Alumno("Ana", "Gomez", new AlumnoInvitado());
+        alumno1.GetNotas().Add(100);
+        alumno1.EstaAprobado();
+
+        Alumno alumno2 = new Alumno("Luis", "Martinez", new AlumnoInvitado());
+        alumno2.GetNotas().Add(80);
+        alumno2.GetNotas().Add(90);
+        alumno2.GetNotas().Add(70);
+        alumno2.EstaAprobado();
+
+        alumno2.CambiarAMedio();
+        alumno2.EstaAprobado();
+
+        Alumno alumno3 = new Alumno("Pedro", "Lopez", new AlumnoPremium());
+        alumno3.GetNotas().Add(60);
+        alumno3.GetNotas().Add(70);
+        alumno3.GetNotas().Add(80);
+        alumno3.GetNotas().Add(90);
+        alumno3.GetNotas().Add(100);
+        alumno3.EstaAprobado();
+
+        Curso curso = new Curso();
+        curso.AgregarAlumno(alumno1);
+        curso.AgregarAlumno(alumno2);
+        curso.AgregarAlumno(alumno3);
+        Console.WriteLine("\nAlumnos aprobados en el curso:");
+        foreach (var alumno in curso.ListarAprobados())
+        {
+            Console.WriteLine($"- {alumno.GetNombreCompleto()}");
+        }
     }
 }
