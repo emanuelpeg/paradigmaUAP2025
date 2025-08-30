@@ -14,7 +14,7 @@ Diseñe un software que permita listar los clientes cargados. Tenga en cuenta qu
 y afiliado a la vez.
 */
 
-/*
+
 
 
 public class Cliente
@@ -35,14 +35,24 @@ public class Cliente
         Direccion = direccion; NumeroCuenta = cuenta;
     }
 
+    public void ListarRoles()
+    {
+        foreach (var rol in Roles)
+        {
+            rol.MostrarRol();
+        }
+    }
+
     public string getNombre() => $"{Nombre} {Apellido}";
 }
 
 public interface IRol
 {
     void Transferir(double monto, Cliente otro); // Transferir representa "mover/registrar dinero" según el rol.
-                                                  // En Beneficiario: registrar un gasto (compra) en un Afiliado.
-                                                  // En Afiliado: registrar que recibe/acepta el dinero por ventas.
+                                                 // En Beneficiario: registrar un gasto (compra) en un Afiliado.
+                                                 // En Afiliado: registrar que recibe/acepta el dinero por ventas.
+
+    void MostrarRol();
 }
 
 public class Beneficiario : IRol
@@ -68,6 +78,11 @@ public class Beneficiario : IRol
         monto_total -= monto;
         Console.WriteLine($"{cliente.getNombre} transfirió {monto} en el afiliado {afiliado.getNombre}"); // aqui hacemos uso de la referencia al cliente para mostrar su nombre.
     }
+
+    public void MostrarRol()
+    {
+        Console.WriteLine("Beneficiario");
+    }
 }
 
 public class Afiliado : IRol
@@ -88,6 +103,10 @@ public class Afiliado : IRol
         monto_total += monto;
         Console.WriteLine($"{cliente.getNombre} recibió {monto} del beneficiario {beneficiario.getNombre}"); // aqui hacemos uso de la referencia al cliente para mostrar su nombre.
     }
+        public void MostrarRol()
+    {
+        Console.WriteLine("Afiliado");
+    }
 }
 
 public class Empresa
@@ -106,19 +125,9 @@ public class Empresa
     {
         foreach (var cliente in clientes) // recorro los clientes
         {
-            foreach (var rol in cliente.Roles)
-            {
-                if (rol is Beneficiario) // compara con el tipo de objeto que es el rol
-                {
-                    Console.WriteLine($"El cliente {cliente.getNombre()} es beneficiario.");
-                }
-                else if (rol is Afiliado)
-                {
-                    
-                }
-            }
+            Console.WriteLine($"El cliente {cliente.getNombre} es: ");
+            cliente.ListarRoles();
         }
     }
 }
 
-*/

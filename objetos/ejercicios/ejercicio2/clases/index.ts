@@ -74,7 +74,7 @@ try {
 
 
 // ========================
-// ACTIVIDAD 4: Buscador Universal (Interfaces y Polimorfismo)
+// ACTIVIDAD 4: Buscador Universal (Interfaces y polimorfismo)
 // ========================
 const buscador = new BuscadorUniversal();
 

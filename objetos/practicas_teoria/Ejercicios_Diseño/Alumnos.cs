@@ -55,7 +55,7 @@ class TipoPremium : ITipo
         {
             if (alumno.Notas.All(n => n > 70))
             {
-                return alumno.Notas.Average() > 80; // ojo, el enunciado decía >80%
+                return alumno.Notas.Average() > 80; 
             }
             return false;
         }

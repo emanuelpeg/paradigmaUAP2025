@@ -142,6 +142,7 @@ class Program
         Console.ReadKey();
         */
 
+        /*
         // Creamos Tipos
         ITipo invitado = new TipoInvitado();
         ITipo medio = new TipoMedio();
@@ -189,5 +190,21 @@ class Program
         Console.WriteLine($"{alumno3.Nombre} aprobó? {alumno3.Aprobo()}");
         Console.WriteLine($"{alumno4.Nombre} aprobó? {alumno4.Aprobo()}");
 
+        */
+
+        Parte ram = new Parte(342, "32 GB", 5000);
+        Parte disco = new Parte(55, "144 HZ", 15000);
+
+        PC pc1 = new PC();
+        pc1.AgregarParte(ram);
+        pc1.AgregarParte(disco);
+
+        Promocion promo = new Promocion();
+        promo.AgregarProducto(pc1);
+        promo.AgregarProducto(disco);
+
+        promo.CalcularPrecio();
+        disco.CalcularPrecio();
+        pc1.CalcularPrecio();
     }
 }
