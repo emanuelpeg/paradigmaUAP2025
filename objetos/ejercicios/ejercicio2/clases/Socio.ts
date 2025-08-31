@@ -1,20 +1,89 @@
 import { Libro } from "./Libro";
 
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
+type Duracion = number;
+
+export enum TipoSocio {
+  REGULAR = "regular",
+  VIP = "vip",
+  EMPLEADO = "empleado",
+  VISITANTE = "visitante",
 }
 
-/** Duracion en dias de un prestamo */
-type Duracion = number;
+export enum TipoPrestamo {
+  REGULAR = "regular",
+  CORTO = "corto",
+  REFERENCIA = "referencia",
+  DIGITAL = "digital",
+}
+
+export abstract class Prestamo {
+  constructor(public libro: Libro, public vencimiento: Date | null) {}
+  abstract calcularVencimiento(): Date | null;
+  abstract calcularMulta(hoy: Date): number;
+}
+
+export class PrestamoRegular extends Prestamo {
+  constructor(libro: Libro, dias: number = 14) {
+    const venc = new Date();
+    venc.setDate(venc.getDate() + dias);
+    super(libro, venc);
+  }
+  calcularVencimiento(): Date | null {
+    return this.vencimiento;
+  }
+  calcularMulta(hoy: Date): number {
+    if (!this.vencimiento) return 0;
+    if (hoy <= this.vencimiento) return 0;
+    const dias = Math.ceil((hoy.getTime() - this.vencimiento.getTime()) / (1000 * 60 * 60 * 24));
+    return dias * 50;
+  }
+}
+
+export class PrestamoCorto extends Prestamo {
+  constructor(libro: Libro, dias: number = 7) {
+    const venc = new Date();
+    venc.setDate(venc.getDate() + dias);
+    super(libro, venc);
+  }
+  calcularVencimiento(): Date | null {
+    return this.vencimiento;
+  }
+  calcularMulta(hoy: Date): number {
+    if (!this.vencimiento) return 0;
+    if (hoy <= this.vencimiento) return 0;
+    const dias = Math.ceil((hoy.getTime() - this.vencimiento.getTime()) / (1000 * 60 * 60 * 24));
+    return dias * 100;
+  }
+}
+
+export class PrestamoReferencia extends Prestamo {
+  constructor(libro: Libro) {
+    super(libro, null);
+  }
+  calcularVencimiento(): Date | null {
+    return null;
+  }
+  calcularMulta(hoy: Date): number {
+    return 0;
+  }
+}
+
+export class PrestamoDigital extends Prestamo {
+  constructor(libro: Libro) {
+    super(libro, null);
+  }
+  calcularVencimiento(): Date | null {
+    return null;
+  }
+  calcularMulta(hoy: Date): number {
+    return 0;
+  }
+}
 
 export abstract class Socio {
   protected prestamos: Prestamo[] = [];
 
-  constructor(
-    private _id: number,
-    private _nombre: string,
-    private _apellido: string
-  ) {}
+  constructor(private _id: number, private _nombre: string, private _apellido: string) {}
 
   get id() {
     return this._id;
@@ -35,15 +104,27 @@ export abstract class Socio {
   abstract getDuracionPrestamo(): Duracion;
   abstract getMaximoLibros(): number;
 
-  retirar(libro: Libro, duracion?: Duracion) {
+  retirar(libro: Libro, duracion?: Duracion, tipo: TipoPrestamo = TipoPrestamo.REGULAR) {
     if (!this.puedeRetirar(libro)) {
       throw new Error("No tiene permisos para retirar este libro");
     }
 
-    const duracionFinal = duracion ?? this.getDuracionPrestamo();
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+    let prestamo: Prestamo;
+    switch (tipo) {
+      case TipoPrestamo.CORTO:
+        prestamo = new PrestamoCorto(libro, duracion ?? 7);
+        break;
+      case TipoPrestamo.REFERENCIA:
+        prestamo = new PrestamoReferencia(libro);
+        break;
+      case TipoPrestamo.DIGITAL:
+        prestamo = new PrestamoDigital(libro);
+        break;
+      default:
+        prestamo = new PrestamoRegular(libro, duracion ?? this.getDuracionPrestamo());
+    }
+
+    this.prestamos.push(prestamo);
   }
 
   devolver(libro: Libro) {
@@ -53,10 +134,13 @@ export abstract class Socio {
       throw new Error("No esta prestado");
     }
 
+    const hoy = new Date();
+    const multa = prestamo.calcularMulta(hoy);
+    
     const indice = this.prestamos.indexOf(prestamo);
     this.prestamos.splice(indice, 1);
 
-    return prestamo;
+    return { prestamo, multa };
   }
 
   tienePrestadoLibro(libro: Libro): Prestamo | null {
@@ -81,8 +165,7 @@ export class SocioRegular extends Socio {
     return 3;
   }
 
-  devolver(libro: Libro): Prestamo {
-    // Manejar potenciales multas
+  devolver(libro: Libro) {
     return super.devolver(libro);
   }
 }
@@ -103,7 +186,7 @@ export class Empleado extends Socio {
   }
 
   getMaximoLibros(): number {
-    return Infinity;
+    return Infinity as unknown as number;
   }
 }
 
@@ -121,20 +204,8 @@ export class Visitante extends Socio {
   }
 }
 
-export enum TipoSocio {
-  REGULAR = "regular",
-  VIP = "vip",
-  EMPLEADO = "empleado",
-  VISITANTE = "visitante",
-}
-
 export class SocioFactory {
-  static crearSocio(
-    tipo: TipoSocio,
-    id: number,
-    nombre: string,
-    apellido: string
-  ): Socio {
+  static crearSocio(tipo: TipoSocio, id: number, nombre: string, apellido: string): Socio {
     switch (tipo) {
       case TipoSocio.REGULAR:
         return new SocioRegular(id, nombre, apellido);
