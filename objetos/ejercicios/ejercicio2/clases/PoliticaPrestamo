@@ -1,0 +1,34 @@
+import { Socio } from "./Socio";
+
+export interface PoliticaPrestamo {
+  puedePrestar(socio: Socio): boolean;
+  periodoPrestamo(): number;
+}
+
+export class PoliticaEstricta implements PoliticaPrestamo {
+  puedePrestar(socio: Socio): boolean {
+    return socio.tieneLibrosVencidos() === false;
+  }
+  periodoPrestamo(): number { return 14; }
+}
+
+export class PoliticaFlexible implements PoliticaPrestamo {
+  puedePrestar(socio: Socio): boolean {
+    return true;
+  }
+  periodoPrestamo(): number { return socio.tieneLibrosVencidos() ? 7 : 14; }
+}
+
+export class PoliticaEstudiante implements PoliticaPrestamo {
+  puedePrestar(socio: Socio): boolean {
+    return true;
+  }
+  periodoPrestamo(): number { return 21; }
+}
+
+export class PoliticaDocente implements PoliticaPrestamo {
+  puedePrestar(socio: Socio): boolean {
+    return true;
+  }
+  periodoPrestamo(): number { return 28; }
+}
