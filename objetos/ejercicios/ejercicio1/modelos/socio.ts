@@ -126,8 +126,8 @@ export class Socio {
     recomendar() {
         const bibliotecaSinPrestados = biblioteca.libros.filter(libro => !this.librosPrestados.some(l => l === libro));
         const recomendaciones: Recomendacion[] = [];
-        const autores = {};
-        const categorias = {};
+        const autores: Record<string, number> = {};
+        const categorias: Record<string, number> = {};
 
         this.librosPrestados.forEach(libro => {
             // establecer importancia de autor
