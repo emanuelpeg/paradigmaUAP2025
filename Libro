@@ -1,0 +1,17 @@
+export class Libro {
+    titulo: string;
+    autor: string;
+    isbn: string;
+    prestado: boolean = false;
+    fechaVencimiento?: Date;
+
+    constructor(titulo: string, autor: string, isbn: string) {
+        this.titulo = titulo;
+        this.autor = autor;
+        this.isbn = isbn;
+    }
+
+    estaPrestado(): boolean {
+        return this.prestado;
+    }
+}
