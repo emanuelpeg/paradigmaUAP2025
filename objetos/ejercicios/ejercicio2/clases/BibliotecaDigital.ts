@@ -17,7 +17,7 @@ export class BibliotecaDigital implements IBuscable<RecursoDigital> {
       recurso.autor.toLowerCase().includes(lower)
     );
   }
-
+//arreglado
   filtrar(condicion: (recurso: RecursoDigital) => boolean): RecursoDigital[] {
     return this.recursos.filter(condicion);
   }
