@@ -34,6 +34,4 @@ export class eventoBiblioteca {
   {
     return this.socioRegistrados.includes(socioId)
   }
-
-
 }

@@ -9,11 +9,11 @@ export class Libro {
   //   this._isbn = isbn;
   // }
 
-  constructor (
-  private _titulo: string,
-  private _autor: string,
-  private _isbn: string
-) {}
+  constructor(
+    private _titulo: string,
+    private _autor: string,
+    private _isbn: string
+  ) { }
 
   get titulo() {
     return this._titulo

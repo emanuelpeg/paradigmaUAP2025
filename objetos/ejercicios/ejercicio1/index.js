@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Biblioteca_1 = require("./clases/Biblioteca");
+Biblioteca_1.biblioteca.agregarAutor("Miguel", "Cervantes", "Escritor español famoso por El Quijote.", 1547);
+Biblioteca_1.biblioteca.agregarAutor("James", "Clear", "Autor de libros sobre hábitos y productividad.", 1979);
+Biblioteca_1.biblioteca.agregarAutor("Saint", "-Exupéry", "Aviador y escritor francés, autor de El Principito.", 1900);
+Biblioteca_1.biblioteca.agregarAutor("George", "Orwell", "Seudónimo de Eric Arthur Blair, escritor y periodista británico.", 1903);
+Biblioteca_1.biblioteca.agregarLibro("El quijote", "Miguel", "1234");
+Biblioteca_1.biblioteca.agregarLibro("Hábitos Atómicos", "James", "2345");
+Biblioteca_1.biblioteca.agregarLibro("El Principito", "Saint", "3456");
+var libro = Biblioteca_1.biblioteca.agregarLibro("1984", "George", "1984");
+Biblioteca_1.biblioteca.registrarSocio(31882, "Lucciano", "Curotto");
+Biblioteca_1.biblioteca.registrarSocio(20321, "Luca", "Giordana");
+Biblioteca_1.biblioteca.registrarSocio(32451, "Samuel", "Olmos");
+console.log(libro.titulo, libro.autor, libro.isbn);
+console.log();

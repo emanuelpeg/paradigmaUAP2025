@@ -1,4 +1,5 @@
 import { biblioteca } from "./clases/Biblioteca";
+import { Libro } from "./clases/Libro";
 
 biblioteca.agregarLibro("El quijote", "Cervantes", "1234")
 biblioteca.agregarLibro("Atomic Habits", "James Clear", "2345");

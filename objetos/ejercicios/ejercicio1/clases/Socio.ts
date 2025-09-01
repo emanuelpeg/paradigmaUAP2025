@@ -1,7 +1,7 @@
 import { Libro } from "./Libro";
 
 class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
+  constructor(public libro: Libro, public vencimiento: Date) { }
 }
 
 /** Duracion en dias de un prestamo */
@@ -10,15 +10,15 @@ type Duracion = number;
 export class Socio {
   private prestamos: Prestamo[] = [];
   private _multa: number = 0;
-  private _historialDeLectura:string[] = [];
+  private _historialDeLectura: string[] = [];
 
   constructor(
     private _id: number,
     private _nombre: string,
     private _apellido: string
-  ) {}
+  ) { }
 
-  get historialDeLectura(){
+  get historialDeLectura() {
     return this._historialDeLectura;
   }
 
@@ -43,12 +43,12 @@ export class Socio {
   }
 
   //metodo para agregar una multa
-  agregarMulta(monto: number){
+  agregarMulta(monto: number) {
     this._multa += monto;
   }
 
   //metodo para saldar una multa
-  saldarMulta(){
+  saldarMulta() {
     this._multa = 0;
   }
 
@@ -77,8 +77,8 @@ export class Socio {
     return this.prestamos.find((p) => p.libro === libro) ?? null;
   }
 
-  haLeidoLibro(isbn: string): boolean{
-    return this._historialDeLectura.includes(isbn);//si el socio ha leido, retorna true, sino false
+  haLeidoLibro(isbn: string): boolean {
+    return this._historialDeLectura.includes(isbn); //si el socio ha leido, retorna true, sino false
   }
 
   prestamosVencidos(): Prestamo[] {

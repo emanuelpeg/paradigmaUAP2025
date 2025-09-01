@@ -11,62 +11,53 @@ class Biblioteca {
   private eventos: eventoBiblioteca[] = [];
 
   //Para recomendar los libros a un socio
-  recomendarLibros(socioId: number): Libro[]{
+  recomendarLibros(socioId: number): Libro[] {
     const socio = this.buscarSocio(socioId);
-    if(!socio)
-    {
+    if (!socio) {
       throw new Error("Socio no encontrado");
     }
     const recomendaciones: Libro[] = [];
     const historial = socio.historialDeLectura;
 
     //Recorremos el historial para ver los libros leido por el socio
-    historial.forEach(isbnLeido => 
-    {
+    historial.forEach(isbnLeido => {
       const libroLeido = this.buscarLibro(isbnLeido);
-      if(libroLeido)
-      {
+      if (libroLeido) {
         const librosDelMismoAutor = this.inventario.filter
-        (libro =>libro.autor.nombre === libroLeido.autor.nombre && !socio.haLeidoLibro(libro.isbn) // que el socio no lo haya leido.
-        );
+          (libro => libro.autor.nombre === libroLeido.autor.nombre && !socio.haLeidoLibro(libro.isbn) // que el socio no lo haya leido.
+          );
 
         librosDelMismoAutor.forEach
-        (libroRecomendado =>
-        {
-          if(!recomendaciones.includes(libroRecomendado))
-          {
-            recomendaciones.push(libroRecomendado);
-          }
-        });
+          (libroRecomendado => {
+            if (!recomendaciones.includes(libroRecomendado)) {
+              recomendaciones.push(libroRecomendado);
+            }
+          });
       }
     });
     return recomendaciones;
   }
 
   //Agregar Autor
-  agregarAutor(nombre: string, apellido:string, biografia: string, anioNacimiento: number): Autor 
-  {
+  agregarAutor(nombre: string, apellido: string, biografia: string, anioNacimiento: number): Autor {
     const autorExistente = this.autores.find(p => p.nombre === nombre);
-    if(autorExistente)
-      {
-        throw new Error("El autor ya existe");
-      }
-      const autorCreado = new Autor (nombre, apellido, biografia, anioNacimiento);
-      this.autores.push(autorCreado);
-      return autorCreado;
-    
+    if (autorExistente) {
+      throw new Error("El autor ya existe");
+    }
+    const autorCreado = new Autor(nombre, apellido, biografia, anioNacimiento);
+    this.autores.push(autorCreado);
+    return autorCreado;
+
   }
 
-  buscarAutor(nombre: string) : Autor | null
-  {
-    return this.autores.find(n =>n.nombre === nombre) ?? null; //Si no encuentra el nombre dentro de la lista de autores retorna un valor nulo
+  buscarAutor(nombre: string): Autor | null {
+    return this.autores.find(n => n.nombre === nombre) ?? null; //Si no encuentra el nombre dentro de la lista de autores retorna un valor nulo
   }
 
   // Funciones de libros
   agregarLibro(titulo: string, autorNombre: string, isbn: string): Libro {
     const autor = this.buscarAutor(autorNombre);
-    if(!autor)
-    {
+    if (!autor) {
       throw new Error(`El autor ${autorNombre} no está registrado en la Biblioteca`);
     }
 
@@ -80,8 +71,7 @@ class Biblioteca {
     const libroEncontrado = this.inventario.find(
       (libro) => libro.isbn === isbn
     );
-    if (libroEncontrado) 
-    {
+    if (libroEncontrado) {
       return libroEncontrado;
     }
     return null;
@@ -112,7 +102,7 @@ class Biblioteca {
         estaPrestado = true;
         break;//si un socio tiene el libro prestado, lo reserva y sale del ciclo
       }
-      if (estaPrestado){
+      if (estaPrestado) {
         //si el libro esta prestado, se le ofrece
         console.log(`El libro ${libro.titulo} no está disponible.`);
         libro.reservar(socioId);
@@ -125,20 +115,19 @@ class Biblioteca {
     //socio.retirar(libro, this.DURACION);
   }
 
-  devolverLibro(socioId: number, libroISBN: string) 
-  {
+  devolverLibro(socioId: number, libroISBN: string) {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
 
     if (!socio || !libro) {
       throw new Error("No se encontro el socio o el librp");
     }
-    
+
     socio.devolver(libro); //El socio devuelve el libro
     console.log(`El socio ${socio.nombreCompleto} ha devuelto el libro ${libro.titulo}`);
-    
+
     //se obtiene el objeto prestamo
-    const prestamoDevuelto = socio.devolver(libro); 
+    const prestamoDevuelto = socio.devolver(libro);
 
     //se verifica si el libro se devolvio con retraso
     const hoy = new Date();
@@ -153,63 +142,55 @@ class Biblioteca {
       * Math.ceil - para redondear hacia arriba los dias de retraso
     */
 
-    if(diasDeRetraso > 0) {
+    if (diasDeRetraso > 0) {
       const multaCalculada = diasDeRetraso * 50; //Es el monto de la multa por día
       socio.agregarMulta(multaCalculada);
       console.log(`¡Atención! El libro se devolvió con ${diasDeRetraso} días de retraso. Se ha aplicado una multa de $${multaCalculada}.`);
     }
 
     //Validacion para ver si un libro tiene reserva de algun socio
-    if(libro.tieneReservas())
-    {
+    if (libro.tieneReservas()) {
       const siguienteSocioId = libro.obtenerSiguienteReserva();
       const siguienteSocio = this.buscarSocio(siguienteSocioId!); //es distinto de null
 
-      if(siguienteSocio){
+      if (siguienteSocio) {
         console.log(`¡Notificación! El libro ${libro.titulo} está disponible para el socio ${siguienteSocio.nombreCompleto}`);
       }
     }
   }
 
   //Funciones para los eventos
-  crearEventos(nombre: string, fecha: Date, descripcion: string): eventoBiblioteca
-  {
+  crearEventos(nombre: string, fecha: Date, descripcion: string): eventoBiblioteca {
     const eventoCreado = new eventoBiblioteca(nombre, fecha, descripcion);
     this.eventos.push(eventoCreado);
     return eventoCreado;
   }
 
-  buscarEvento(nombre:string): eventoBiblioteca | null
-  {
-    return this.eventos.find(e => e.nombre === nombre) ??  null; //Si encuentra el nombre lo retorna, sino retorna null
+  buscarEvento(nombre: string): eventoBiblioteca | null {
+    return this.eventos.find(e => e.nombre === nombre) ?? null; //Si encuentra el nombre lo retorna, sino retorna null
   }
 
-  registrarSocioEnEvento(socioId: number, eventoNombre: string): void
-  {
+  registrarSocioEnEvento(socioId: number, eventoNombre: string): void {
     const socio = this.buscarSocio(socioId);
     const evento = this.buscarEvento(eventoNombre);
 
-    if(!socio || !evento){
+    if (!socio || !evento) {
       throw new Error("Socio o evento no encontrado")
     }
     evento.registrarSocio(socioId);
     console.log(`El socio ${socio.nombreCompleto} se ha registrado al evento ${eventoNombre}`)
   }
 
-  notificarSocios():void
-  {
+  notificarSocios(): void {
     console.log('--- NOTIFICACIONES ---');
-    this.socios.forEach(socio => 
-      {
+    this.socios.forEach(socio => {
       //Notificacion de libro vencido
       const prestamosVencidos = socio.prestamosVencidos();
-      if(prestamosVencidos.length > 0)
-      {
+      if (prestamosVencidos.length > 0) {
         console.log(`[AVISO] ${socio.nombreCompleto}: Tienes ${prestamosVencidos.length} libros vencidos, por favor, regresalos para evitar multas`);
       }
       //Notificacion para otros eventos
-      this.eventos.forEach(evento =>
-      {
+      this.eventos.forEach(evento => {
         console.log(`[EVENTO] ${socio.nombreCompleto}: ¡Recordatorio! Estás registrado en el evento ${evento.nombre} que se realizá el ${evento.fecha.toLocaleDateString()}.`);
       });
     });
