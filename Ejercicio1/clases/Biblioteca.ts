@@ -10,7 +10,7 @@ class Biblioteca {
   private DURACION = 14;
   private Multa = 50;
 
-  // Funciones de libros
+
   agregarLibro(titulo: string, autor: Autor, isbn: string): Libro {
     const libroCreado = new Libro(titulo, autor, isbn);
     
@@ -46,24 +46,27 @@ class Biblioteca {
     const libro = this.buscarLibro(libroISBN);
 
     if (!socio || !libro) {
-      throw new Error("No se encontro");
+      throw new Error("Socio o libro no encontrado");
     }
-    // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (libro.tienePrestadoLibro(socio)) {
-        throw new Error("El libro ya lo tiene usted");
-      }
-      if (socio.verificarMultas()) {
-        throw new Error("El socio tiene multas pendientes");
-      }
-      if (libro.libroPrestado()) {
-        libro.agregarAColaDeEspera(socio);
-        socio.agregarNotificacion(`El libro '${libro.titulo}' no está disponible. Te agregamos a la lista de espera.`);
-        throw new Error("El libro no esta disponible, lo agregaremos a la lista de espera");
-      }
-      
+    
+    // Verificar si el socio tiene multas pendientes
+    if (socio.verificarMultas()) {
+      throw new Error("El socio tiene multas pendientes");
+    }
+    
+    // Verificar si el socio ya tiene este libro
+    if (libro.tienePrestadoLibro(socio)) {
+      throw new Error("El socio ya tiene este libro prestado");
+    }
+    
+    // Si el libro está prestado por otro socio, agregar a cola de espera
+    if (libro.libroPrestado()) {
+      libro.agregarAColaDeEspera(socio);
+      socio.agregarNotificacion(`El libro '${libro.titulo}' no está disponible. Te agregamos a la lista de espera.`);
+      throw new Error("El libro no está disponible, lo agregaremos a la lista de espera");
     }
 
+    // Crear el préstamo
     libro.nuevoPrestamo(this.DURACION, socio);
     socio.agregarNotificacion(`Has retirado el libro '${libro.titulo}'.`);
   }
@@ -73,25 +76,59 @@ class Biblioteca {
     const libro = this.buscarLibro(libroISBN);
 
     if (!socio || !libro) {
-      throw new Error("No se encontro");
+      throw new Error("Socio o libro no encontrado");
     }
     
     const diasPasados = libro.prestamoVencido();
-    if (diasPasados) {
+    if (diasPasados && diasPasados > 0) {
       const multaTotal = diasPasados * this.Multa;
+      socio.agregarMulta(multaTotal);
       socio.agregarNotificacion(`Tienes una multa de $${multaTotal} por el libro '${libro.titulo}'.`);
       console.log(`El socio ${socio.nombreCompleto} tiene una multa de $${multaTotal}`);
     }
-    if (socio.pagarMulta()) {
-      libro.devolver(socio);
-      socio.agregarNotificacion(`Has devuelto el libro '${libro.titulo}'.`);
-    }
+    
+    libro.devolver(socio, this.DURACION);
+    socio.agregarNotificacion(`Has devuelto el libro '${libro.titulo}'.`);
   }
 
   recomendarLibrosParaSocio(socioId: number): Libro[] {
     const socio = this.buscarSocio(socioId);
     if (!socio) return [];
     return socio.recomendarLibros(this.inventario);
+  }
+
+  // Método para obtener estadísticas de la biblioteca
+  obtenerEstadisticas(): {
+    totalLibros: number;
+    librosPrestados: number;
+    librosDisponibles: number;
+    totalSocios: number;
+    sociosConMultas: number;
+  } {
+    const totalLibros = this.inventario.length;
+    const librosPrestados = this.inventario.filter(libro => libro.libroPrestado()).length;
+    const librosDisponibles = totalLibros - librosPrestados;
+    const totalSocios = this.socios.length;
+    const sociosConMultas = this.socios.filter(socio => socio.verificarMultas()).length;
+
+    return {
+      totalLibros,
+      librosPrestados,
+      librosDisponibles,
+      totalSocios,
+      sociosConMultas
+    };
+  }
+
+  // Método para mostrar el estado de un libro específico
+  estadoLibro(isbn: string): string {
+    const libro = this.buscarLibro(isbn);
+    if (!libro) return "Libro no encontrado";
+    
+    if (libro.libroPrestado()) {
+      return `Prestado. Cola de espera: ${(libro as any).colaDeEspera.length} personas`;
+    }
+    return "Disponible";
   }
 }
 

@@ -1,4 +1,3 @@
-import { biblioteca } from "./Biblioteca";
 import { Socio } from "./Socio";
 import { Autor } from "./Autor";
 
@@ -42,19 +41,15 @@ export class Libro {
     this.PrestamoActual = new Prestamo(this, vencimiento, socio);
   }
 
-  devolver(socio: Socio): Prestamo {
+  devolver(socio: Socio, duracion: number): Prestamo {
     if (!this.tienePrestadoLibro(socio)) {
       throw new Error("El socio no tiene este libro prestado");
     }
 
     const prestamoDevuelto = this.PrestamoActual;
     this.PrestamoActual = null;
-    this.siguienteEnColaDeEspera();
+    this.siguienteEnColaDeEspera(duracion);
 
-    // Notificar al socio si tenía multa
-    if (prestamoDevuelto && this.prestamoVencido()) {
-      socio.agregarNotificacion(`Tienes una multa por el libro '${this.titulo}'.`);
-    }
     // Registrar libro en historial de lectura
     socio.agregarLibroAlHistorial(this);
 
@@ -65,9 +60,12 @@ export class Libro {
     this.colaDeEspera.push(socio);
   }
 
-  siguienteEnColaDeEspera(){
-    const siguienteSocio = this.colaDeEspera.shift()!;
-    this.nuevoPrestamo(biblioteca.obtenerDuracion(), siguienteSocio);
+  siguienteEnColaDeEspera(duracion: number) {
+    const siguienteSocio = this.colaDeEspera.shift();
+    if (siguienteSocio) {
+      this.nuevoPrestamo(duracion, siguienteSocio);
+      siguienteSocio.agregarNotificacion(`El libro '${this.titulo}' está ahora disponible para ti.`);
+    }
   }
 
   prestamoVencido(): number | undefined {
