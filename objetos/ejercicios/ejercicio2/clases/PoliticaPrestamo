@@ -1,0 +1,55 @@
+import { Socio } from "./Socio";
+
+export interface PoliticaPrestamo {
+    puedePrestar(socio: Socio): boolean;
+    periodoPrestamo(socio: Socio): number;
+}
+
+export class PoliticaEstricta implements PoliticaPrestamo {
+    puedePrestar(socio: Socio): boolean {
+        // No permite préstamos si el socio tiene libros en préstamo vencidos
+        return !this.tieneLibrosVencidos(socio);
+    }
+    periodoPrestamo(socio: Socio): number {
+        return socio.getDuracionPrestamo();
+    }
+    private tieneLibrosVencidos(socio: Socio): boolean {
+        const hoy = new Date();
+        return socio["prestamos"].some((p: any) => p.vencimiento < hoy);
+    }
+}
+
+export class PoliticaFlexible implements PoliticaPrestamo {
+    puedePrestar(socio: Socio): boolean {
+        // Permite préstamos aunque tenga vencidos
+        return true;
+    }
+    periodoPrestamo(socio: Socio): number {
+        // Si tiene vencidos, período reducido
+        return this.tieneLibrosVencidos(socio) ? 7 : socio.getDuracionPrestamo();
+    }
+    private tieneLibrosVencidos(socio: Socio): boolean {
+        const hoy = new Date();
+        return socio["prestamos"].some((p: any) => p.vencimiento < hoy);
+    }
+}
+
+export class PoliticaEstudiante implements PoliticaPrestamo {
+    puedePrestar(socio: Socio): boolean {
+        return true;
+    }
+    periodoPrestamo(socio: Socio): number {
+        // Período extendido durante épocas de solicitudes
+        return 21;
+    }
+}
+
+export class PoliticaDocente implements PoliticaPrestamo {
+    puedePrestar(socio: Socio): boolean {
+        return true;
+    }
+    periodoPrestamo(socio: Socio): number {
+        // Préstamos de larga duración y múltiples renovaciones
+        return 28;
+    }
+}
