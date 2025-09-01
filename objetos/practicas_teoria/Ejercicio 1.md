@@ -41,4 +41,17 @@ Una persona es considerada para el proceso de nacionalidad Italiana, si es Itali
 
 Realice un diseño que permita resolver dicho problema y permita saber si una persona es apta para el proceso de ciudadanía.
 
+# Ejercicio 5
+
+## Descripción del Ejercicio
+La empresa CursoSys lo contrata para desarrollar un software que permita registrar el dictado de su curso. La empresa dicta un curso y tiene diferentes tipos de alumnos:
+  a) Alumno invitado: es gratuito y aprueba el curso con una nota mayor a 60 en el examen.
+  b) Alumno medio: el cual paga una suscripción y aprueba el curso con 3 exámenes los cuales tienen que tener un promedio mayor a 70.
+  c) Alumnos premium: el cual paga una suscripción y aprueba el curso con 5 exámenes los cuales tienen que ser mayores a 70 y tener un promedio mayor a 80%
+
+El alumno tiene un código, nombre y apellido y las notas dependientes del tipo.
+  a) Realice un diseño orientado a objetos
+  b) Realice una función que liste los alumnos que aprobaron el curso
+  c) La empresa necesita una funcionalidad que permita al usuario invitado cambiar a usuario medio o premium.
+
 
