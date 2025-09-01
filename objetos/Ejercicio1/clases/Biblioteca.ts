@@ -1,8 +1,6 @@
 import { Libro } from "./Libro";
 import{Socio} from "./Socio";
 
-
-
 class Autor {
     constructor(
         public nombre: string,
@@ -203,6 +201,20 @@ class Reserva
             `${socio.nombre}, tienes una multa de $${monto} por retraso`
         );
     }
+
+    recomendarLibros(socioId: number): Libro[]{
+        const socio = this.BuscarSocio(socioId);
+        if(!socio)
+        {
+            throw new Error ('$No se encontró el socio `${socioId}`');
+        }
+        
+        const historial = socio.getHistorialLectura();
+        const autoresLeidos = historial.map(libro => libro.autor.nombre);
+        
+        return this.inventario.filter(libro => autoresLeidos.includes(libro.autor.nombre) && !historial.includes(libro))
+    };
+
 }
 
 export const biblioteca = new Biblioteca();

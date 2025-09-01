@@ -14,6 +14,7 @@ export class Socio{
     private vencimientoPrestamo: Date[] = []; // Array de fechas de vencimiento de prestamos
     private multaPendiente: number = 0;
     private librosPrestados: { libro: Libro; fechaDevolucion: Date }[] = [];
+    private historialLectura: Libro[] = []; // Historial de libros leídos
 
     constructor(
         private _nombre: string, 
@@ -70,6 +71,7 @@ export class Socio{
             this.prestamos = this.prestamos.filter(p => p.libro !== libro);
             libro.devolver();
             this.librosPrestados.splice(index, 1);
+            this.historialLectura.push(libro); //Agregamos el libro al historial
         }
     }
 
@@ -90,4 +92,10 @@ export class Socio{
         }
         this.multaPendiente -= monto;
     }
+
+    getHistorialLectura(): Libro[]{
+        return this.historialLectura
+    }
+    
+    
 }
