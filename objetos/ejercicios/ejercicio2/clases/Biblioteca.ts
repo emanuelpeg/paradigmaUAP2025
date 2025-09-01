@@ -1,4 +1,5 @@
 import { Libro } from "./Libro";
+import { Prestamo, PrestamoFactory, PrestamoRegular, TipoPrestamo } from "./prestamos/Prestamo";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
 
 class Biblioteca {
@@ -11,6 +12,11 @@ class Biblioteca {
 		this.inventario.push(libroCreado);
 		return libroCreado;
 	}
+
+	crearPrestamo(tipoPrestamo: TipoPrestamo, libro: Libro) {
+		const prestamo: Prestamo = PrestamoFactory.crearPrestamo(tipoPrestamo, libro, new Date());
+	}
+	
 
 	buscarLibro(isbn: string): Libro | null {
 		// return this.inventario.find(libro => libro.isbn === isbn) ?? null;

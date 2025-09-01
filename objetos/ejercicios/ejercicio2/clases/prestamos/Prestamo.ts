@@ -1,10 +1,10 @@
 import { Libro } from "../Libro";
 
-abstract class Prestamo {
-    constructor(public _libro: Libro, public _fechaPresta: Date) {}
+export abstract class Prestamo {
+    constructor(public _libro: Libro, public _fechaPresta: Date) { }
 
     abstract calcularVencimiento();
-    
+
     abstract calcularMulta();
 
 }
@@ -64,5 +64,29 @@ export class PrestamoDigital extends Prestamo {
 
     calcularMulta() {
         return 0;
+    }
+}
+
+export enum TipoPrestamo {
+    REGULAR = "regular",
+    CORTO = "corto",
+    REFERENCIA = "referencia",
+    DIGITAL = "digital",
+}
+
+export class PrestamoFactory {
+    static crearPrestamo(tipo: TipoPrestamo, libro: Libro, fecha: Date) {
+        switch (tipo) {
+            case TipoPrestamo.REGULAR:
+                return new PrestamoRegular(libro, fecha);
+            case TipoPrestamo.CORTO:
+                return new PrestamoCorto(libro, fecha);
+            case TipoPrestamo.REFERENCIA:
+                return new PrestamoReferencia(libro, fecha);
+            case TipoPrestamo.DIGITAL:
+                return new PrestamoDigital(libro, fecha);
+            default:
+                throw new Error("No hay tip de prestamo");
+        }
     }
 }
