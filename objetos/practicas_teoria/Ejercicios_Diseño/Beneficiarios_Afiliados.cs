@@ -14,7 +14,7 @@ Diseñe un software que permita listar los clientes cargados. Tenga en cuenta qu
 y afiliado a la vez.
 */
 
-
+/*
 
 
 public class Cliente
@@ -131,3 +131,4 @@ public class Empresa
     }
 }
 
+*/

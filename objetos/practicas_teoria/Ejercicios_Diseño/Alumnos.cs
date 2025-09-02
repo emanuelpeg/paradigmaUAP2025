@@ -1,3 +1,5 @@
+
+/*
 interface ITipo
 {
     public bool Aprobo(Alumno alumno); // este metodo va a devolver un booleano si es que el alumno aprobó o no segun su promedio
@@ -62,5 +64,5 @@ class TipoPremium : ITipo
         return false;
     }
 }
-
+*/
 

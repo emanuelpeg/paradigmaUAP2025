@@ -112,6 +112,8 @@ class Biblioteca
 }
 */
 
+/*
+
 abstract class Persona // clas abstracta porque comparten los mismos datos y metodos
 {
     private string Nombre;
@@ -229,5 +231,5 @@ class Prestamo
         return fecha_limite;
     }
 }
-
+*/
 

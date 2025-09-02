@@ -192,6 +192,7 @@ class Program
 
         */
 
+        /*
         Parte ram = new Parte(342, "32 GB", 5000);
         Parte disco = new Parte(55, "144 HZ", 15000);
 
@@ -206,5 +207,19 @@ class Program
         promo.CalcularPrecio();
         disco.CalcularPrecio();
         pc1.CalcularPrecio();
+        */
+
+        /*
+        UsuarioGratis gianna = new UsuarioGratis("Gianna", "gianna@gmail", "caso2802");
+        UsuarioPremium male = new UsuarioPremium("Male", "Male@gmail", "4565htg");
+        UsuarioFamiliar dani = new UsuarioFamiliar("Dani", "dani@gmail", "dkmofd 34");
+
+        Cancion can1 = new Cancion(3.25, "7 Vidas", "Corazon Roto");
+        Podcast pod1 = new Podcast(26.23, "El terror de la IA", "Miedos");
+
+        gianna.Escuchar(can1);
+        male.Escuchar(pod1);
+        dani.Escuchar(can1);
+        */
     }
 }

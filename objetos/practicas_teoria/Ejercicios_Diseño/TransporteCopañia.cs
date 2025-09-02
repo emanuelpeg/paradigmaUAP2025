@@ -1,3 +1,4 @@
+/*
 abstract class Vehiculo
 {
     private string Patente;
@@ -46,4 +47,5 @@ class Empresa
     }
 
 }
+*/
 

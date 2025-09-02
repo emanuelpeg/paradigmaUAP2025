@@ -1,4 +1,4 @@
-
+/*
 
 abstract class Comida // O puede llamarse ItemPedido
 {
@@ -76,7 +76,7 @@ class Efectivo : ICobrable
         Console.WriteLine("Pagando con efectivo..");
     }
 }
-
+*/
 
 
 

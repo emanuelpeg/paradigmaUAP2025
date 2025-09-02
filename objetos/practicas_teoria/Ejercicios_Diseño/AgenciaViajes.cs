@@ -1,5 +1,6 @@
 using System.Diagnostics;
 
+/*
 abstract class Producto
 {
     public abstract double ObtenerPrecioProducto();
@@ -78,4 +79,4 @@ class Agencia {
         }
     }
 }
-
+*/

@@ -119,7 +119,7 @@ Una biblioteca digital quiere manejar sus contenidos.
 	•	Se necesita una función que devuelva la cantidad total de páginas de lectura disponibles en la biblioteca.
 	•	Además, la biblioteca quiere tener colecciones que agrupan libros y revistas, y la cantidad de páginas de una colección es la suma de los elementos que la componen.
 
-# Ejercicio 8 – Empresa de Transporte
+# Ejercicio 16 – Empresa de Transporte
 
 Una empresa de transporte necesita un sistema para registrar sus vehículos.
 	•	Los vehículos pueden ser:
@@ -127,3 +127,62 @@ Una empresa de transporte necesita un sistema para registrar sus vehículos.
 	•	Camión: tiene capacidad de carga (en toneladas) y patente.
 	•	La empresa necesita poder listar todos los vehículos y, para cada uno, saber su tipo y capacidad.
 	•	Además, debe existir la posibilidad de que un vehículo sea tercerizado (es decir, que pertenezca a otra compañía). En ese caso, también se debe registrar el nombre de la compañía dueña.
+
+# Actividad 17: Plataforma de Música 
+
+Una app de música maneja usuarios y reproducciones. Hay distintos tipos de usuarios:
+Gratis: solo puede escuchar con anuncios.
+Premium: puede escuchar sin anuncios.
+Familiar: permite compartir hasta 5 perfiles.
+Todos los usuarios tienen nombre, email y contraseña. 
+Cada reproducción puede ser de canción o de podcast. Todas las reproducciones tienen duración, pero las canciones tienen “álbum” y los podcasts tienen “episodio”.
+
+# Actividad 18: Sistema de Pagos 
+
+Un sistema debe manejar pagos con distintas formas:
+Tarjeta de crédito
+Transferencia bancaria
+Criptomoneda
+
+Cada forma de pago valida de manera distinta:
+La tarjeta necesita número, fecha y CVV.
+La transferencia necesita CBU.
+La cripto necesita dirección de wallet.
+
+# Actividad 19: Videojuego de Personaje
+
+En un juego hay distintos personajes:
+Guerrero: puede atacar con espada.
+Mago: puede lanzar hechizos.
+Arquero: puede disparar flechas.
+
+Algunos personajes pueden volar, otros pueden nadar.
+Los movimientos (volar, nadar, caminar) se deberían poder combinar entre distintos personajes.
+
+# Actividad 20: Sistema de Vehículos Compartidos
+
+Una empresa de movilidad quiere desarrollar un sistema para gestionar su flota de vehículos. Los vehículos pueden ser:
+🚲 Bicicleta: no usa combustible.
+🚗 Auto: funciona con combustible.
+🚙 Auto Eléctrico: funciona con batería y además se puede enchufar para recargar.
+
+Reglas del sistema:
+Todos los vehículos tienen: código, marca y capacidad de pasajeros.
+Todos deben implementar un método IniciarViaje() y FinalizarViaje().
+Solo los vehículos con motor (Auto y Auto Eléctrico) pueden implementar una interfaz IMotorizado con el método CargarCombustible().
+Solo los eléctricos implementan además una interfaz IRecargable con el método RecargarBateria().
+La empresa quiere poder cambiar la forma de cargar energía de un auto en tiempo de ejecución (ej: convertir un auto normal a eléctrico o viceversa).
+El sistema debe listar todos los vehículos disponibles para un viaje (podés representarlo con un booleano Disponible).
+
+# Actividad 21: Sistema de Pedidos de Restaurante
+
+Un restaurante quiere digitalizar sus pedidos. Tipos de pedidos:
+Pedido en el local: Tiene número de mesa.
+Pedido delivery: Tiene dirección de entrega y teléfono de contacto.
+Pedido para llevar (take away): El cliente lo retira en mostrador, tiene un horario estimado de retiro.
+
+Reglas del sistema:
+Todos los pedidos tienen: id, cliente, lista de platos. Todos los pedidos deben implementar los métodos:
+CalcularTotal(), MostrarDetalle().
+Los pedidos delivery implementan además una interfaz IDelivery con el método AsignarRepartidor().
+El sistema debe poder listar todos los pedidos de un cliente específico.El sistema debe poder mostrar el total de ventas sumando todos los pedidos

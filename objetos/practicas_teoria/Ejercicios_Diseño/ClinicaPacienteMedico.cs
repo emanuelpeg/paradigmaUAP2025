@@ -1,3 +1,4 @@
+/*
 class Persona
 {
     private int DNI;
@@ -54,4 +55,5 @@ class Clinica
         persona.ListarRoles();
     }
 }
+*/
 
