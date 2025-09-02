@@ -1,5 +1,4 @@
 import { Socio } from "./Socio";
-import { Autor } from "./Autor";
 
 export class Libro {
     private _disponible: boolean = true;
@@ -7,7 +6,7 @@ export class Libro {
 
     constructor(
         private _titulo: string,
-        private _autor: Autor,
+        private _autor: string,
         private _isbn: string
     ) {}
 
