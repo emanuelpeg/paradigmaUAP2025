@@ -1,0 +1,6 @@
+//clase contador en ts con una sola instancia q solo tenga incrementar, 
+// cda vez q se llama se incrementa en 1 y cdo llega a 10 muestra un mensaje, 
+// y no se puede incrementar mas de 10
+class Contador {
+    private cuenta: 
+}
