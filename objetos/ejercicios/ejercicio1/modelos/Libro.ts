@@ -1,5 +1,5 @@
 import { Autor } from "./Autor";
-import { Socio } from "./Socio";
+import { Socio } from "../clases/Socio";
 
 export class Libro {
     private disponible: boolean = true;

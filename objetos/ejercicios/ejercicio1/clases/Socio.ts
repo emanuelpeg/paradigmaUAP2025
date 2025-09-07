@@ -1,4 +1,4 @@
-import { Libro } from "./Libro";
+import { Libro } from "../modelos/Libro";
 
 export class Socio {
     private prestamos: Map<Libro, Date> = new Map();
