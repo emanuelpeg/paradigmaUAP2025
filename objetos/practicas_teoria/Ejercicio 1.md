@@ -114,16 +114,40 @@ Realice un diseño que permita resolver dicho problema y permita saber si una pe
 Persona (que tiene hijos padre,madre,etc), Antepasados(lista persona) 
 A su vez, cada Persona tiene una lista de antepasados, lo que estaria mal
 
-Clase general
+Clase general(embajada)
 Lista<Persona> personas
 
-Persona
-Lista <Antepasado>
+abstract class Pariente
+nivel
 
-Antepasado
+Persona:nivel
+
 Dni
 Nombre
 Apellido
 Nacionalidad
+Padre: Persona
+Madre: Persona
 
+Ejercicio 5: 
+
+Superclase Alumno//mala idea en este caso, pq el alumno no va a poder cambiar de tipo :(
+
+interfaz tipo
+Validar(alumno)
+isOK(alumno)
+
+Alumno:tipo
+resto atributos
+Tipo tipo;
+int[]notas
+validar()
+promedio()
+is Ok()//Se auto pregunta si aprobo?
+add(int nota)
+
+Clase Curso
+Lista <Alumno> alumnos
+ListarAlumnosAprobados
+CambiarTipoAlumno();
 

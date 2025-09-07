@@ -1,15 +1,20 @@
 import { Libro } from "./Libro";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
+import { PoliticaPrestamo } from "./PoliticaPrestamo";
 
 class Biblioteca {
-  private inventario: Libro[] = [];
+  private _inventario: Libro[] = [];
   private socios: Socio[] = [];
+  private tipoPolitica: PoliticaPrestamo;
 
   // Funciones de libros
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
     const libroCreado = new Libro(titulo, autor, isbn);
     this.inventario.push(libroCreado);
     return libroCreado;
+  }
+  get inventario(){
+    return this._inventario;
   }
 
   buscarLibro(isbn: string): Libro | null {
@@ -47,8 +52,9 @@ class Biblioteca {
         throw new Error("Libro no esta disponible");
       }
     }
-
+    if (this.tipoPolitica.puedeRetirar(socio, this.inventario)) {
     socio.retirar(libro);
+  }
   }
 
   devolverLibro(socioId: number, libroISBN: string) {
@@ -60,6 +66,10 @@ class Biblioteca {
     }
 
     socio.devolver(libro);
+  }
+
+  cambiarPoliticaPrestamo(politica:PoliticaPrestamo){
+    this.tipoPolitica=politica;
   }
 }
 
