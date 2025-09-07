@@ -1,0 +1,20 @@
+{
+  "name": "ejercicio2-biblioteca",
+  "version": "1.0.0",
+  "description": "Sistema de biblioteca extendido con polimorfismo y patrones de diseño",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "tsc",
+    "dev": "ts-node-dev index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": ["typescript", "oop", "solid", "design-patterns"],
+  "author": "Estudiante UAP",
+  "license": "MIT"
+}
