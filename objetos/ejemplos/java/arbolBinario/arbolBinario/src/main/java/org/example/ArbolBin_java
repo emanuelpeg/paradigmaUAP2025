@@ -1,0 +1,44 @@
+package org.example;
+
+public class ArbolBin {
+
+    private int dato;
+    private ArbolBin izq = null;
+    private ArbolBin der = null;
+
+    public ArbolBin(int dato) { this.dato = dato; }
+
+    public int getDato() { return dato; }
+
+    public void add(int dato) {
+        if (dato < this.dato) {
+            if (this.izq == null) {
+                this.izq = new ArbolBin(dato);
+            } else {
+                this.izq.add(dato);
+            }
+        } else {
+            if (dato > this.dato) {
+                if (this.der == null) {
+                    this.der = new ArbolBin(dato);
+                }
+                else {
+                    this.der.add(dato);
+                }
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        var str = "";
+        if (this.izq != null) {
+            str += this.izq.toString();
+        }
+        str += " " + this.dato + " ";
+        if (this.der != null) {
+            str += this.der.toString();
+        }
+        return str;
+    }
+}
