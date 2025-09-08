@@ -123,7 +123,15 @@ export class Biblioteca {
     // busqueda global 
     buscarGlobal(criterio: string): any[] {
         const resultados = this.buscador.buscarGlobal(criterio);
-        console.log(`🌐 Búsqueda global para "${criterio}": ${resultados.length} resultados encontrados.`);
-        return resultados;
+
+        const resumen = resultados.map((item: any) => ({
+            titulo: item.titulo,
+            autor: item.autor?.nombre,
+            isbn: item.isbn
+        }));
+
+        console.log(`🌐 Búsqueda global para "${criterio}": ${resumen.length} resultados encontrados.`);
+
+        return resumen;
     }
 }

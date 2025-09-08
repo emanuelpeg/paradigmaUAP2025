@@ -12,15 +12,6 @@ import { BibliotecaDigital } from "./busqueda/BibliotecaDigital";
 import { ArchivoHistorico } from "./busqueda/ArchivoHistorico";
 import { BaseConocimiento } from "./busqueda/BaseConocimiento";
 
-// configuracion de biblioteca
-
-const sistemasBusqueda = [
-    new CatalogoBiblioteca([]),
-    new BibliotecaDigital([]),
-    new ArchivoHistorico([]),
-    new BaseConocimiento([])
-]
-const biblioteca = new Biblioteca(sistemasBusqueda);
 
 // Crear autoresj
 const autor1 = new Autor("Epicteto", "Filósofo griego de la escuela estoica", 55);
@@ -38,6 +29,16 @@ const socio1 = new SocioRegular(1, "Claire");
 const socio2 = new SocioVIP(2, "Katsuki");
 const empleado = new Empleado(3, "Phill");
 const visitante = new Visitante(4, "Hiroshi");
+
+// configuracion de biblioteca
+const sistemasBusqueda = [
+    new CatalogoBiblioteca([libro1, libro2, libro3, libro4]),
+    new BibliotecaDigital([]),
+    new ArchivoHistorico([]),
+    new BaseConocimiento([])
+]
+const biblioteca = new Biblioteca(sistemasBusqueda);
+
 
 biblioteca.agregarLibro(libro1);
 biblioteca.agregarLibro(libro2);
@@ -88,4 +89,4 @@ biblioteca.recomendarLibros(1);
 
 // Busqueda global 
 console.log("--- Búsqueda Global ---");
-console.log(biblioteca.buscarGlobal("Epicteto"));
+console.log(biblioteca.buscarGlobal("Sobrino"));
