@@ -1,0 +1,92 @@
+public abstract class Objeto
+{
+    public int Id { get; protected set; }
+    public string Nombre { get; protected set; }
+
+    public abstract void FuncionObjeto(Personaje personaje);
+}
+
+
+
+
+public class ObjetoCura : Objeto
+{
+    private int curacion;
+
+    public ObjetoCura(int id, string nombre, int curacion)
+    {
+        Id = id;
+        Nombre = nombre;
+        this.curacion = curacion;
+    }
+
+    public override void FuncionObjeto(Personaje personaje)
+    {
+        personaje.ModificarVida(curacion);
+        Console.WriteLine($"{personaje.Nombre} se cura {curacion} puntos de vida.");
+    }
+}
+
+public class ObjetoMejoraAtaque : Objeto
+{
+    private int aumento;
+
+    public ObjetoMejoraAtaque(int id, string nombre, int aumento)
+    {
+        Id = id;
+        Nombre = nombre;
+        this.aumento = aumento;
+    }
+
+    public override void FuncionObjeto(Personaje personaje)
+    {
+        personaje.DañoBase += aumento;
+        Console.WriteLine($"{personaje.Nombre} aumenta su ataque en {aumento} puntos.");
+    }
+}
+
+// Pergaminos que cambian el comportamiento
+public class PergaminoGuerrero : Objeto
+{
+    public PergaminoGuerrero(int id)
+    {
+        Id = id;
+        Nombre = "Pergamino Guerrero";
+    }
+
+    public override void FuncionObjeto(Personaje personaje)
+    {
+        personaje.CambiarComportamiento(new ComportamientoGuerrero());
+        Console.WriteLine($"{personaje.Nombre} ahora es un Guerrero!");
+    }
+}
+
+public class PergaminoMago : Objeto
+{
+    public PergaminoMago(int id)
+    {
+        Id = id;
+        Nombre = "Pergamino Mago";
+    }
+
+    public override void FuncionObjeto(Personaje personaje)
+    {
+        personaje.CambiarComportamiento(new ComportamientoMago());
+        Console.WriteLine($"{personaje.Nombre} ahora es un Mago!");
+    }
+}
+
+public class PergaminoArquero : Objeto
+{
+    public PergaminoArquero(int id)
+    {
+        Id = id;
+        Nombre = "Pergamino Arquero";
+    }
+
+    public override void FuncionObjeto(Personaje personaje)
+    {
+        personaje.CambiarComportamiento(new ComportamientoArquero());
+        Console.WriteLine($"{personaje.Nombre} ahora es un Arquero!");
+    }
+}
