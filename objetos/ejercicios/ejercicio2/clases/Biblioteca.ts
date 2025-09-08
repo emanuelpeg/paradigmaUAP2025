@@ -1,11 +1,18 @@
 import { Libro } from "./Libro";
-import { Socio, SocioFactory, TipoSocio } from "./Socio";
+import { Socio, SocioFactory, TipoSocio } from "./socio";
+import { IPoliticaTransaccion, PoliticaRigida } from "./politicaPrestamo";
+import { IConsultable, CatalogoGeneral, BuscadorTotal } from "./buscador";
 
 class Biblioteca {
   private inventario: Libro[] = [];
   private socios: Socio[] = [];
+  private politicaActual: IPoliticaTransaccion = new PoliticaRigida();
+  private fuentesDeBusqueda: IConsultable[] = [];
 
-  // Funciones de libros
+  constructor() {
+    this.fuentesDeBusqueda.push(new CatalogoGeneral(this.inventario));
+  }
+
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
     const libroCreado = new Libro(titulo, autor, isbn);
     this.inventario.push(libroCreado);
@@ -13,7 +20,6 @@ class Biblioteca {
   }
 
   buscarLibro(isbn: string): Libro | null {
-    // return this.inventario.find(libro => libro.isbn === isbn) ?? null;
     const libroEncontrado = this.inventario.find(
       (libro) => libro.isbn === isbn
     );
@@ -23,15 +29,19 @@ class Biblioteca {
     return null;
   }
 
-  // Funciones de socios
-  registrarSocio(tipo: TipoSocio, id: number, nombre: string, apellido: string): Socio {
+  registrarSocio(
+    tipo: TipoSocio,
+    id: number,
+    nombre: string,
+    apellido: string
+  ): Socio {
     const socioCreado = SocioFactory.crearSocio(tipo, id, nombre, apellido);
     this.socios.push(socioCreado);
     return socioCreado;
   }
 
   buscarSocio(id: number): Socio | null {
-    return this.socios.find((socio) => socio.id === id) ?? null;
+    return this.socios.find((socio) => socio.codigo === id) ?? null;
   }
 
   retirarLibro(socioId: number, libroISBN: string): void {
@@ -41,9 +51,13 @@ class Biblioteca {
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-    // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
+
+    if (!this.politicaActual.esTransaccionPermitida(socio, libro)) {
+      throw new Error("El prestamo no es permitido segun la politica actual.");
+    }
+
+    for (const s of this.socios) {
+      if (s.tieneLibroPrestado(libro)) {
         throw new Error("Libro no esta disponible");
       }
     }
@@ -60,6 +74,15 @@ class Biblioteca {
     }
 
     socio.devolver(libro);
+  }
+
+  setPoliticaPrestamo(politica: IPoliticaTransaccion): void {
+    this.politicaActual = politica;
+  }
+
+  buscarEnBiblioteca(criterio: string): Libro[] {
+    const buscador = new BuscadorTotal(this.fuentesDeBusqueda);
+    return buscador.buscarEnTodasLasFuentes(criterio);
   }
 }
 
