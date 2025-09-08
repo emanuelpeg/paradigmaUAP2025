@@ -1,10 +1,12 @@
 import { Libro } from "./Libro";
-import { Socio } from "./Socio";
+import { SocioRegular, SocioVIP, Empleado, Visitante } from "./Socio";
+import { Usuario } from "./usuario";
+
+type TipoSocio = "regular" | "vip" | "empleado" | "visitante";
 
 class Biblioteca {
   private inventario: Libro[] = [];
-  private socios: Socio[] = [];
-  private DURACION = 14;
+  private socios: Usuario[] = [];
 
   // Funciones de libros
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
@@ -14,24 +16,35 @@ class Biblioteca {
   }
 
   buscarLibro(isbn: string): Libro | null {
-    // return this.inventario.find(libro => libro.isbn === isbn) ?? null;
-    const libroEncontrado = this.inventario.find(
-      (libro) => libro.isbn === isbn
-    );
-    if (libroEncontrado) {
-      return libroEncontrado;
-    }
-    return null;
+    return this.inventario.find((libro) => libro.isbn === isbn) ?? null;
   }
 
   // Funciones de socios
-  registrarSocio(id: number, nombre: string, apellido: string): Socio {
-    const socioCreado = new Socio(id, nombre, apellido);
-    this.socios.push(socioCreado);
-    return socioCreado;
+  registrarSocio(
+    id: number,
+    nombre: string,
+    apellido: string,
+    tipo: TipoSocio = "regular"
+  ): Usuario {
+    let socio: Usuario;
+    switch (tipo) {
+      case "vip":
+        socio = new SocioVIP(id, nombre, apellido);
+        break;
+      case "empleado":
+        socio = new Empleado(id, nombre, apellido);
+        break;
+      case "visitante":
+        socio = new Visitante(id, nombre, apellido);
+        break;
+      default:
+        socio = new SocioRegular(id, nombre, apellido);
+    }
+    this.socios.push(socio);
+    return socio;
   }
 
-  buscarSocio(id: number): Socio | null {
+  buscarSocio(id: number): Usuario | null {
     return this.socios.find((socio) => socio.id === id) ?? null;
   }
 
@@ -42,14 +55,24 @@ class Biblioteca {
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-    // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
-        throw new Error("Libro no esta disponible");
+    if (!socio.puedeRetirar()) {
+      throw new Error("Este usuario no puede retirar libros");
+    }
+    // Verificar disponibilidad
+    for (const s of this.socios) {
+      // Solo socios que pueden tener préstamos
+      if ("tienePrestadoLibro" in s && typeof s["tienePrestadoLibro"] === "function") {
+        if ((s as any).tienePrestadoLibro(libro)) {
+          throw new Error("Libro no esta disponible");
+        }
       }
     }
-
-    socio.retirar(libro, this.DURACION);
+    // Llamar a retirar solo si el método existe
+    if ("retirar" in socio && typeof socio["retirar"] === "function") {
+      (socio as any).retirar(libro);
+    } else {
+      throw new Error("Este usuario no puede retirar libros");
+    }
   }
 
   devolverLibro(socioId: number, libroISBN: string) {
@@ -59,8 +82,11 @@ class Biblioteca {
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-
-    socio.devolver(libro);
+    if ("devolver" in socio && typeof socio["devolver"] === "function") {
+      (socio as any).devolver(libro);
+    } else {
+      throw new Error("Este usuario no puede devolver libros");
+    }
   }
 }
 
