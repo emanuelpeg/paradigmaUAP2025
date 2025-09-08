@@ -1,0 +1,10 @@
+import { IBuscable } from "./IBuscable";
+export class BuscadorUniversal {
+  sistemas: IBuscable<any>[];
+  constructor(sistemas: IBuscable<any>[]) {
+    this.sistemas = sistemas;
+  }
+  buscarEnTodos(criterio: (item: any) => boolean): any[] {
+    return this.sistemas.flatMap(sistema => sistema.buscarPor(criterio));
+  }
+}

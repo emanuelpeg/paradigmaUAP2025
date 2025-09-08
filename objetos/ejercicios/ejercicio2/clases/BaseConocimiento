@@ -1,0 +1,10 @@
+import { IBuscable } from "./IBuscable";
+export class BaseConocimiento implements IBuscable<string> {
+  articulos: string[] = [];
+  buscarPor(criterio: (item: string) => boolean): string[] {
+    return this.articulos.filter(criterio);
+  }
+  filtrar(condicion: (item: string) => boolean): string[] {
+    return this.articulos.filter(condicion);
+  }
+}
