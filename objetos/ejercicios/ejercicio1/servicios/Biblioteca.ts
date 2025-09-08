@@ -17,6 +17,7 @@ export class Biblioteca {
 
     constructor(sistemasBusqueda: IBuscable<any>[]) {
     this.buscador = new BuscadorUniversal(sistemasBusqueda);
+    console.log("📚 Biblioteca");
   }
 
 
@@ -24,23 +25,28 @@ export class Biblioteca {
 
     agregarLibro(libro: Libro): void {
         this.libros.push(libro);
+        console.log(`📖 Libro agregado: "${libro.titulo}" de ${libro.autor.nombre}`);
     }
 
     agregarUsuario(usuario: Usuario): void {
         this.usuarios.push(usuario);
+        console.log(`🧑 Usuario agregado: ${usuario.nombre} (ID: ${usuario.id})`);
     }
 
     crearEvento(evento: EventoBiblioteca): void {
         this.eventos.push(evento);
+        console.log(`🎉 Evento creado: "${evento.nombre}" en fecha ${evento.fecha}`);
     }
 
     // gestión de préstamos
     setPolitica(politica: PoliticaPrestamo): void {
         this.politica = politica;
+        console.log(`⚖️ Política de préstamo actualizada: ${politica.constructor.name}`);
     }
 
     prestarLibro(prestamo: Prestamo): string {
         const usuario = prestamo.usuario;
+        console.log(`📌 Intentando prestar "${prestamo.libro.titulo}" a ${usuario.nombre}...`);
 
         // chequeo politica
         const prestamosUsuario = this.prestamos.filter(p => p.usuario.id === usuario.id);
@@ -66,12 +72,18 @@ export class Biblioteca {
             p => p.libro.isbn === isbn && p.usuario.id === usuarioId
         );
 
-        if (!prestamo) return "❌ Préstamo no encontrado.";
+        if (!prestamo) {
+            console.log(`❌ Préstamo no encontrado para Libro ${isbn} y usuario ${usuarioId}.`);
+            return "❌ Préstamo no encontrado.";
+        }
+
+        console.log(`📌 Devolviendo libro "${prestamo.libro.titulo}" de ${prestamo.usuario.nombre}...`);
 
         // calcular multa si corresponde 
         let multa = 0;
         if (prestamo.usuario.tieneMultas()) {
             multa = prestamo.calcularMulta(fechaDevolucion);
+            console.log(`💰 Multa calculada: $${multa}`);
         }
 
         prestamo.libro.devolver();
@@ -80,27 +92,38 @@ export class Biblioteca {
         let mensaje = `✔️ Libro "${prestamo.libro.titulo}" devuelto por ${prestamo.usuario.nombre}.`;
         if (multa > 0) mensaje += ` Multa aplicada: $${multa}.`;
 
+        console.log(mensaje);
         return mensaje;
     }
 
     // consultas 
-
     buscarLibrosPorAutor(autor: Autor): Libro[] {
-        return this.libros.filter(l => l.autor === autor);
+        const encontrados =  this.libros.filter(l => l.autor === autor);
+        console.log(`🔍 Libros encontrados por ${autor.nombre}: ${encontrados.map(l => l.titulo).join(", ")}`);
+        return encontrados;
     }
 
     recomendarLibros(usuarioId: number): Libro[] {
         const prestamosUsuario = this.prestamos.filter(p => p.usuario.id === usuarioId);
-        if (!prestamosUsuario || prestamosUsuario.length === 0) return [];
-
+        if (!prestamosUsuario || prestamosUsuario.length === 0) {
+            const usuario = this.usuarios.find(u => u.id === usuarioId);
+            const nombre = usuario ? usuario.nombre : `ID ${usuarioId}`;
+            console.log(`ℹ️ Usuario ${nombre} no tiene préstamos previos. No hay recomendaciones.`);
+            return [];
+        }
+        const nombreUsuario = prestamosUsuario[0].usuario.nombre;
         const autoresLeidos = prestamosUsuario.map(p => p.libro.autor);
-        return this.libros.filter(
+        const recomendados = this.libros.filter(
             l => autoresLeidos.includes(l.autor) && !prestamosUsuario.some(p => p.libro === l)
         );
+        console.log(`💡 Recomendaciones para usuario ${nombreUsuario}: ${recomendados.map(l => l.titulo).join(", ")}`);
+        return recomendados;
     }
 
     // busqueda global 
     buscarGlobal(criterio: string): any[] {
-        return this.buscador.buscarGlobal(criterio);
+        const resultados = this.buscador.buscarGlobal(criterio);
+        console.log(`🌐 Búsqueda global para "${criterio}": ${resultados.length} resultados encontrados.`);
+        return resultados;
     }
 }

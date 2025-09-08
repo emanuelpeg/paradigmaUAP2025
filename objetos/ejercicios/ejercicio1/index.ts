@@ -30,6 +30,7 @@ const autor2 = new Autor("Clive Staples Lewis", "Escritor británico", 1898);
 const libro1 = new Libro("Enchiridion of Epictetus (Enquiridion)", autor1, "ISBN001");
 const libro2 = new Libro("El Sobrino del Mago", autor2, "ISBN002");
 const libro3 = new Libro("La Silla de Plata", autor2, "ISBN003");
+const libro4 = new Libro("Of Human Freedom", autor1, "ISBN004");
 
 
 // Crear usuarios
@@ -41,6 +42,7 @@ const visitante = new Visitante(4, "Hiroshi");
 biblioteca.agregarLibro(libro1);
 biblioteca.agregarLibro(libro2);
 biblioteca.agregarLibro(libro3);
+biblioteca.agregarLibro(libro4);
 
 biblioteca.agregarUsuario(socio1);
 biblioteca.agregarUsuario(socio2);
@@ -81,7 +83,8 @@ biblioteca.crearEvento(evento);
 
 // Recomendaciones
 console.log("--- Recomendaciones ---");
-console.log(`Recomendación para "${socio1.nombre}"`, biblioteca.recomendarLibros(1).map(l => l.titulo));
+//console.log(`Recomendación para "${socio1.nombre}"`, biblioteca.recomendarLibros(1).map(l => l.titulo));
+biblioteca.recomendarLibros(1);
 
 // Busqueda global 
 console.log("--- Búsqueda Global ---");
