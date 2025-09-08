@@ -1,10 +1,13 @@
 import { Libro } from "./Libro";
+import { PrestamoStrategy } from "./prestamos/PrestamoStrategy";
 import { Prestamo, PrestamoFactory, PrestamoRegular, TipoPrestamo } from "./prestamos/Prestamo";
+import { PoliticaPrestamoEstricta } from "./prestamos/Strategies";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
 
 class Biblioteca {
 	private inventario: Libro[] = [];
 	private socios: Socio[] = [];
+	private _prestamoStrategy: PrestamoStrategy = new PoliticaPrestamoEstricta();
 
 	// Funciones de libros
 	agregarLibro(titulo: string, autor: string, isbn: string): Libro {
@@ -12,14 +15,9 @@ class Biblioteca {
 		this.inventario.push(libroCreado);
 		return libroCreado;
 	}
-
-	crearPrestamo(tipoPrestamo: TipoPrestamo, libro: Libro) {
-		const prestamo: Prestamo = PrestamoFactory.crearPrestamo(tipoPrestamo, libro, new Date());
-	}
 	
 
 	buscarLibro(isbn: string): Libro | null {
-		// return this.inventario.find(libro => libro.isbn === isbn) ?? null;
 		const libroEncontrado = this.inventario.find(
 			(libro) => libro.isbn === isbn
 		);
@@ -47,6 +45,7 @@ class Biblioteca {
 		if (!socio || !libro) {
 			throw new Error("No se encontro");
 		}
+
 		// fijarse si esta disponible
 		for (const socio of this.socios) {
 			if (socio.tienePrestadoLibro(libro)) {
@@ -54,7 +53,12 @@ class Biblioteca {
 			}
 		}
 
-		socio.retirar(libro);
+		if (!this._prestamoStrategy.validarIncremento(socio)) {
+			throw new Error("No puede tomar prestado un libro con libros vencidos en su inventario");
+		}
+
+		const ajusteDias = this._prestamoStrategy.conseguirIncremento(socio, false);
+		socio.retirar(libro, ajusteDias);
 	}
 
 	devolverLibro(socioId: number, libroISBN: string) {
@@ -66,6 +70,10 @@ class Biblioteca {
 		}
 
 		socio.devolver(libro);
+	}
+
+	setPrestamoStrategy(strategy: PrestamoStrategy) {
+		this._prestamoStrategy = strategy;
 	}
 }
 

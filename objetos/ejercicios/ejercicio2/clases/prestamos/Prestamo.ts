@@ -1,18 +1,26 @@
 import { Libro } from "../Libro";
 
 export abstract class Prestamo {
-    constructor(public _libro: Libro, public _fechaPresta: Date) { }
+    constructor(private _libro: Libro, private _fechaPresta: Date) {}
 
     abstract calcularVencimiento();
 
     abstract calcularMulta();
 
+
+    extenderFechaPresta(fecha: Date) { this._fechaPresta = fecha };
+
+    
+    get fechaPresta() { return this._fechaPresta };
+    get libro() { return this._libro };
 }
 
 export class PrestamoRegular extends Prestamo {
+    private duracion = 14;
+
     calcularVencimiento(): Date {
-        const fecha = new Date(this._fechaPresta);
-        fecha.setDate(fecha.getDate() + 14);
+        const fecha = new Date(this.fechaPresta);
+        fecha.setDate(fecha.getDate() + this.duracion);
         return fecha;
     }
 
@@ -29,9 +37,11 @@ export class PrestamoRegular extends Prestamo {
 }
 
 export class PrestamoCorto extends Prestamo {
+    private duracion = 7;
+
     calcularVencimiento() {
-        const fecha = new Date(this._fechaPresta);
-        fecha.setDate(fecha.getDate() + 7);
+        const fecha = new Date(this.fechaPresta);
+        fecha.setDate(fecha.getDate() + this.duracion);
         return fecha;
     }
 
@@ -75,7 +85,7 @@ export enum TipoPrestamo {
 }
 
 export class PrestamoFactory {
-    static crearPrestamo(tipo: TipoPrestamo, libro: Libro, fecha: Date) {
+    static crearPrestamo(tipo: TipoPrestamo, libro: Libro, fecha: Date): Prestamo {
         switch (tipo) {
             case TipoPrestamo.REGULAR:
                 return new PrestamoRegular(libro, fecha);

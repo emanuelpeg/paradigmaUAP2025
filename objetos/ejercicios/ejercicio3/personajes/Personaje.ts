@@ -35,5 +35,6 @@ export abstract class Personaje {
 
     get vida() { return this._vida };
     get ataque() { return this._ataque };
+    set ataque(cantidad: number) { this._ataque = cantidad };
     get inventario() { return this._inventario };
 }

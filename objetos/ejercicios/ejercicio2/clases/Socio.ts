@@ -1,8 +1,11 @@
 import { Libro } from "./Libro";
+import { Prestamo, PrestamoFactory, TipoPrestamo } from "./prestamos/Prestamo";
+import { PrestamoStrategy } from "./prestamos/PrestamoStrategy";
+import { PoliticaPrestamoEstricta } from "./prestamos/Strategies";
 
-class Prestamo {
-	constructor(public libro: Libro, public vencimiento: Date) { }
-}
+// export class Prestamo {
+// 	constructor(public libro: Libro, public vencimiento: Date) { }
+// }
 
 /** Duracion en dias de un prestamo */
 type Duracion = number;
@@ -35,15 +38,15 @@ export abstract class Socio {
 	abstract getDuracionPrestamo(): Duracion;
 	abstract getMaximoLibros(): number;
 
-	retirar(libro: Libro, duracion?: Duracion) {
+	retirar(libro: Libro, ajusteDias: Duracion) {
 		if (!this.puedeRetirar(libro)) {
 			throw new Error("No tiene permisos para retirar este libro");
 		}
 
-		const duracionFinal = duracion ?? this.getDuracionPrestamo();
-		const vencimiento = new Date();
-		vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-		this.prestamos.push(new Prestamo(libro, vencimiento));
+		const fechaActualConAjuste = new Date();
+		fechaActualConAjuste.setDate(fechaActualConAjuste.getDate() + ajusteDias);
+		const prestamo: Prestamo = PrestamoFactory.crearPrestamo(TipoPrestamo.REGULAR, libro, fechaActualConAjuste);
+		this.prestamos.push(prestamo);
 	}
 
 	devolver(libro: Libro) {
@@ -59,6 +62,16 @@ export abstract class Socio {
 		return prestamo;
 	}
 
+	renovar(prestamo: Prestamo, strategy: PrestamoStrategy) {
+		if (!strategy.puedeRenovar) {
+			throw new Error("No se puede renovar");
+		}
+
+		const nuevaFecha = new Date(prestamo.calcularVencimiento());
+		nuevaFecha.setDate(nuevaFecha.getDate() + 10);
+		prestamo.extenderFechaPresta(nuevaFecha);
+	}
+
 	tienePrestadoLibro(libro: Libro): Prestamo | null {
 		return this.prestamos.find((p) => p.libro === libro) ?? null;
 	}
@@ -70,6 +83,8 @@ export abstract class Socio {
 	puedeRetirar(libro: Libro): boolean {
 		return this.prestamos.length < this.getMaximoLibros();
 	}
+
+	get prestamosActuales() { return this.prestamos };
 }
 
 export class SocioRegular extends Socio {
