@@ -1,4 +1,4 @@
-import { Libro } from "./Libro";
+import { Libro, TipoLibro } from "./Libro";
 import { PrestamoStrategy } from "./prestamos/PrestamoStrategy";
 import { Prestamo, PrestamoFactory, PrestamoRegular, TipoPrestamo } from "./prestamos/Prestamo";
 import { PoliticaPrestamoEstricta } from "./prestamos/Strategies";
@@ -10,8 +10,8 @@ class Biblioteca {
 	private _prestamoStrategy: PrestamoStrategy = new PoliticaPrestamoEstricta();
 
 	// Funciones de libros
-	agregarLibro(titulo: string, autor: string, isbn: string): Libro {
-		const libroCreado = new Libro(titulo, autor, isbn);
+	agregarLibro(titulo: string, autor: string, isbn: string, tipo: TipoLibro): Libro {
+		const libroCreado = new Libro(titulo, autor, isbn, tipo);
 		this.inventario.push(libroCreado);
 		return libroCreado;
 	}
@@ -75,6 +75,8 @@ class Biblioteca {
 	setPrestamoStrategy(strategy: PrestamoStrategy) {
 		this._prestamoStrategy = strategy;
 	}
+
+	get libros() { return this.inventario };
 }
 
 export const biblioteca = new Biblioteca();
