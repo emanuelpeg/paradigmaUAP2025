@@ -6,7 +6,7 @@ class Libro {
     _autor;
     _isbn;
     esReferencia;
-    constructor(_titulo, _autor, _isbn, esReferencia = false // ← importante
+    constructor(_titulo, _autor, _isbn, esReferencia = false // <- nuevo
     ) {
         this._titulo = _titulo;
         this._autor = _autor;

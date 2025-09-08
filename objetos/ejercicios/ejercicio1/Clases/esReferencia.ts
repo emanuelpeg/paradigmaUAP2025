@@ -5,7 +5,7 @@ export class Libro {
     private _titulo: string,
     private _autor: Autor,
     private _isbn: string,
-    public esReferencia: boolean = false   // ← importante
+    public esReferencia: boolean = false // <- nuevo
   ) {}
 
   get titulo() { return this._titulo; }
