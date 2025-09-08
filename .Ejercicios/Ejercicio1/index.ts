@@ -1,4 +1,3 @@
-import { Autor } from "./clases/Autor";
 import { biblioteca } from "./clases/Biblioteca";
 import { EventoBiblioteca } from "./clases/EventoBiblioteca";
 import { Recomendador } from "./clases/Recomendador";
@@ -109,3 +108,4 @@ import { Recomendador } from "./clases/Recomendador";
 
 // const recomendador = new Recomendador(biblioteca);
 // console.log("Recomendaciones:", recomendador.recomendarLibros(socio1));
+

@@ -1,15 +1,6 @@
 import type { Reserva } from "./Biblioteca";
 import type { Autor } from "./Autor";
 export class Libro {
-    //private _titulo: string;
-    //private _autor: string;
-    //private _isbn: string;
-
-    //constructor(titulo: string, autor: string, isbn: string) {
-    //    this._titulo = titulo;
-    //    this._autor = autor;
-    //    this._isbn = isbn;
-    //}
     private reservas: Reserva[] = [];
     constructor(
         private _titulo: string, //Protected solo se puede acceder desde la misma clase o clases que heredan de ella
@@ -31,15 +22,4 @@ export class Libro {
             this.reservas.splice(indice, 1);
         }
     }
-    obtenerReservasSocio(socioId: number): Reserva[] {
-        return this.reservas.filter(reserva => reserva.obtenerSocio.id === socioId);
-    }
-    
 }
-
-/*
-class Revista extends Libro {
-    hola(){
-        this._titulo;
-    }
-}*/
