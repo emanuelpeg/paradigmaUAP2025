@@ -1,9 +1,17 @@
 import { Libro } from "./Libro";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
+import { PoliticaPrestamo, PoliticaEstricta, PoliticaFlexible, PoliticaEstudiante, PoliticaDocente } from "./PoliticaPrestamo";
 
 class Biblioteca {
   private inventario: Libro[] = [];
   private socios: Socio[] = [];
+  private politica: PoliticaPrestamo = new PoliticaEstricta();
+  /**
+   * Cambia la política de préstamo de la biblioteca en tiempo de ejecución.
+   */
+  setPolitica(politica: PoliticaPrestamo) {
+    this.politica = politica;
+  }
 
   // Funciones de libros
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
@@ -13,7 +21,6 @@ class Biblioteca {
   }
 
   buscarLibro(isbn: string): Libro | null {
-    // return this.inventario.find(libro => libro.isbn === isbn) ?? null;
     const libroEncontrado = this.inventario.find(
       (libro) => libro.isbn === isbn
     );
@@ -52,26 +59,11 @@ class Biblioteca {
         throw new Error("Libro no esta disponible");
       }
     }
-    socio.retirar(libro, tipoPrestamo);
-  }
-
-  /**
-   * Devuelve un libro y retorna la multa calculada (si corresponde).
-   * @param socioId ID del socio
-   * @param libroISBN ISBN del libro
-   * @param fechaDevolucion Fecha de devolución (opcional, por defecto hoy)
-   * @returns Multa calculada
-   */
-  devolverLibro(socioId: number, libroISBN: string, fechaDevolucion?: Date) {
-    const socio = this.buscarSocio(socioId);
-    const libro = this.buscarLibro(libroISBN);
-    if (!socio || !libro) {
-      throw new Error("No se encontro");
+    //  política
+    if (!this.politica.puedeRetirar(socio)) {
+      throw new Error("No puede retirar libros según la política actual");
     }
-    const { multa } = socio.devolver(libro, fechaDevolucion);
-    return multa;
+    const tipoFinal = this.politica.tipoPrestamoPorDefecto(socio, tipoPrestamo);
+    socio.retirar(libro, tipoFinal);
   }
 }
-
-export const biblioteca = new Biblioteca();
-export type { Biblioteca };
