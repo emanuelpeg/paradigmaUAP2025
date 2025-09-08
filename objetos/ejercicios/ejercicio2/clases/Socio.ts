@@ -1,8 +1,5 @@
 import { Libro } from "./Libro";
-
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
+import { Prestamo, PrestamoRegular } from "./prestamo";
 
 /** Duracion en dias de un prestamo */
 type Duracion = number;
@@ -14,7 +11,7 @@ export abstract class Socio {
     private _id: number,
     private _nombre: string,
     private _apellido: string
-  ) {}
+  ) { }
 
   get id() {
     return this._id;
@@ -35,15 +32,12 @@ export abstract class Socio {
   abstract getDuracionPrestamo(): Duracion;
   abstract getMaximoLibros(): number;
 
-  retirar(libro: Libro, duracion?: Duracion) {
-    if (!this.puedeRetirar(libro)) {
+  retirar(libro: Libro) {
+    const prestamo = new PrestamoRegular(libro, new Date());
+    if (!this.puedeRetirar(libro) || !prestamo.puedeLlevar()) {
       throw new Error("No tiene permisos para retirar este libro");
     }
-
-    const duracionFinal = duracion ?? this.getDuracionPrestamo();
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+    this.prestamos.push(prestamo);
   }
 
   devolver(libro: Libro) {
@@ -53,9 +47,13 @@ export abstract class Socio {
       throw new Error("No esta prestado");
     }
 
+    const multa = prestamo.calcularMulta();
+    if (multa > 0) {
+      console.log(`Debe pagar una multa de: $${multa}`);
+    }
+
     const indice = this.prestamos.indexOf(prestamo);
     this.prestamos.splice(indice, 1);
-
     return prestamo;
   }
 
@@ -70,6 +68,10 @@ export abstract class Socio {
   puedeRetirar(libro: Libro): boolean {
     return this.prestamos.length < this.getMaximoLibros();
   }
+
+  tieneLibrosVencidos(): boolean {
+    return this.prestamos.some((p) => p.calcularMulta() > 0);
+  }
 }
 
 export class SocioRegular extends Socio {
@@ -80,11 +82,6 @@ export class SocioRegular extends Socio {
   getMaximoLibros(): number {
     return 3;
   }
-
-  devolver(libro: Libro): Prestamo {
-    // Manejar potenciales multas
-    return super.devolver(libro);
-  }
 }
 
 export class SocioVIP extends Socio {
@@ -94,6 +91,17 @@ export class SocioVIP extends Socio {
 
   getMaximoLibros(): number {
     return 5;
+  }
+
+  devolver(libro: Libro) {
+    const prestamo = this.tienePrestadoLibro(libro);
+    if (!prestamo) {
+      throw new Error("No esta prestado");
+    }
+    // No calcula multa por ser VIP
+    const indice = this.prestamos.indexOf(prestamo);
+    this.prestamos.splice(indice, 1);
+    return prestamo;
   }
 }
 
