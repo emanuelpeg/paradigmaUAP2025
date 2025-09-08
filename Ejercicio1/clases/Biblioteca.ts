@@ -1,7 +1,9 @@
   
 import { Libro } from "./Libro";
-import { Socio } from "./Socio";
+import { Socio, SocioRegular, SocioVip, Empleado, Invitado } from "./Socio";
 import { Autor } from "./Autor";
+import { PoliticaPrestamo, PoliticaEstricta, ContextoPrestamo } from "./PoliticasPrestamo";
+import { BuscadorUniversal, CatalogoBiblioteca, BibliotecaDigital, ArchivoHistorico, BaseConocimiento } from "./Busquedas";
 
 class Biblioteca {
   
@@ -9,6 +11,8 @@ class Biblioteca {
   private socios: Socio[] = [];
   private DURACION = 14;
   private Multa = 50;
+  private politica: PoliticaPrestamo = new PoliticaEstricta();
+  private epocaExamenes = false;
 
 
   agregarLibro(titulo: string, autor: Autor, isbn: string): Libro {
@@ -23,8 +27,27 @@ class Biblioteca {
   }
 
   // Funciones de socios
-  registrarSocio(id: number, nombre: string, apellido: string): Socio {
-    const socioCreado = new Socio(id, nombre, apellido);
+  registrarSocio(
+    id: number,
+    nombre: string,
+    apellido: string,
+    tipo: "regular" | "vip" | "empleado" | "invitado" = "regular"
+  ): Socio {
+    let socioCreado: Socio;
+    switch (tipo) {
+      case "vip":
+        socioCreado = new SocioVip(id, nombre, apellido);
+        break;
+      case "empleado":
+        socioCreado = new Empleado(id, nombre, apellido);
+        break;
+      case "invitado":
+        socioCreado = new Invitado(id, nombre, apellido);
+        break;
+      case "regular":
+      default:
+        socioCreado = new SocioRegular(id, nombre, apellido);
+    }
     this.socios.push(socioCreado);
     return socioCreado;
   }
@@ -41,33 +64,61 @@ class Biblioteca {
     return this.Multa;
   }
 
+  // Strategy: cambiar política dinámicamente
+  setPolitica(politica: PoliticaPrestamo) {
+    this.politica = politica;
+  }
+
+  setEpocaExamenes(on: boolean) {
+    this.epocaExamenes = on;
+  }
+
   retirarLibro(socioId: number, libroISBN: string): void {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
-
+    
     if (!socio || !libro) {
       throw new Error("Socio o libro no encontrado");
     }
     
-    // Verificar si el socio tiene multas pendientes
+    if (!socio.puedeRetirar()){
+      throw new Error("El socio no tiene permiso para retirar, solo para mirar el catalogo");
+    }
+
+    const cantidadPrestados = socio.cantidadDeLibrosPrestados(this.inventario);
+    const maximoPermitido = socio.cantidadDeLibrosAPrestar();
+    if (maximoPermitido !== null && cantidadPrestados >= maximoPermitido) {
+      throw new Error("El socio ha alcanzado el límite de libros prestados");
+    }
+
     if (socio.verificarMultas()) {
       throw new Error("El socio tiene multas pendientes");
     }
     
-    // Verificar si el socio ya tiene este libro
     if (libro.tienePrestadoLibro(socio)) {
       throw new Error("El socio ya tiene este libro prestado");
     }
     
-    // Si el libro está prestado por otro socio, agregar a cola de espera
     if (libro.libroPrestado()) {
       libro.agregarAColaDeEspera(socio);
       socio.agregarNotificacion(`El libro '${libro.titulo}' no está disponible. Te agregamos a la lista de espera.`);
       throw new Error("El libro no está disponible, lo agregaremos a la lista de espera");
     }
 
-    // Crear el préstamo
-    libro.nuevoPrestamo(this.DURACION, socio);
+    const tipo = socio.tipoDePrestamoPara(libro);
+    const ctx: ContextoPrestamo = {
+      duracionBase: this.DURACION,
+      multaBase: this.Multa,
+      epocaExamenes: this.epocaExamenes,
+      socioTieneVencidos: (s) => this.inventario.some(l => l.tienePrestadoLibro(s) && !!l.prestamoVencido()),
+    };
+    const base = { tipo, diasRegular: this.DURACION };
+    const perm = this.politica.puedePrestar(socio, libro, ctx);
+    if (!perm.permitido) {
+      throw new Error(perm.motivo ?? "Préstamo no permitido por política actual");
+    }
+    const ajuste = this.politica.ajustarPrestamo(socio, libro, ctx, base);
+    libro.nuevoPrestamo(ajuste.tipo, socio, this.Multa, { diasRegular: ajuste.diasRegular });
     socio.agregarNotificacion(`Has retirado el libro '${libro.titulo}'.`);
   }
 
@@ -81,13 +132,16 @@ class Biblioteca {
     
     const diasPasados = libro.prestamoVencido();
     if (diasPasados && diasPasados > 0) {
-      const multaTotal = diasPasados * this.Multa;
-      socio.agregarMulta(multaTotal);
-      socio.agregarNotificacion(`Tienes una multa de $${multaTotal} por el libro '${libro.titulo}'.`);
-      console.log(`El socio ${socio.nombreCompleto} tiene una multa de $${multaTotal}`);
+      const multaTotal = libro.calcularMulta(diasPasados);
+      // VIP sin multas según consigna
+      if (socio.aplicaMulta() && multaTotal > 0) {
+        socio.agregarMulta(multaTotal);
+        socio.agregarNotificacion(`Tienes una multa de $${multaTotal} por el libro '${libro.titulo}'.`);
+        console.log(`El socio ${socio.nombreCompleto} tiene una multa de $${multaTotal}`);
+      }
     }
-    
-    libro.devolver(socio, this.DURACION);
+
+  libro.devolver(socio, { tipo: socio.tipoDePrestamoPara(libro), multaBase: this.Multa, opciones: { diasRegular: this.DURACION } });
     socio.agregarNotificacion(`Has devuelto el libro '${libro.titulo}'.`);
   }
 
@@ -129,6 +183,21 @@ class Biblioteca {
       return `Prestado. Cola de espera: ${(libro as any).colaDeEspera.length} personas`;
     }
     return "Disponible";
+  }
+
+  // Buscadores (Tarea 4)
+  crearBuscadorUniversal(): BuscadorUniversal {
+    const catalogo = new CatalogoBiblioteca(this.inventario.map(l => ({ titulo: l.titulo, autor: l.autor.nombreCompleto ?? String(l.autor), isbn: l.isbn })));
+    const digital = new BibliotecaDigital([
+      { titulo: "Eloquent JS", url: "https://eloquentjavascript.net", tema: "programación" },
+    ]);
+    const historico = new ArchivoHistorico([
+      { titulo: "Acta fundacional", anio: 1890, descripcion: "Documento histórico" },
+    ]);
+    const base = new BaseConocimiento([
+      { titulo: "POO en TS", autores: ["Alguien"], doi: "10.1234/xyz" },
+    ]);
+    return new BuscadorUniversal([catalogo, digital, historico, base]);
   }
 }
 

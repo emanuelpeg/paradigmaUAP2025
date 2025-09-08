@@ -1,4 +1,6 @@
+import { biblioteca } from "./Biblioteca";
 import { Libro } from "./Libro";
+import { TipoPrestamo } from "./Prestamo";
 /** Duracion en dias de un prestamo */
 
 
@@ -6,7 +8,7 @@ export class Notificacion {
   constructor(public mensaje: string, public fecha: Date = new Date()) {}
 }
 
-export class Socio {
+export abstract class Socio {
   private multas: number[] = [];
   private notificaciones: Notificacion[] = [];
   private historialLectura: Libro[] = [];
@@ -87,5 +89,98 @@ export class Socio {
         titulosLeidos.some(titulo => libro.titulo.toLowerCase().includes(titulo))
       )
     );
+  }
+
+  cantidadDeLibrosPrestados(libros: Libro[]): number {
+    return libros.filter(libro => libro.tienePrestadoLibro(this)).length;
+  }
+
+  abstract cantidadDeLibrosAPrestar(): number | null;
+
+  abstract duracionDePrestamo(): number;
+
+  abstract puedeRetirar(): boolean;
+
+  abstract tipoDePrestamoPara(libro: Libro): TipoPrestamo;
+
+  aplicaMulta(): boolean {
+    return true;
+  }
+}
+
+export class SocioRegular extends Socio {
+  puedeRetirar(): boolean {
+    return true;
+  }
+
+  cantidadDeLibrosAPrestar(): number | null {
+    return 3;
+  }
+
+  duracionDePrestamo(): number {
+    return biblioteca.obtenerDuracion();
+  }
+
+  tipoDePrestamoPara(_libro: Libro): TipoPrestamo {
+    // Por simplicidad, devolvemos Regular por defecto; podrías variar según reglas.
+    return TipoPrestamo.Regular;
+  }
+}
+
+export class SocioVip extends Socio {
+  puedeRetirar(): boolean {
+    return true;
+  }
+
+  cantidadDeLibrosAPrestar(): number | null{
+    return 5;
+  }
+
+  duracionDePrestamo(): number {
+    return biblioteca.obtenerDuracion() + 7; // 7 días adicionales
+  }
+
+  tipoDePrestamoPara(_libro: Libro): TipoPrestamo {
+    return TipoPrestamo.Regular;
+  }
+
+  aplicaMulta(): boolean {
+    return false;
+  }
+}
+
+export class Empleado extends Socio {
+  puedeRetirar(): boolean {
+    return true;
+  }
+
+  cantidadDeLibrosAPrestar(): number | null{
+    return null;
+  }
+
+  duracionDePrestamo(): number {
+    return biblioteca.obtenerDuracion() + 14; 
+  }
+
+  tipoDePrestamoPara(libro: Libro): TipoPrestamo {
+    return TipoPrestamo.Referencia;
+  }
+}
+
+export class Invitado extends Socio {
+  puedeRetirar(): boolean {
+    return false;
+  }
+
+  cantidadDeLibrosAPrestar(): number | null{
+    return 0;
+  }
+
+  duracionDePrestamo(): number {
+    return 0;
+  }
+
+  tipoDePrestamoPara(_libro: Libro): TipoPrestamo {
+    return TipoPrestamo.Referencia; 
   }
 }
