@@ -140,14 +140,7 @@ class Caminador : IHabilidad
 
 abstract class Personaje
 {
-    protected string Nombre;
-    protected int Nivel;
     public List<IHabilidad> habilidades = new List<IHabilidad>();
-    public Personaje(string nombre, int nivel)
-    {
-        Nombre = nombre;
-        Nivel = nivel;
-    }
     public void AgregarHabilidad(IHabilidad habilidad)
     {
         habilidades.Add(habilidad);
@@ -158,7 +151,6 @@ abstract class Personaje
         {
             habilidad.Ejecutar();
         }
-        Console.WriteLine("El personaje no posee esa habilidad...");
     }
 }
 

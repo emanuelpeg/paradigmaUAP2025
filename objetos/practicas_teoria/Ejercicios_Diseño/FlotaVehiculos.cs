@@ -34,33 +34,15 @@ class Bateria : IEnergia
 
 class Auto : Vehiculo
 {
-    private IEnergia energia;
-
-    public Auto(string codigo, string marca, int capacidad, IEnergia energia) 
-        : base(codigo, marca, capacidad)
+    private IEnergia Energia;
+    public void AsignarEnergia(IEnergia energia) // el setter
     {
-        this.energia = energia;
+        Energia = energia;
     }
-
-    public void SetEnergia(IEnergia nuevaEstrategia)
-    {
-        energia = nuevaEstrategia;
-    }
-
     public void Cargar()
     {
-        energia.CargarEnergia();
+        Energia.CargarEnergia();
     }
-
-    public override void IniciarViaje()
-    {
-        Console.WriteLine($"Auto {Marca} inicia viaje");
-        Disponible = false;
-    }
-
-    public override void FinalizarViaje()
-    {
-        Console.WriteLine($"Auto {Marca} finaliza viaje");
-        Disponible = true;
-    }
+    public override void IniciarViaje() { }
+    public override void FinalizarViaje() { }
 }

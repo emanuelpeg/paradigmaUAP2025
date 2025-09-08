@@ -186,3 +186,18 @@ Todos los pedidos tienen: id, cliente, lista de platos. Todos los pedidos deben 
 CalcularTotal(), MostrarDetalle().
 Los pedidos delivery implementan además una interfaz IDelivery con el método AsignarRepartidor().
 El sistema debe poder listar todos los pedidos de un cliente específico.El sistema debe poder mostrar el total de ventas sumando todos los pedidos
+
+# Ejercicio 22 – Red Social de Mascotas 🐾
+
+Una red social permite registrar mascotas.
+Cada mascota tiene nombre, especie y edad.
+Pueden publicarse diferentes tipos de contenido: fotos, videos o mensajes de texto.
+Algunas mascotas tienen un perfil “premium” que les permite subir videos de más duración.
+El sistema debe poder listar todas las publicaciones hechas por una mascota y calcular la cantidad de “likes” totales recibidos.
+
+# Ejercicio 23 – Sistema de Votación Electrónica 🗳️
+
+Un municipio quiere informatizar sus elecciones.
+Existen votantes que pueden emitir su voto.
+Los candidatos pertenecen a distintos partidos políticos y cada voto debe registrarse.
+El sistema debe poder calcular los resultados por candidato y por partido, y verificar si hubo empate.

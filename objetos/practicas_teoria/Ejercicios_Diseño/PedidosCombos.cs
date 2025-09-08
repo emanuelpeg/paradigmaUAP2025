@@ -76,7 +76,7 @@ class Efectivo : ICobrable
         Console.WriteLine("Pagando con efectivo..");
     }
 }
-*/
+
 
 
 

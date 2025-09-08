@@ -1,10 +1,10 @@
 using System.Diagnostics;
 
 /*
-abstract class Producto
+interface IProducto
 {
-    public abstract double ObtenerPrecioProducto();
-    public abstract void MostrarDatos();
+    double ObtenerPrecioProducto();
+    void MostrarDatos();
 }
 
 class Vuelo : Producto
@@ -16,17 +16,17 @@ class Vuelo : Producto
     // Constructor
     //Getters
     //Setters
-    public override double ObtenerPrecioProducto()
+    public double ObtenerPrecioProducto()
     {
         return Precio;
     }
-    public override void MostrarDatos()
+    public void MostrarDatos()
     {
         Console.WriteLine($"Vuelo {NuemeroVuelo} - Destino {Destino} - Precio {Precio}");
     }
 }
 
-class Hotel : Producto
+class Hotel : IProducto
 {
     private string Nombre;
     private string Ciudad;
@@ -37,19 +37,19 @@ class Hotel : Producto
     //Getters
     //Setters
 
-    public override double ObtenerPrecioProducto()
+    public double ObtenerPrecioProducto()
     {
         return PrecioNoche * CantidadNoches;
     }
 
-    public override void MostrarDatos()
+    public void MostrarDatos()
     {
         Console.WriteLine($"Hotel {Nombre} - Ciudad {Ciudad} - Precio por noche {PrecioNoche}");
     }
 }
 class Oferta
 {
-    public List<Producto> productosOferta = new List<Producto>();
+    public List<IProducto> productosOferta = new List<Producto>();
 
     public double ObtenerPrecio()
     {

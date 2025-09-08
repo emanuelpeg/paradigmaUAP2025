@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
-/*
+
 abstract class Cuenta
 {
     public string Nombre;

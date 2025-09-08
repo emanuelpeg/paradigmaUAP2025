@@ -1,69 +1,52 @@
-
-/*
-abstract class Usuario
+class Usuario
 {
-    public int Id { get; set; }
     public string Nombre { get; set; }
-    public string Email { get; set; }
+    private string Email { get; set; }
+    private ITipo tipoUsuario; // puede ser premiun, medio, gratuito
 
-    public Usuario(int id, string nombre, string email)
+    public Usuario(int id, string nombre, string email, ITipo tipouser)
     {
-        Id = id;
         Nombre = nombre;
         Email = email;
+        tipoUsuario = tipouser;
     }
-
-    public abstract bool TieneAccesoIlimitado();
-
-    public virtual void MostrarDatos()
+    public bool UsuarioTieneAccesoIlimitado()
     {
-        Console.WriteLine($"{Id} - {Nombre} ({Email})");
+        return tipoUsuario.TieneAccesoIlimitado();
     }
+    public void UsuarioMostrarDatos()
+    {
+        tipoUsuario.MostrarDatos(); //polimorfismo
+    }
+    // getters y setters
+}
+interface ITipo
+{
+    bool TieneAccesoIlimitado();
+    void MostrarDatos();
 }
 
-class UsuarioGratuito : Usuario
+class UsuarioGratuito : ITipo
 {
     public int HorasDisponibles { get; set; } = 5;
-
-    public UsuarioGratuito(int id, string nombre, string email)
-        : base(id, nombre, email) { }
-
-    public override bool TieneAccesoIlimitado() => false;
-
-    public override void MostrarDatos()
+    public bool TieneAccesoIlimitado() => false;
+    public void MostrarDatos()
     {
-        base.MostrarDatos();
         Console.WriteLine($"Tipo: Gratuito - Máx {HorasDisponibles} horas/semana");
     }
 }
 
-class UsuarioEstandar : Usuario
+class UsuarioEstandar : ITipo
 {
-    public UsuarioEstandar(int id, string nombre, string email)
-        : base(id, nombre, email) { }
+    // atributos  y constructor
+    public bool TieneAccesoIlimitado() => true;
 
-    public override bool TieneAccesoIlimitado() => true;
-
-    public override void MostrarDatos()
+    public void MostrarDatos()
     {
-        base.MostrarDatos();
         Console.WriteLine("Tipo: Estándar - Acceso ilimitado en 1 dispositivo");
     }
 }
 
-class UsuarioPremium : Usuario
-{
-    public UsuarioPremium(int id, string nombre, string email)
-        : base(id, nombre, email) { }
-
-    public override bool TieneAccesoIlimitado() => true;
-
-    public override void MostrarDatos()
-    {
-        base.MostrarDatos();
-        Console.WriteLine("Tipo: Premium - Acceso ilimitado en hasta 4 dispositivos + descargas");
-    }
-}
 
 class PlataformaStreaming
 {
@@ -79,19 +62,9 @@ class PlataformaStreaming
         Console.WriteLine("\nUsuarios con acceso ILIMITADO:");
         foreach (var u in usuarios)
         {
-            if (u.TieneAccesoIlimitado())
-                u.MostrarDatos();
-        }
-    }
-
-    public void ListarUsuariosLimitados()
-    {
-        Console.WriteLine("\nUsuarios con acceso LIMITADO:");
-        foreach (var u in usuarios)
-        {
-            if (!u.TieneAccesoIlimitado())
-                u.MostrarDatos();
+            if (u.UsuarioTieneAccesoIlimitado())
+                u.UsuarioMostrarDatos();
         }
     }
 }
-*/
+
