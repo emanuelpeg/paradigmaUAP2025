@@ -1,23 +1,19 @@
 import { Libro } from "./Libro";
+import { Transaccion, TransaccionEstandar } from "./prestamo";
 
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
-
-/** Duracion en dias de un prestamo */
-type Duracion = number;
+type DuracionPrestamo = number;
 
 export abstract class Socio {
-  protected prestamos: Prestamo[] = [];
+  protected historialTransacciones: Transaccion[] = [];
 
   constructor(
-    private _id: number,
+    private _codigo: number,
     private _nombre: string,
     private _apellido: string
-  ) {}
+  ) { }
 
-  get id() {
-    return this._id;
+  get codigo() {
+    return this._codigo;
   }
 
   get nombre() {
@@ -32,77 +28,87 @@ export abstract class Socio {
     return `${this.nombre} ${this.apellido}`;
   }
 
-  abstract getDuracionPrestamo(): Duracion;
-  abstract getMaximoLibros(): number;
+  abstract getDuracionMaximaPrestamo(): DuracionPrestamo;
+  abstract getCantidadMaximaLibros(): number;
 
-  retirar(libro: Libro, duracion?: Duracion) {
-    if (!this.puedeRetirar(libro)) {
+  retirar(libro: Libro) {
+    const transaccion = new TransaccionEstandar(libro, new Date());
+    if (!this.puedeRetirar(libro) || !transaccion.esPrestable()) {
       throw new Error("No tiene permisos para retirar este libro");
     }
-
-    const duracionFinal = duracion ?? this.getDuracionPrestamo();
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+    this.historialTransacciones.push(transaccion);
   }
 
   devolver(libro: Libro) {
-    const prestamo = this.tienePrestadoLibro(libro);
+    const transaccion = this.tieneLibroPrestado(libro);
 
-    if (!prestamo) {
+    if (!transaccion) {
       throw new Error("No esta prestado");
     }
 
-    const indice = this.prestamos.indexOf(prestamo);
-    this.prestamos.splice(indice, 1);
+    const multa = transaccion.calcularMontoRetraso();
+    if (multa > 0) {
+      console.log(`Debe pagar un monto por retraso de: $${multa}`);
+    }
 
-    return prestamo;
+    const indice = this.historialTransacciones.indexOf(transaccion);
+    this.historialTransacciones.splice(indice, 1);
+    return transaccion;
   }
 
-  tienePrestadoLibro(libro: Libro): Prestamo | null {
-    return this.prestamos.find((p) => p.libro === libro) ?? null;
+  tieneLibroPrestado(libro: Libro): Transaccion | null {
+    return this.historialTransacciones.find((t) => t.libro === libro) ?? null;
   }
 
   get librosEnPrestamo() {
-    return this.prestamos.length;
+    return this.historialTransacciones.length;
   }
 
   puedeRetirar(libro: Libro): boolean {
-    return this.prestamos.length < this.getMaximoLibros();
+    return this.historialTransacciones.length < this.getCantidadMaximaLibros();
+  }
+
+  tieneLibrosVencidos(): boolean {
+    return this.historialTransacciones.some((t) => t.calcularMontoRetraso() > 0);
   }
 }
 
 export class SocioRegular extends Socio {
-  getDuracionPrestamo(): Duracion {
+  getDuracionMaximaPrestamo(): DuracionPrestamo {
     return 14;
   }
 
-  getMaximoLibros(): number {
+  getCantidadMaximaLibros(): number {
     return 3;
-  }
-
-  devolver(libro: Libro): Prestamo {
-    // Manejar potenciales multas
-    return super.devolver(libro);
   }
 }
 
 export class SocioVIP extends Socio {
-  getDuracionPrestamo(): Duracion {
+  getDuracionMaximaPrestamo(): DuracionPrestamo {
     return 21;
   }
 
-  getMaximoLibros(): number {
+  getCantidadMaximaLibros(): number {
     return 5;
+  }
+
+  devolver(libro: Libro) {
+    const transaccion = this.tieneLibroPrestado(libro);
+    if (!transaccion) {
+      throw new Error("No esta prestado");
+    }
+    const indice = this.historialTransacciones.indexOf(transaccion);
+    this.historialTransacciones.splice(indice, 1);
+    return transaccion;
   }
 }
 
 export class Empleado extends Socio {
-  getDuracionPrestamo(): Duracion {
+  getDuracionMaximaPrestamo(): DuracionPrestamo {
     return 30;
   }
 
-  getMaximoLibros(): number {
+  getCantidadMaximaLibros(): number {
     return Infinity;
   }
 }
@@ -112,11 +118,11 @@ export class Visitante extends Socio {
     return false;
   }
 
-  getDuracionPrestamo(): Duracion {
+  getDuracionMaximaPrestamo(): DuracionPrestamo {
     return 0;
   }
 
-  getMaximoLibros(): number {
+  getCantidadMaximaLibros(): number {
     return 0;
   }
 }
@@ -131,19 +137,19 @@ export enum TipoSocio {
 export class SocioFactory {
   static crearSocio(
     tipo: TipoSocio,
-    id: number,
+    codigo: number,
     nombre: string,
     apellido: string
   ): Socio {
     switch (tipo) {
       case TipoSocio.REGULAR:
-        return new SocioRegular(id, nombre, apellido);
+        return new SocioRegular(codigo, nombre, apellido);
       case TipoSocio.VIP:
-        return new SocioVIP(id, nombre, apellido);
+        return new SocioVIP(codigo, nombre, apellido);
       case TipoSocio.EMPLEADO:
-        return new Empleado(id, nombre, apellido);
+        return new Empleado(codigo, nombre, apellido);
       case TipoSocio.VISITANTE:
-        return new Visitante(id, nombre, apellido);
+        return new Visitante(codigo, nombre, apellido);
       default:
         throw new Error("Tipo de socio no valido");
     }
