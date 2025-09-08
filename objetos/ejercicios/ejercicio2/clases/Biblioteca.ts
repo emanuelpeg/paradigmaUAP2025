@@ -1,6 +1,6 @@
 import { Libro } from "./Libro";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
-import { Prestamo, PrestamoRegular, PrestamoCorto, PrestamoReferencia, PrestamoDigital } from "./prestamo";
+import { Prestamo, PrestamoRegular, PrestamoCorto, PrestamoReferencia, PrestamoDigital } from "./Prestamo";
 
 type TipoPrestamo = "regular" | "corto" | "referencia" | "digital";
 

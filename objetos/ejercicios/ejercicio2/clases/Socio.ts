@@ -1,5 +1,5 @@
 import { Libro } from "./Libro";
-import { Prestamo, PrestamoRegular } from "./prestamo";
+import { Prestamo, PrestamoRegular } from "./Prestamo";
 
 export type Duracion = number;
 
