@@ -1,4 +1,6 @@
 export class Libro {
+
+    private _categoria:string[]=[]
   constructor(
     private _titulo: string,
     private _autor: string,
@@ -13,5 +15,8 @@ export class Libro {
   }
   get isbn() {
     return this._isbn;
+  }
+  get categoria(){
+    return this._categoria;
   }
 }

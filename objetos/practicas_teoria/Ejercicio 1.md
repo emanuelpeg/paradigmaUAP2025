@@ -6,6 +6,30 @@
 El restaurante “San Martín” nos contrata para hacer un software que controle los costos de sus platos. Los platos están compuestos por ingredientes los cuales pueden ser platos o ingredientes básicos. Por ejemplo los panqueques con dulce de leche, está compuesto por panqueques (que es un plato) y dulce de leche que es un ingrediente básico. 
 El software debe mantener el costo de cada uno de los platos, y el costo está dado por la suma de los costos de los ingredientes (básicos o platos). 
 
+Plato, Ingredientes, Carta(clase general que tiene una lista de platos)
+Ingredientes compone Plato
+Atributos ingredientes 
+Id
+Nombre
+Costo
+
+Metodos
+Get Id/Nombre/Costo
+Set Nombre/Costo
+
+Atributos Plato
+Id
+Nombre
+Descripcion
+Lista <Ingredientes>
+Lista <Plato>
+
+Metodos
+Get Id/Nombre/Descripcion/Ingredientes/Precio
+Set Nombre/Descripcion/
+
+//Esta bastante bien en general este ejercicio pero Plato tiene problemas de escalabilidad
+//Se podria usar interfaz Valorable con GetPrecio y aplicarla a ambas clases. En plato tendria un array de Valorable y puedo meter tantas clases como necesite a futuro
 
 # Ejercicio 2
 
@@ -15,6 +39,34 @@ La bicicletería Oro Verde lo contrata para diseñar y desarrollar su sistema de
 
 Por último, la bicicletería tiene ofertas las cuales son un conjunto de partes y/o bicicletas y su precio está dado por la suma de los elementos que lo componen, menos un 20%. 
 
+Clases
+Bicicleta,Parte, Bicicleteria, Oferta, Carrito
+Clase Abstracta Articulo(numero,descripcion)
+
+Parte: Articulo
+
+Numero
+Descripcion
+Precio
+
+Metodos()
+
+Bicicleta: Articulo
+
+Numero
+Descripcion
+Lista <Parte>partes
+
+Metodos()
+
+Oferta
+Lista <Articulos> partes
+
+Bicicleteria
+Lista <Oferta>
+Lista <Articulo> articulos
+
+//Bueno, fue un ejercicio hecho decentemente casi bien, Le acerte a alguna cosas y le erre a otras. Es importante tener en cuenta que si oferta es articulo, oferta podria estar dentro de oferta, y eso estaria mal. Tener en cuenta que antes de este ejercicio hicimos el tercer ejercicio
 
 # Ejercicio 3
 
@@ -27,8 +79,26 @@ Los datos de los beneficiarios son: cuit, nombre, apellido, dirección y número
 Los datos de los afiliados son: cuit, nombre, apellido, dirección y número de cuenta donde se depositará por mes, lo gastado por los beneficiarios.
 
 Diseñe un software que permita listar los clientes cargados. Tenga en cuenta que un cliente puede ser beneficiario y afiliado a la vez. 
+//No pude resolverlo, tuve que pedirle ayuda a Mai, y aun asi no pude hacer nada. De cierta manera siento que no puedo terminar de obtener el pensamiento necesario en esta carrera. Tal vez me hubiera ido mejor si hubiera elegido otra cosa(aunque no lo creo, pero por lo menos entenderia mas qsy).
+Beneficiario, Afiliado, Rol, Cliente, Empresa
 
+Cliente
+Cuit
+Nombre
+Apellido 
+Direccion
+Lista <Rol> roles
 
+Interfaz Rol(void transferir())
+
+Beneficiario: Rol 
+Cuenta
+
+Afiliado:Rol
+Cuenta
+
+Empresa
+Lista <Cliente> clientes
 # Ejercicio 4
 
 ## Descripción del Ejercicio
@@ -41,17 +111,43 @@ Una persona es considerada para el proceso de nacionalidad Italiana, si es Itali
 
 Realice un diseño que permita resolver dicho problema y permita saber si una persona es apta para el proceso de ciudadanía.
 
-# Ejercicio 5
+Persona (que tiene hijos padre,madre,etc), Antepasados(lista persona) 
+A su vez, cada Persona tiene una lista de antepasados, lo que estaria mal
 
-## Descripción del Ejercicio
-La empresa CursoSys lo contrata para desarrollar un software que permita registrar el dictado de su curso. La empresa dicta un curso y tiene diferentes tipos de alumnos:
-  a) Alumno invitado: es gratuito y aprueba el curso con una nota mayor a 60 en el examen.
-  b) Alumno medio: el cual paga una suscripción y aprueba el curso con 3 exámenes los cuales tienen que tener un promedio mayor a 70.
-  c) Alumnos premium: el cual paga una suscripción y aprueba el curso con 5 exámenes los cuales tienen que ser mayores a 70 y tener un promedio mayor a 80%
+Clase general(embajada)
+Lista<Persona> personas
 
-El alumno tiene un código, nombre y apellido y las notas dependientes del tipo.
-  a) Realice un diseño orientado a objetos
-  b) Realice una función que liste los alumnos que aprobaron el curso
-  c) La empresa necesita una funcionalidad que permita al usuario invitado cambiar a usuario medio o premium.
+abstract class Pariente
+nivel
 
+Persona:nivel
+
+Dni
+Nombre
+Apellido
+Nacionalidad
+Padre: Persona
+Madre: Persona
+
+Ejercicio 5: 
+
+Superclase Alumno//mala idea en este caso, pq el alumno no va a poder cambiar de tipo :(
+
+interfaz tipo
+Validar(alumno)
+isOK(alumno)
+
+Alumno:tipo
+resto atributos
+Tipo tipo;
+int[]notas
+validar()
+promedio()
+is Ok()//Se auto pregunta si aprobo?
+add(int nota)
+
+Clase Curso
+Lista <Alumno> alumnos
+ListarAlumnosAprobados
+CambiarTipoAlumno();
 
