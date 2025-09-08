@@ -1,8 +1,12 @@
-import { Libro } from "./Libro";
 
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
+import { Libro } from "./Libro";
+import {
+  Prestamo,
+  PrestamoRegular,
+  PrestamoCorto,
+  PrestamoReferencia,
+  PrestamoDigital
+} from "./Prestamo";
 
 /** Duracion en dias de un prestamo */
 type Duracion = number;
@@ -35,28 +39,45 @@ export abstract class Socio {
   abstract getDuracionPrestamo(): Duracion;
   abstract getMaximoLibros(): number;
 
-  retirar(libro: Libro, duracion?: Duracion) {
+  /**
+   * Retira un libro, eligiendo el tipo de préstamo adecuado.
+   * Por defecto, cada tipo de socio define su tipo de préstamo preferido.
+   * Se puede sobreescribir en subclases para lógica especial.
+   */
+  retirar(libro: Libro, tipoPrestamo?: "regular" | "corto" | "referencia" | "digital") {
     if (!this.puedeRetirar(libro)) {
       throw new Error("No tiene permisos para retirar este libro");
     }
-
-    const duracionFinal = duracion ?? this.getDuracionPrestamo();
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+    const fechaInicio = new Date();
+    let prestamo: Prestamo;
+    switch (tipoPrestamo) {
+      case "corto":
+        prestamo = new PrestamoCorto(libro, fechaInicio);
+        break;
+      case "referencia":
+        prestamo = new PrestamoReferencia(libro, fechaInicio);
+        break;
+      case "digital":
+        prestamo = new PrestamoDigital(libro, fechaInicio);
+        break;
+      case "regular":
+      default:
+        prestamo = new PrestamoRegular(libro, fechaInicio);
+        break;
+    }
+    this.prestamos.push(prestamo);
   }
 
-  devolver(libro: Libro) {
+  devolver(libro: Libro, fechaDevolucion: Date = new Date()) {
     const prestamo = this.tienePrestadoLibro(libro);
-
     if (!prestamo) {
       throw new Error("No esta prestado");
     }
-
     const indice = this.prestamos.indexOf(prestamo);
     this.prestamos.splice(indice, 1);
-
-    return prestamo;
+    // Calcular multa usando polimorfismo
+    const multa = prestamo.calcularMulta(fechaDevolucion);
+    return { prestamo, multa };
   }
 
   tienePrestadoLibro(libro: Libro): Prestamo | null {
@@ -81,9 +102,9 @@ export class SocioRegular extends Socio {
     return 3;
   }
 
-  devolver(libro: Libro): Prestamo {
-    // Manejar potenciales multas
-    return super.devolver(libro);
+  // Por defecto, préstamo regular
+  retirar(libro: Libro, tipoPrestamo?: "regular" | "corto" | "referencia" | "digital") {
+    super.retirar(libro, tipoPrestamo ?? "regular");
   }
 }
 
@@ -95,6 +116,11 @@ export class SocioVIP extends Socio {
   getMaximoLibros(): number {
     return 5;
   }
+
+  // Puede elegir entre regular o corto
+  retirar(libro: Libro, tipoPrestamo?: "regular" | "corto" | "referencia" | "digital") {
+    super.retirar(libro, tipoPrestamo ?? "regular");
+  }
 }
 
 export class Empleado extends Socio {
@@ -104,6 +130,11 @@ export class Empleado extends Socio {
 
   getMaximoLibros(): number {
     return Infinity;
+  }
+
+  // Puede elegir cualquier tipo
+  retirar(libro: Libro, tipoPrestamo?: "regular" | "corto" | "referencia" | "digital") {
+    super.retirar(libro, tipoPrestamo);
   }
 }
 
@@ -118,6 +149,14 @@ export class Visitante extends Socio {
 
   getMaximoLibros(): number {
     return 0;
+  }
+
+  // Solo préstamo de referencia
+  retirar(libro: Libro, tipoPrestamo?: "referencia") {
+    if (tipoPrestamo !== "referencia") {
+      throw new Error("El visitante solo puede consultar en sala");
+    }
+    super.retirar(libro, "referencia");
   }
 }
 

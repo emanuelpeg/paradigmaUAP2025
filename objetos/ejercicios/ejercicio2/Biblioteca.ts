@@ -34,32 +34,42 @@ class Biblioteca {
     return this.socios.find((socio) => socio.id === id) ?? null;
   }
 
-  retirarLibro(socioId: number, libroISBN: string): void {
+  /**
+   * Retira un libro para un socio, permitiendo especificar el tipo de préstamo.
+   * @param socioId ID del socio
+   * @param libroISBN ISBN del libro
+   * @param tipoPrestamo Tipo de préstamo: "regular", "corto", "referencia", "digital"
+   */
+  retirarLibro(socioId: number, libroISBN: string, tipoPrestamo?: "regular" | "corto" | "referencia" | "digital"): void {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
-
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
     // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
+    for (const s of this.socios) {
+      if (s.tienePrestadoLibro(libro)) {
         throw new Error("Libro no esta disponible");
       }
     }
-
-    socio.retirar(libro);
+    socio.retirar(libro, tipoPrestamo);
   }
 
-  devolverLibro(socioId: number, libroISBN: string) {
+  /**
+   * Devuelve un libro y retorna la multa calculada (si corresponde).
+   * @param socioId ID del socio
+   * @param libroISBN ISBN del libro
+   * @param fechaDevolucion Fecha de devolución (opcional, por defecto hoy)
+   * @returns Multa calculada
+   */
+  devolverLibro(socioId: number, libroISBN: string, fechaDevolucion?: Date) {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
-
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-
-    socio.devolver(libro);
+    const { multa } = socio.devolver(libro, fechaDevolucion);
+    return multa;
   }
 }
 
