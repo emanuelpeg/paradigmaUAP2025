@@ -11,6 +11,7 @@ biblioteca.registrarSocio(TipoSocio.VISITANTE, 31882, "Lucciano", "Curotto");
 biblioteca.registrarSocio(TipoSocio.VISITANTE, 20321, "Luca", "Giordana");
 const samu: Visitante = biblioteca.registrarSocio(TipoSocio.VISITANTE, 32451, "Samuel", "Olmos");
 
-console.log(samu);
+// console.log(samu);
 
 // console.log(libro.titulo, libro.autor, libro.isbn);
+biblioteca.busqueda()

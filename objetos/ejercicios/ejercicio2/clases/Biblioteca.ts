@@ -3,17 +3,24 @@ import { PrestamoStrategy } from "./prestamos/PrestamoStrategy";
 import { Prestamo, PrestamoFactory, PrestamoRegular, TipoPrestamo } from "./prestamos/Prestamo";
 import { PoliticaPrestamoEstricta } from "./prestamos/Strategies";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
+import { IBuscable } from "./IBuscable";
+import { BuscadorUniversal } from "./BuscadorUniversal";
 
 class Biblioteca {
 	private inventario: Libro[] = [];
 	private socios: Socio[] = [];
 	private _prestamoStrategy: PrestamoStrategy = new PoliticaPrestamoEstricta();
+	private _buscador: IBuscable = new BuscadorUniversal(this.inventario);
 
 	// Funciones de libros
 	agregarLibro(titulo: string, autor: string, isbn: string, tipo: TipoLibro): Libro {
 		const libroCreado = new Libro(titulo, autor, isbn, tipo);
 		this.inventario.push(libroCreado);
 		return libroCreado;
+	}
+
+	busqueda() {
+		console.log(this._buscador.filtrar('el'));
 	}
 	
 
