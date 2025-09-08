@@ -1,0 +1,23 @@
+export class Item {
+    private nombre: string;
+    private tipo: 'curacion' | 'ataque' | 'defensa';
+    private puntos: number;
+
+    constructor(nombre: string, tipo: 'curacion' | 'ataque' | 'defensa', puntos: number) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.puntos = puntos;
+    }
+
+    public async getNombre(): Promise<string> {
+        return this.nombre;
+    }
+
+    public async getTipo(): Promise<string> {
+        return this.tipo;
+    }
+
+    public async getPuntos(): Promise<number> {
+        return this.puntos;
+    }
+}
