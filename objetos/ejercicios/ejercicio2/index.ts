@@ -71,7 +71,11 @@ try {
   biblioteca.prestarLibro(1, "4321", "regular");
   biblioteca.prestarLibro(1, "9999", "regular"); // Excede el límite
 } catch (e) {
-  console.log("[SocioRegular] Límite alcanzado:", e.message);
+  if (e instanceof Error) {
+    console.log("[SocioRegular] Límite alcanzado:", e.message);
+  } else {
+    console.log("[SocioRegular] Límite alcanzado:", e);
+  }
 }
 
 // Ejemplo: SocioVIP sin multas, período extendido
@@ -84,14 +88,22 @@ try {
   biblioteca.prestarLibro(3, "4321", "referencia");
   console.log("[Empleado] Préstamo de referencia exitoso");
 } catch (e) {
-  console.log("[Empleado] Error:", e.message);
+  if (e instanceof Error) {
+    console.log("[Empleado] Error:", e.message);
+  } else {
+    console.log("[Empleado] Error:", e);
+  }
 }
 
 // Ejemplo: Visitante intenta retirar libro
 try {
   biblioteca.prestarLibro(4, "1234", "regular");
 } catch (e) {
-  console.log("[Visitante] No puede retirar:", e.message);
+  if (e instanceof Error) {
+    console.log("[Visitante] No puede retirar:", e.message);
+  } else {
+    console.log("[Visitante] No puede retirar:", e);
+  }
 }
 
 // Ejemplo: Políticas de préstamo
@@ -99,7 +111,11 @@ biblioteca.setPoliticaPrestamo(new PoliticaEstricta());
 try {
   biblioteca.prestarLibro(1, "1984", "regular"); // Si hay vencidos, no permite
 } catch (e) {
-  console.log("[Política estricta] No permite préstamo:", e.message);
+  if (e instanceof Error) {
+    console.log("[Política estricta] No permite préstamo:", e.message);
+  } else {
+    console.log("[Política estricta] No permite préstamo:", e);
+  }
 }
 
 // Ejemplo: Búsqueda avanzada en catálogo
