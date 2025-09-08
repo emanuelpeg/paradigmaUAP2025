@@ -1,5 +1,5 @@
 import { Libro } from "./Libro";
-import { Prestamo, PrestamoRegular } from "./Prestamo";
+import { Prestamo, PrestamoRegular, PrestamoCorto, PrestamoDigital, PrestamoReferencia, TipoPrestamo } from "./Prestamo";
 
 export type Duracion = number;
 
@@ -31,19 +31,29 @@ export abstract class Socio {
   abstract getDuracionPrestamo(): Duracion;
   abstract getMaximoLibros(): number;
 
-  retirar(libro: Libro, duracion?: Duracion) {
+  retirar(libro: Libro, duracion: Duracion, tipoPrestamo: TipoPrestamo = TipoPrestamo.REGULAR) {
     if (!this.puedeRetirar(libro)) {
       throw new Error("No tiene permisos para retirar este libro");
     }
+    let prestamo: Prestamo;
 
-    const duracionFinal = duracion ?? this.getDuracionPrestamo();
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new PrestamoRegular(libro));
-    
+    switch (tipoPrestamo) {
+      case TipoPrestamo.CORTO:
+        prestamo = new PrestamoCorto(libro);
+        break;
+      case TipoPrestamo.REFERENCIA:
+        prestamo = new PrestamoReferencia(libro);
+        break;
+      case TipoPrestamo.DIGITAL:
+        prestamo = new PrestamoDigital(libro);
+        break;
+      default:
+        prestamo = new PrestamoRegular(libro);
+    }
+    this.prestamos.push(prestamo);
   }
 
-  devolver(libro: Libro) {
+  devolver(libro: Libro): Prestamo {
     const prestamo = this.tienePrestadoLibro(libro);
 
     if (!prestamo) {
@@ -66,6 +76,10 @@ export abstract class Socio {
 
   puedeRetirar(libro: Libro): boolean {
     return this.prestamos.length < this.getMaximoLibros();
+  }
+  tienesPrestamosVencidos(): boolean {
+    const hoy = new Date();
+    return this.prestamos.some(prestamo => prestamo.vencimiento < hoy);
   }
 }
 

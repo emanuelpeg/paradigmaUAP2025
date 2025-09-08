@@ -1,19 +1,19 @@
 import { Libro } from "./Libro";
 
-export interface IBuscable{
-  buscarPor(criterio :  string): Libro[];
-  filtrar(condicion: (libro:Libro)=> boolean): Libro[];
+export interface IBuscable {
+  buscarPor(criterio: string): Libro[];
+  filtrar(condicion: (libro: Libro) => boolean): Libro[];
 }
 
 export class CatalogoBiblioteca implements IBuscable {
   private libros: Libro[];
 
-  constructor(libros: Libro[]){
+  constructor(libros: Libro[]) {
     this.libros = libros;
   }
 
   buscarPor(criterio: string): Libro[] {
-    return this.libros.filter(libro => 
+    return this.libros.filter(libro =>
       libro.titulo.toLowerCase().includes(criterio.toLowerCase()) ||
       libro.autor.toLowerCase().includes(criterio.toLowerCase()) ||
       libro.isbn.includes(criterio)
@@ -21,13 +21,13 @@ export class CatalogoBiblioteca implements IBuscable {
   }
 
   filtrar(condicion: (libro: Libro) => boolean): Libro[] {
-      return this.libros.filter(condicion);
+    return this.libros.filter(condicion);
   }
 }
 
 export class BibliotecaDigital implements IBuscable {
   private recursosDigitales: Libro[] = [];
-  
+
   buscarPor(criterio: string): Libro[] {
     return this.recursosDigitales.filter(libro =>
       libro.titulo.toLowerCase().includes(criterio.toLowerCase())
@@ -35,7 +35,7 @@ export class BibliotecaDigital implements IBuscable {
   }
 
   filtrar(condicion: (libro: Libro) => boolean): Libro[] {
-      return this.recursosDigitales.filter(condicion);
+    return this.recursosDigitales.filter(condicion);
   }
 }
 

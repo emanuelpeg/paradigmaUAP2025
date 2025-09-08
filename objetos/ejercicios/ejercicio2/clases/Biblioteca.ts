@@ -10,8 +10,7 @@ class Biblioteca {
   private politicaPrestamo: PoliticaPrestamo = new PoliticaEstricta;
   private buscador: BuscadorUniversal = new BuscadorUniversal();
 
-
-  constructor(){
+  constructor() {
     this.buscador.agregarSistema(new CatalogoBiblioteca(this.inventario));
   }
 
@@ -61,12 +60,12 @@ class Biblioteca {
     return this.socios.find((socio) => socio.id === id) ?? null;
   }
 
-  retirarLibro(socioId: number, libroISBN: string): void {
+  retirarLibro(socioId: number, libroISBN: string, tipoPrestamo: TipoPrestamo = TipoPrestamo.REGULAR): void {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
 
     if (!socio || !libro) {
-      throw new Error("No se encontro");
+      throw new Error("No se encontro el socio o el libro");
     }
     // fijarse si esta disponible
     for (const socio of this.socios) {
@@ -74,6 +73,12 @@ class Biblioteca {
         throw new Error("Libro no esta disponible");
       }
     }
+    //verificar politica de prestamo
+    if (!this.politicaPrestamo.puedePrestar(socio, libro)) {
+      throw new Error("No se puede prestar el libro segun la politica actual");
+    }
+    //procedar el prestamo
+    this.procesarPrestamo(socio, libro, tipoPrestamo);
   }
 
   public procesarPrestamo(
@@ -101,9 +106,8 @@ class Biblioteca {
     }
 
     const dias = this.politicaPrestamo.getDuracionPrestamo(socio, libro);
-    socio.retirar(libro, dias);
+    socio.retirar(libro, dias, tipoPrestamo); //arreglar en socio
   }
-
 
   devolverLibro(socioId: number, libroISBN: string) {
     const socio = this.buscarSocio(socioId);
@@ -119,8 +123,6 @@ class Biblioteca {
     if (multa > 0) {
       console.log(`Multa aplicada es: $${multa} `);
     }
-
-    socio.devolver(libro);
   }
 }
 

@@ -1,0 +1,15 @@
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\bin\Debug\net9.0\juego.exe
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\bin\Debug\net9.0\juego.deps.json
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\bin\Debug\net9.0\juego.runtimeconfig.json
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\bin\Debug\net9.0\juego.dll
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\bin\Debug\net9.0\juego.pdb
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\juego.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\juego.AssemblyInfoInputs.cache
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\juego.AssemblyInfo.cs
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\juego.csproj.CoreCompileInputs.cache
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\juego.sourcelink.json
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\juego.dll
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\refint\juego.dll
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\juego.pdb
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\juego.genruntimeconfig.cache
+C:\Users\saids\Documents\ParadimasdeProgrmacion\paradigmaUAP2025\objetos\ejercicios\ejercicio3\juego\obj\Debug\net9.0\ref\juego.dll
