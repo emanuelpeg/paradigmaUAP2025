@@ -7,7 +7,7 @@ import { PrestamoFactory } from "./Prestamo";
 type Duracion = number;
 
 export abstract class Socio {
-  protected prestamos: Prestamo[] = [];
+  public prestamos: Prestamo[] = [];
 
   constructor(
     private _id: number,
