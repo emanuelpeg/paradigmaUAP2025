@@ -1,11 +1,27 @@
+import { PoliticaPrestamo } from "./PoliticaPrestamo";
 import { Libro } from "./Libro";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
 
-class Biblioteca {
-  private inventario: Libro[] = [];
-  private socios: Socio[] = [];
 
-  // Funciones de libros
+
+class Biblioteca {
+
+  prestarLibro(socio: Socio, libro: Libro, politica: PoliticaPrestamo): void {
+    if (!politica.puedePrestar(socio)) {
+       throw new Error("No se puede prestar el libro según la política actual");
+    }
+    for (const s of this.socios) {
+      if (s.tienePrestadoLibro(libro)) {
+         throw new Error("Libro no está disponible");
+      }
+    }
+    const duracion = politica.calcularDuracion(socio);
+     socio.retirar(libro, duracion);
+  }
+  private inventario: Libro[] = [];
+ tn private socios: Socio[] = [];
+
+
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
     const libroCreado = new Libro(titulo, autor, isbn);
     this.inventario.push(libroCreado);
@@ -13,7 +29,7 @@ class Biblioteca {
   }
 
   buscarLibro(isbn: string): Libro | null {
-    // return this.inventario.find(libro => libro.isbn === isbn) ?? null;
+   
     const libroEncontrado = this.inventario.find(
       (libro) => libro.isbn === isbn
     );
@@ -23,7 +39,6 @@ class Biblioteca {
     return null;
   }
 
-  // Funciones de socios
   registrarSocio(tipo: TipoSocio, id: number, nombre: string, apellido: string): Socio {
     const socioCreado = SocioFactory.crearSocio(tipo, id, nombre, apellido);
     this.socios.push(socioCreado);
@@ -41,7 +56,6 @@ class Biblioteca {
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-    // fijarse si esta disponible
     for (const socio of this.socios) {
       if (socio.tienePrestadoLibro(libro)) {
         throw new Error("Libro no esta disponible");
@@ -64,4 +78,3 @@ class Biblioteca {
 }
 
 export const biblioteca = new Biblioteca();
-export type { Biblioteca };
