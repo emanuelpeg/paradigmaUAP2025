@@ -1,8 +1,6 @@
 import { Libro } from "./Libro";
+import { Prestamo, PrestamoRegular } from "./Prestamo";
 
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
 
 /** Duracion en dias de un prestamo */
 type Duracion = number;
@@ -43,7 +41,7 @@ export abstract class Socio {
     const duracionFinal = duracion ?? this.getDuracionPrestamo();
     const vencimiento = new Date();
     vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+    this.prestamos.push(new PrestamoRegular(libro, vencimiento));
   }
 
   devolver(libro: Libro) {
@@ -75,7 +73,7 @@ export abstract class Socio {
 export class SocioRegular extends Socio {
   getDuracionPrestamo(): Duracion {
     return 14;
-  }
+  } 
 
   getMaximoLibros(): number {
     return 3;
