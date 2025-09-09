@@ -10,12 +10,18 @@ main =
 
 add : Int -> Int -> Int
 add a b =
-    a + b
+    if b == 0 then
+        a
+    else
+        add (a + 1) (b - 1)
 
 
 multiply : Int -> Int -> Int
 multiply a b =
-    a * b
+    if b == 0 then
+        0
+    else
+        add a (multiply a (b - 1))
 
 
 -- Ejercicio 1: Función Potencia
