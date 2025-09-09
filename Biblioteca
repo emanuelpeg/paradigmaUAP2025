@@ -1,0 +1,24 @@
+import { Libro } from "./Libro";
+import { Socio } from "./Socio";
+
+export class Biblioteca {
+  libros: Libro[] = [];
+  socios: Socio[] = [];
+  DURACION: number = 7; // días de préstamo
+
+  agregarLibro(titulo: string, autor: string, isbn: string): void {
+    this.libros.push(new Libro(titulo, autor, isbn));
+  }
+
+  registrarSocio(id: number, nombre: string, apellido: string): void {
+    this.socios.push(new Socio(id, nombre, apellido));
+  }
+
+  buscarSocio(id: number): Socio | undefined {
+    return this.socios.find((s) => s.id === id);
+  }
+
+  buscarLibro(isbn: string): Libro | undefined {
+    return this.libros.find((l) => l.isbn === isbn);
+  }
+}
