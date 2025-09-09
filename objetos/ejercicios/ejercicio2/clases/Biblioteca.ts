@@ -15,7 +15,6 @@ class Biblioteca {
   }
 
   buscarLibro(isbn: string): Libro | null {
-    // return this.inventario.find(libro => libro.isbn === isbn) ?? null;
     const libroEncontrado = this.inventario.find(
       (libro) => libro.isbn === isbn
     );
