@@ -19,7 +19,7 @@ class Biblioteca {
      socio.retirar(libro, duracion);
   }
   private inventario: Libro[] = [];
- tn private socios: Socio[] = [];
+   private socios: Socio[] = [];
 
 
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
