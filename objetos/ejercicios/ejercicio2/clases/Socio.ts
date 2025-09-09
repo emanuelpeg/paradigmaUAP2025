@@ -1,14 +1,13 @@
 import { Libro } from "./Libro";
+import { Prestamo } from "./Prestamo";
+import { PrestamoFactory } from "./Prestamo";
 
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
 
 /** Duracion en dias de un prestamo */
 type Duracion = number;
 
 export abstract class Socio {
-  protected prestamos: Prestamo[] = [];
+  public prestamos: Prestamo[] = [];
 
   constructor(
     private _id: number,
@@ -43,7 +42,13 @@ export abstract class Socio {
     const duracionFinal = duracion ?? this.getDuracionPrestamo();
     const vencimiento = new Date();
     vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+    
+    const prestamo = PrestamoFactory.crearPrestamo(
+      PrestamoFactory.selectTipo(this.constructor.name.toLowerCase()),
+      libro
+    );
+    this.prestamos.push(prestamo);
+    return prestamo;
   }
 
   devolver(libro: Libro) {

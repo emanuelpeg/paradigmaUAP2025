@@ -1,11 +1,18 @@
-import { biblioteca } from "./clases/Biblioteca";
+import { biblioteca } from "./clases/Bibiblioteca";
+//import { Autor } from "./clases/Autor";
 
-biblioteca.agregarLibro("El quijote", "Cervantes", "1234");
-biblioteca.agregarLibro("Hábitos Atómicos", "James Clear", "2345");
-const libro = biblioteca.agregarLibro("1984", "Orwell", "1984");
+//crear autores
 
-biblioteca.registrarSocio(31882, "Lucciano", "Curotto");
-biblioteca.registrarSocio(20321, "Luca", "Giordana");
-biblioteca.registrarSocio(32451, "Samuel", "Olmos");
 
-console.log(libro.titulo, libro.autor, libro.isbn);
+//agregar un libro
+biblioteca.agregarLibro("El Quijote", biblioteca.agregarAutor("Cervantes", "agsajfl",new Date), "1234567890");
+biblioteca.agregarLibro("Cien años de soledad",biblioteca.agregarAutor("Gabriel García Márquez", "agsajfl",new Date) , "0987654321");
+const libro = biblioteca.agregarLibro("1984", biblioteca.agregarAutor("George Orwell", "agsajfl",new Date), "1122334455");
+
+//agregar un socio
+biblioteca.agregarSocio(1, "Juan", "Pérez");
+biblioteca.agregarSocio(2, "Ana", "Gómez");
+biblioteca.agregarSocio(3, "Luis", "Martínez");
+
+console.log(libro.titulo + " de " + libro.autor + " (ISBN: " + libro.isbn + ")");
+
