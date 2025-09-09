@@ -4,7 +4,6 @@ class Prestamo {
   constructor(public libro: Libro, public vencimiento: Date) {}
 }
 
-/** Duracion en dias de un prestamo */
 type Duracion = number;
 
 export abstract class Socio {
@@ -63,11 +62,25 @@ export abstract class Socio {
     return this.prestamos.find((p) => p.libro === libro) ?? null;
   }
 
+
   get librosEnPrestamo() {
     return this.prestamos.length;
   }
 
-  puedeRetirar(libro: Libro): boolean {
+  librosVencidos(): number {
+    const hoy = new Date();
+    return this.prestamos.filter(p => p.vencimiento < hoy).length;
+  }
+
+  estaEnExamenes(): boolean {
+    return false;
+  }
+
+  puedeRenovar(): boolean {
+    return true;
+  }
+
+  puedeRetirar(_libro: Libro): boolean {
     return this.prestamos.length < this.getMaximoLibros();
   }
 }
@@ -82,7 +95,6 @@ export class SocioRegular extends Socio {
   }
 
   devolver(libro: Libro): Prestamo {
-    // Manejar potenciales multas
     return super.devolver(libro);
   }
 }
@@ -108,7 +120,7 @@ export class Empleado extends Socio {
 }
 
 export class Visitante extends Socio {
-  puedeRetirar(libro: Libro): boolean {
+  puedeRetirar(_libro: Libro): boolean {
     return false;
   }
 
