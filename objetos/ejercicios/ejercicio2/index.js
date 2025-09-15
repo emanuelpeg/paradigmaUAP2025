@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Biblioteca_1 = require("./clases/Biblioteca");
+var Socio_1 = require("./clases/Socio");
+Biblioteca_1.biblioteca.agregarLibro("El quijote", "Cervantes", "1234");
+Biblioteca_1.biblioteca.agregarLibro("Hábitos Atómicos", "James Clear", "2345");
+var libro = Biblioteca_1.biblioteca.agregarLibro("1984", "Orwell", "1984");
+Biblioteca_1.biblioteca.registrarSocio(Socio_1.TipoSocio.REGULAR, 31882, "Lucciano", "Curotto");
+Biblioteca_1.biblioteca.registrarSocio(Socio_1.TipoSocio.VIP, 20321, "Luca", "Giordana");
+Biblioteca_1.biblioteca.registrarSocio(Socio_1.TipoSocio.VISITANTE, 32451, "Samuel", "Olmos");
+console.log(libro.titulo, libro.autor, libro.isbn);
