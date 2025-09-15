@@ -1,13 +1,16 @@
 import { Libro } from "./Libro";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
+import { IBuscable } from "../Interface/IBuscable";
+import { Prestamo,TipoPrestamo } from "./Prestamo";
 
+import { IPoliticaPrestamo } from "../Interface/IPoliticaPrestamo";
 class Biblioteca {
   private inventario: Libro[] = [];
   private socios: Socio[] = [];
 
   // Funciones de libros
-  agregarLibro(titulo: string, autor: string, isbn: string): Libro {
-    const libroCreado = new Libro(titulo, autor, isbn);
+  agregarLibro(titulo: string, autor: string, isbn: string, anioPublicacion: number, genero: string, disponible: boolean = true): Libro {
+    const libroCreado = new Libro(titulo, autor, isbn, anioPublicacion, genero, disponible);
     this.inventario.push(libroCreado);
     return libroCreado;
   }
@@ -34,33 +37,60 @@ class Biblioteca {
     return this.socios.find((socio) => socio.id === id) ?? null;
   }
 
-  retirarLibro(socioId: number, libroISBN: string): void {
-    const socio = this.buscarSocio(socioId);
-    const libro = this.buscarLibro(libroISBN);
+  retirarLibro(socioId: number, libroIsbn: string, tipoPrestamo: TipoPrestamo, politica: IPoliticaPrestamo): Prestamo {
+        const socio = this.socios.find(s => s.id === socioId);
+        const libro = this.inventario.find(l => l.isbn === libroIsbn);
 
-    if (!socio || !libro) {
-      throw new Error("No se encontro");
+        if (!socio) throw new Error("Socio no encontrado");
+        if (!libro) throw new Error("Libro no encontrado");
+        if (!this.libroDisponible(libro)) throw new Error("Libro no disponible");
+
+        // Usar el método del socio
+        return socio.retirarLibro(libro, tipoPrestamo, politica);
     }
-    // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
-        throw new Error("Libro no esta disponible");
+
+    private libroDisponible(libro: Libro): boolean {
+        // Verificar que ningún socio tenga el libro prestado
+        return !this.socios.some(socio => 
+            socio.tienePrestadoLibro(libro)
+        );
+    }
+
+    devolverLibro(socioId: number, libroISBN: string) {
+      const socio = this.buscarSocio(socioId);
+      const libro = this.buscarLibro(libroISBN);
+
+      if (!socio || !libro) {
+        throw new Error("No se encontro");
       }
+
+      socio.devolver(libro);
+    }
+    buscarPor(criterio: string): Libro[] {
+        const criterioLower = criterio.toLowerCase();
+        return this.inventario.filter(libro => 
+            libro.titulo.toLowerCase().includes(criterioLower) ||
+            libro.autor.toLowerCase().includes(criterioLower) ||
+            libro.isbn.includes(criterio)
+        );
     }
 
-    socio.retirar(libro);
-  }
 
-  devolverLibro(socioId: number, libroISBN: string) {
-    const socio = this.buscarSocio(socioId);
-    const libro = this.buscarLibro(libroISBN);
 
-    if (!socio || !libro) {
-      throw new Error("No se encontro");
+    // Métodos específicos del catálogo
+    buscarPorAutor(autor: string): Libro[] {
+        return this.buscarPor(autor);
     }
 
-    socio.devolver(libro);
-  }
+    filtrar(predicate: (libro: Libro) => boolean): Libro[] {
+        return this.inventario.filter(predicate);
+    }
+
+    buscarPorTitulo(titulo: string): Libro[] {
+        return this.filtrar(libro => 
+            libro.titulo.toLowerCase().includes(titulo.toLowerCase())
+        );
+    }
 }
 
 export const biblioteca = new Biblioteca();
