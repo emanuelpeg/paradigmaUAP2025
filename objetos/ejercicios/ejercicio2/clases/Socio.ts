@@ -10,6 +10,10 @@ type Duracion = number;
 export abstract class Socio {
   protected prestamos: Prestamo[] = [];
 
+  public getPrestamos(): Prestamo[] {
+    return this.prestamos;
+  }
+
   constructor(
     private _id: number,
     private _nombre: string,
