@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Html exposing (Html, text)
 import Html exposing (a)
+import Html.Attributes exposing (list)
 
 
 main : Html msg
@@ -62,7 +63,7 @@ factorial n =
 -- Ejercicio 3: Fibonacci
 fibonacciExponential : Int -> Int
 fibonacciExponential n = 
-    if n == 0 then
+    if n <= 0 then
     0
     else if n == 1 then
     1
@@ -109,44 +110,62 @@ gcd a b =
     if b == 0 then
         abs a
     else
-        gcd b (a % b)
+        gcd b (remainderBy b a)
     -- TODO: Implementar algoritmo euclidiano
     
 
 
+ 
+-- Ejercicio 6: Contar Dígitos
+-- Ejercicio 6: Contar Dígitos
 -- Ejercicio 6: Contar Dígitos
 countDigits : Int -> Int
 countDigits n =
-    -- TODO: Implementar contador de dígitos
-    0
+    let
+        nAbs = abs n
+    in
+    if nAbs < 10 then
+        1
+    else
+        1 + countDigits (toFloat nAbs / 10 |> floor)
 
 
 -- Ejercicio 7: Suma de Dígitos
 sumDigits : Int -> Int
 sumDigits n =
-    -- TODO: Implementar suma de dígitos
-    0
+    let
+        nAbs = abs n
+    in
+    if nAbs < 10 then
+        nAbs
+    else
+        remainderBy 10 nAbs + sumDigits (toFloat nAbs / 10 |> floor)
 
-
+-- Ejercicio 8: Verificar Palíndromo
 -- Ejercicio 8: Verificar Palíndromo
 isPalindrome : Int -> Bool
 isPalindrome n =
-    -- TODO: Implementar verificador de palíndromo
-    False
+    if n < 0 then
+        False
+    else
+        n == reverseNumber n
 
 
+-- Función para invertir los dígitos de un número
 reverseNumber : Int -> Int
 reverseNumber n =
-    -- TODO: Implementar función para invertir número
-    0
+    reverseHelper (abs n) 0
 
 
+-- Función auxiliar recursiva
 reverseHelper : Int -> Int -> Int
 reverseHelper n acc =
-    -- TODO: Función auxiliar para invertir número
-    0
+    if n == 0 then
+        acc
+    else
+        reverseHelper (toFloat n / 10 |> floor) (acc * 10 + remainderBy 10 n)
 
-
+--no se hace
 -- Ejercicio 9: Paréntesis Balanceados
 isBalanced : String -> Bool
 isBalanced str =
@@ -154,8 +173,13 @@ isBalanced str =
     False
 
 
-isBalancedHelper : List Char -> Int -> Bool
-isBalancedHelper chars counter =
+--isBalancedHelper : List Char -> Int -> Bool
+--isBalancedHelper chars counter =
     -- TODO: Función auxiliar para verificar paréntesis balanceados
-    False
+--    if List.isEmpty chars then True
+--    else let
+--        current= List.head Chars 
+--    in  
+--        if current == Just                         then is BalancedHelper (Maybe.withDefault [] List.tail)
+--    False
 

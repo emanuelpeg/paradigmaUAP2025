@@ -173,88 +173,88 @@ suite =
                      Main.gcd (-48) 18
                          |> Expect.equal 6
              ]
-        -- , describe "Ejercicio 6: Contar Dígitos"
-        --     [ test "single digit" <|
-        --         \_ ->
-        --             Main.countDigits 7
-        --                 |> Expect.equal 1
-        --     , test "example from guide" <|
-        --         \_ ->
-        --             Main.countDigits 12345
-        --                 |> Expect.equal 5
-        --     , test "negative number" <|
-        --         \_ ->
-        --             Main.countDigits (-456)
-        --                 |> Expect.equal 3
-        --     , test "zero" <|
-        --         \_ ->
-        --             Main.countDigits 0
-        --                 |> Expect.equal 1
-        --     , test "large number" <|
-        --         \_ ->
-        --             Main.countDigits 999999
-        --                 |> Expect.equal 6
-        --     ]
-        -- , describe "Ejercicio 7: Suma de Dígitos"
-        --     [ test "example from guide (123)" <|
-        --         \_ ->
-        --             Main.sumDigits 123
-        --                 |> Expect.equal 6
-        --     , test "example from guide (999)" <|
-        --         \_ ->
-        --             Main.sumDigits 999
-        --                 |> Expect.equal 27
-        --     , test "negative number" <|
-        --         \_ ->
-        --             Main.sumDigits (-456)
-        --                 |> Expect.equal 15
-        --     , test "single digit" <|
-        --         \_ ->
-        --             Main.sumDigits 9
-        --                 |> Expect.equal 9
-        --     , test "zero" <|
-        --         \_ ->
-        --             Main.sumDigits 0
-        --                 |> Expect.equal 0
-        --     ]
-        -- , describe "Ejercicio 8: Verificar Palíndromo"
-        --     [ describe "reverseNumber function"
-        --         [ test "reverse single digit" <|
-        --             \_ ->
-        --                 Main.reverseNumber 7
-        --                     |> Expect.equal 7
-        --         , test "reverse multi digit" <|
-        --             \_ ->
-        --                 Main.reverseNumber 123
-        --                     |> Expect.equal 321
-        --         , test "reverse with zeros" <|
-        --             \_ ->
-        --                 Main.reverseNumber 1200
-        --                     |> Expect.equal 21
-        --         ]
-        --     , describe "isPalindrome function"
-        --         [ test "single digit palindrome" <|
-        --             \_ ->
-        --                 Main.isPalindrome 7
-        --                     |> Expect.equal True
-        --         , test "multi digit palindrome" <|
-        --             \_ ->
-        --                 Main.isPalindrome 12321
-        --                     |> Expect.equal True
-        --         , test "not a palindrome" <|
-        --             \_ ->
-        --                 Main.isPalindrome 12345
-        --                     |> Expect.equal False
-        --         , test "even length palindrome" <|
-        --             \_ ->
-        --                 Main.isPalindrome 1221
-        --                     |> Expect.equal True
-        --         , test "negative palindrome" <|
-        --             \_ ->
-        --                 Main.isPalindrome (-121)
-        --                     |> Expect.equal False
-        --         ]
-        --     ]
+         , describe "Ejercicio 6: Contar Dígitos"
+             [ test "single digit" <|
+                 \_ ->
+                     Main.countDigits 7
+                         |> Expect.equal 1
+             , test "example from guide" <|
+                 \_ ->
+                     Main.countDigits 12345
+                         |> Expect.equal 5
+             , test "negative number" <|
+                 \_ ->
+                     Main.countDigits (-456)
+                         |> Expect.equal 3
+             , test "zero" <|
+                 \_ ->
+                     Main.countDigits 0
+                         |> Expect.equal 1
+             , test "large number" <|
+                 \_ ->
+                     Main.countDigits 999999
+                         |> Expect.equal 6
+             ]
+         , describe "Ejercicio 7: Suma de Dígitos"
+             [ test "example from guide (123)" <|
+                 \_ ->
+                     Main.sumDigits 123
+                         |> Expect.equal 6
+             , test "example from guide (999)" <|
+                 \_ ->
+                     Main.sumDigits 999
+                         |> Expect.equal 27
+             , test "negative number" <|
+                 \_ ->
+                     Main.sumDigits (-456)
+                         |> Expect.equal 15
+             , test "single digit" <|
+                 \_ ->
+                     Main.sumDigits 9
+                         |> Expect.equal 9
+             , test "zero" <|
+                 \_ ->
+                    Main.sumDigits 0
+                         |> Expect.equal 0
+             ]
+         , describe "Ejercicio 8: Verificar Palíndromo"
+             [ describe "reverseNumber function"
+                 [ test "reverse single digit" <|
+                     \_ ->
+                         Main.reverseNumber 7
+                             |> Expect.equal 7
+                 , test "reverse multi digit" <|
+                     \_ ->
+                         Main.reverseNumber 123
+                             |> Expect.equal 321
+                 , test "reverse with zeros" <|
+                     \_ ->
+                         Main.reverseNumber 1200
+                             |> Expect.equal 21
+                 ]
+             , describe "isPalindrome function"
+                 [ test "single digit palindrome" <|
+                     \_ ->
+                         Main.isPalindrome 7
+                             |> Expect.equal True
+                 , test "multi digit palindrome" <|
+                     \_ ->
+                         Main.isPalindrome 12321
+                             |> Expect.equal True
+                 , test "not a palindrome" <|
+                     \_ ->
+                         Main.isPalindrome 12345
+                             |> Expect.equal False
+                 , test "even length palindrome" <|
+                     \_ ->
+                         Main.isPalindrome 1221
+                             |> Expect.equal True
+                 , test "negative palindrome" <|
+                     \_ ->
+                         Main.isPalindrome (-121)
+                             |> Expect.equal False
+                 ]
+             ]
         -- , describe "Ejercicio 9: Paréntesis Balanceados"
         --     [ test "simple balanced" <|
         --         \_ ->
