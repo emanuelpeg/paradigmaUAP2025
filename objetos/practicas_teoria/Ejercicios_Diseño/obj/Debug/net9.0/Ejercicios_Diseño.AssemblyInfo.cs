@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Ejercicios_Diseño")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e566c2d4537964e5a60a8c07154161c8dd6f740e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c9cd66c89cc794f7db016b7ba55aa8e01c9a0d53")]
 [assembly: System.Reflection.AssemblyProductAttribute("Ejercicios_Diseño")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Ejercicios_Diseño")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
