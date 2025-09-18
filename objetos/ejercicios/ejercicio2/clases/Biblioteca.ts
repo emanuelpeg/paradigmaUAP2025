@@ -1,9 +1,15 @@
 import { Libro } from "./Libro";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
+import { PoliticaPrestamo, PoliticaEstricta } from "./PoliticaPrestamo";
 
 class Biblioteca {
   private inventario: Libro[] = [];
   private socios: Socio[] = [];
+  private politicaPrestamo: PoliticaPrestamo = new PoliticaEstricta();
+
+  setPoliticaPrestamo(politica: PoliticaPrestamo) {
+    this.politicaPrestamo = politica;
+  }
 
   // Funciones de libros
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
@@ -41,14 +47,17 @@ class Biblioteca {
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-    // fijarse si esta disponible
     for (const socio of this.socios) {
       if (socio.tienePrestadoLibro(libro)) {
         throw new Error("Libro no esta disponible");
       }
     }
-
-    socio.retirar(libro);
+    // Aplica la política de préstamo
+    if (!this.politicaPrestamo.puedePrestar(socio, libro)) {
+      throw new Error("No cumple la política de préstamo");
+    }
+    const duracion = this.politicaPrestamo.calcularDuracionPrestamo(socio);
+    socio.retirar(libro, duracion);
   }
 
   devolverLibro(socioId: number, libroISBN: string) {
