@@ -10,8 +10,6 @@ type Duracion = number;
 export class Socio {
     private prestamos: Prestamo[] = [];
     private _deuda: number = 0;
-    private notificaciones: string[] = [];
-    private historial: Libro[] = [];
 
     constructor(
         private _id: number, 
@@ -43,22 +41,6 @@ export class Socio {
         return this._deuda;
     }
 
-    get bandejaNotificaciones() {
-        return this.notificaciones;
-    }
-
-    get historialLectura() {
-        return this.historial;
-    }
-
-    notificar(mensaje: string) {
-        this.notificaciones.push(mensaje);
-    }
-
-    agregarNotificacion(mensaje: string) {
-        this.notificaciones.push(mensaje);
-    }
-
     retirar(libro: Libro, duracion: Duracion) {
         const vencimiento = new Date();
         vencimiento.setDate(vencimiento.getDate() + duracion);
@@ -82,7 +64,6 @@ export class Socio {
             );
             this._deuda += diasAtraso*50;
         }
-        this.historial.push(libro);
 
         return prestamo;
     }

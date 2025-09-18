@@ -1,26 +1,12 @@
 import { Libro } from "./Libro";
 import { Socio } from "./Socio";
-import { Autor } from "./Autor";
-import { EventoBiblioteca } from "./EventoBiblioteca";
 
 class Biblioteca {
     private inventario: Libro[] = [];
     private socios: Socio[] = [];
     private DURACION = 14;
-    private autores: Autor[] = [];
-    private eventos: EventoBiblioteca[] = [];
 
-    agregarAutor(nombre: string, biografia: string, añoNacimiento: number): Autor {
-        const autor = new Autor(nombre, biografia, añoNacimiento);
-        this.autores.push(autor);
-        return autor;
-    }
-
-    buscarAutor(nombre: string): Autor | null {
-        return this.autores.find((autor) => autor.nombre === nombre) ?? null;
-    }
-
-    agregarLibro(titulo: string, autor:Autor, isbn: string): Libro {
+    agregarLibro(titulo: string, autor:string, isbn: string): Libro {
         const libroCreado = new Libro(titulo, autor, isbn);
         this.inventario.push(libroCreado);
         return libroCreado;
@@ -92,7 +78,7 @@ class Biblioteca {
                 libro.marcarComoDisponible();
             }
         }
-    }
+    }   
     
     consultarEstadoLibro(libroIsbn: string): string {
         const libro = this.buscarLibro(libroIsbn);
@@ -103,57 +89,23 @@ class Biblioteca {
     }
 
     consultarEstadoSocio(id: number): string {
-        const socio = this.buscarSocio(id);
-        if (!socio) return "El socio no existe";
+    const socio = this.buscarSocio(id);
+    if (!socio) return "El socio no existe";
 
-        const prestamos = socio.prestamosActuales;
-        if (prestamos.length === 0) {
-            return `${socio.nombreCompleto} no tiene libros prestados.`;
-        }
-
-        //mostrar detalle de cada préstamo
-        let detalle = prestamos.map((p) => `- ${p.libro.titulo} (vence el ${p.vencimiento.toLocaleDateString()})`).join("\n");
-        return `Estado de ${socio.nombreCompleto}:\n${detalle}`;
+    const prestamos = socio.prestamosActuales;
+    if (prestamos.length === 0) {
+        return `${socio.nombreCompleto} no tiene libros prestados.`;
     }
 
-    crearEvento(nombre: string, descripcion: string, fecha: Date): EventoBiblioteca {
-        const evento = new EventoBiblioteca(nombre, descripcion, fecha);
-        this.eventos.push(evento);
-        return evento;
-    }
+    //mostrar detalle de cada préstamo
+    let detalle = prestamos
+        .map(
+            (p) => `- ${p.libro.titulo} (vence el ${p.vencimiento.toLocaleDateString()})`
+        )
+        .join("\n");
 
-    listarEventos(): EventoBiblioteca[] {
-        return this.eventos;
-    }
-
-    notificarVencimientos() {
-        const hoy = new Date();
-        this.socios.forEach((socio) => {
-            socio.prestamosActuales.forEach((prestamo) => {
-                if (hoy > prestamo.vencimiento) {
-                    socio.notificar(`⚠️ El libro "${prestamo.libro.titulo}" está vencido desde el ${prestamo.vencimiento.toLocaleDateString()}`);
-                }
-            });
-        });
-    }
-
-    recomendarLibros(socioId: number): Libro[] {
-        const socio = this.buscarSocio(socioId);
-        if (!socio) throw new Error("Socio no encontrado");
-
-        const historial = socio.historialLectura;
-        if (historial.length === 0) return [];
-
-        const autoresLeidos = new Set(historial.map(l => l.autor));
-
-        const recomendaciones = this.inventario.filter(libro => 
-            autoresLeidos.has(libro.autor) &&
-            !historial.includes(libro) &&
-            !socio.tienePrestadoLibro(libro)
-        );
-
-        return recomendaciones;
-    }
+    return `Estado de ${socio.nombreCompleto}:\n${detalle}`;
+}
 
 }
 

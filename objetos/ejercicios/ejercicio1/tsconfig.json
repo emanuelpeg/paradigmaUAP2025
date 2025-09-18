@@ -18,7 +18,7 @@
   },
   "include": [
     "*"
-  ],
+, "clases/Biblioteca.ts", "index.ts", "clases/Libro.ts", "clases/Socio.ts"  ],
   "exclude": [
     "node_modules",
     "dist"
