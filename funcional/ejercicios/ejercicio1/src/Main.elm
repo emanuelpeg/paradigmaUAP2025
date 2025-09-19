@@ -125,5 +125,14 @@ reverseHelper n acc =
 
 ---isBlancedHelper : List Char -> Int -> Bool
 ---isBalancedHelper chars counter =
+
+
+
     
-    
+-- PS C:\Users\Samu\Documents\2do Año\Paradigmas de Programación\paradigmaUAP2025\funcional\ejercicios\ejercicio1> npx elm-test
+
+-- elm-test 0.19.1-revision16
+-- --------------------------
+
+-- Running 54 tests. To reproduce these results, run: elm-test --fuzz 100 --seed 260310843221659
+-- Creo q está todo bien profe, pero no me dice TEST RUN PASSED, así q no sé si está bien del todo.
