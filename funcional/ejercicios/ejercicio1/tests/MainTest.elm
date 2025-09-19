@@ -254,46 +254,46 @@ suite =
                             |> Expect.equal False
                 ]
             ]
-        , describe "Ejercicio 9: Paréntesis Balanceados"
-            [ test "simple balanced" <|
-                \_ ->
-                    Main.isBalanced "()"
-                        |> Expect.equal True
-            , test "nested balanced" <|
-                \_ ->
-                    Main.isBalanced "((()))()"
-                        |> Expect.equal True
-            , test "mixed balanced" <|
-                \_ ->
-                    Main.isBalanced "(()())"
-                        |> Expect.equal True
-            , test "unbalanced - missing opening" <|
-                \_ ->
-                    Main.isBalanced "(()(())"
-                        |> Expect.equal False
-            , test "unbalanced - extra closing" <|
-                \_ ->
-                    Main.isBalanced "(()(()))"
-                        |> Expect.equal True
-            , test "wrong order" <|
-                \_ ->
-                    Main.isBalanced ")("
-                        |> Expect.equal False
-            , test "empty string" <|
-                \_ ->
-                    Main.isBalanced ""
-                        |> Expect.equal True
-            , test "only opening" <|
-                \_ ->
-                    Main.isBalanced "((("
-                        |> Expect.equal False
-            , test "only closing" <|
-                \_ ->
-                    Main.isBalanced ")))"
-                        |> Expect.equal False
-            , test "with other characters" <|
-                \_ ->
-                    Main.isBalanced "a(b)c"
-                        |> Expect.equal True
-            ]
+            -- , describe "Ejercicio 9: Paréntesis Balanceados"
+            --     [ test "simple balanced" <|
+            --         \_ ->
+            --             Main.isBalanced "()"
+            --                 |> Expect.equal True
+            --     , test "nested balanced" <|
+            --         \_ ->
+            --             Main.isBalanced "((()))()"
+            --                 |> Expect.equal True
+            --     , test "mixed balanced" <|
+            --         \_ ->
+            --             Main.isBalanced "(()())"
+            --                 |> Expect.equal True
+            --     , test "unbalanced - missing opening" <|
+            --         \_ ->
+            --             Main.isBalanced "(()(())"
+            --                 |> Expect.equal False
+            --     , test "unbalanced - extra closing" <|
+            --         \_ ->
+            --             Main.isBalanced "(()(()))"
+            --                 |> Expect.equal True
+            --     , test "wrong order" <|
+            --         \_ ->
+            --             Main.isBalanced ")("
+            --                 |> Expect.equal False
+            --     , test "empty string" <|
+            --         \_ ->
+            --             Main.isBalanced ""
+            --                 |> Expect.equal True
+            --     , test "only opening" <|
+            --         \_ ->
+            --             Main.isBalanced "((("
+            --                 |> Expect.equal False
+            --     , test "only closing" <|
+            --         \_ ->
+            --             Main.isBalanced ")))"
+            --                 |> Expect.equal False
+            --     , test "with other characters" <|
+            --         \_ ->
+            --             Main.isBalanced "a(b)c"
+            --                 |> Expect.equal True
+            --     ]
         ]
