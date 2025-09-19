@@ -77,10 +77,14 @@ fibonacciHelper n acc1 acc2 =
 -- De lo contrario, el valor es la suma de los dos valores de arriba: (x-1, y-1) y (x-1, y).
 pascalTriangle : Int -> Int -> Int
 pascalTriangle x y =
-    if y == 0 || x == y then
+    if x < 0 || y < 0 || y > x then
+        0
+    else if y == 0 || y == x then
         1
     else
         pascalTriangle (x - 1) (y - 1) + pascalTriangle (x - 1) y
+
+
 
 
 -- Ejercicio 5: Máximo Común Divisor (MCD)
@@ -90,9 +94,12 @@ pascalTriangle x y =
 gcd : Int -> Int -> Int
 gcd a b =
     if b == 0 then
-        a
+        Basics.abs a
     else
         gcd b (remainderBy b a)
+
+
+
 
 
 -- Ejercicio 6: Contar Dígitos
@@ -101,10 +108,14 @@ gcd a b =
 -- De lo contrario, es 1 más el número de dígitos en 'n' dividido por 10 (sin el último dígito).
 countDigits : Int -> Int
 countDigits n =
-    if n == 0 then
-        0
+    let
+        absN = Basics.abs n
+    in
+    if absN < 10 then
+        1
     else
-        1 + countDigits (n // 10)
+        1 + countDigits (absN // 10)
+
 
 
 -- Ejercicio 7: Suma de Dígitos
@@ -113,10 +124,16 @@ countDigits n =
 -- De lo contrario, sumamos el último dígito ('n % 10') más la suma de los demás dígitos ('n // 10').
 sumDigits : Int -> Int
 sumDigits n =
-    if n == 0 then
+    let
+        absN = Basics.abs n
+    in
+    if absN == 0 then
         0
     else
-        (remainderBy 10 n) + sumDigits (n // 10)
+        (remainderBy 10 absN) + sumDigits (absN // 10)
+
+
+
 
 
 -- Ejercicio 8: Verificar Palíndromo
@@ -124,7 +141,8 @@ sumDigits n =
 -- Razonamiento: Primero invertimos el número original y luego lo comparamos con el número original.
 isPalindrome : Int -> Bool
 isPalindrome n =
-    n == reverseNumber n
+    n >= 0 && n == reverseNumber n
+
 
 
 reverseNumber : Int -> Int
@@ -145,6 +163,18 @@ reverseHelper n acc =
                 n // 10
         in
         reverseHelper remainingNumber (acc * 10 + lastDigit)
+
+--USE AI PARA QUE ME DE UNA DESCRIPCION DEL EJERCICIO Y UN RAZONAMIENTO SOLO ESO POR ESO LOS COMENTARIOS
+
+
+
+
+
+
+
+
+
+
 
 
 -- Ejercicio 9: Paréntesis Balanceados
