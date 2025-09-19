@@ -100,8 +100,6 @@ gcd a b =
 
 
 
-
-
 -- Ejercicio 6: Contar Dígitos
 -- Descripción: Cuenta la cantidad de dígitos en un número.
 -- Razonamiento: Si 'n' es 0, hay 0 dígitos (caso base).
@@ -165,15 +163,6 @@ reverseHelper n acc =
         reverseHelper remainingNumber (acc * 10 + lastDigit)
 
 --USE AI PARA QUE ME DE UNA DESCRIPCION DEL EJERCICIO Y UN RAZONAMIENTO SOLO ESO POR ESO LOS COMENTARIOS
-
-
-
-
-
-
-
-
-
 
 
 
