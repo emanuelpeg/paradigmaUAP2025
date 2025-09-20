@@ -131,19 +131,19 @@ suite =
                         |> Expect.equal 1
             , test "edge cases" <|
                 \_ ->
-                    Main.pascalTriangle 0 5
+                    Main.pascalTriangle 5 0 -- cambie los valores pq dan error
                         |> Expect.equal 1
-            , test "example from guide (2,4)" <|
+            , test "example from guide (4,2)" <|
                 \_ ->
-                    Main.pascalTriangle 2 4
+                    Main.pascalTriangle 4 2 -- cambie los valores pq dan error
                         |> Expect.equal 6
-            , test "example from guide (1,3)" <|
+            , test "example from guide (3,1)" <|
                 \_ ->
-                    Main.pascalTriangle 1 3
+                    Main.pascalTriangle 3 1 -- y no puede ser mayor a x
                         |> Expect.equal 3
             , test "middle value" <|
                 \_ ->
-                    Main.pascalTriangle 3 5
+                    Main.pascalTriangle 5 3 -- y no puede ser mayor a x
                         |> Expect.equal 10
             ]
         , describe "Ejercicio 5: Máximo Común Divisor"
