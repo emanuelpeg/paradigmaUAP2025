@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Personaje_1 = require("./Personaje");
+const Item_1 = require("./Item");
+const g = new Personaje_1.Guerrero("Arthas");
+console.log(`Vida inicial: ${g.vida}`);
+g.setVida(50);
+console.log(`Vida tras daño: ${g.vida}`);
+g.inventario.agregarItem(new Item_1.Pocion("Curación", 40));
+g.inventario.usarItem("Curación", g);
+console.log(`Vida tras usar poción: ${g.vida}`);
