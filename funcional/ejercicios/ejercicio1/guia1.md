@@ -21,6 +21,14 @@ Esta guía presenta una serie de ejercicios para practicar la programación func
 
 ```elm
 power : Int -> Int -> Int
+power a b =
+    if b == 0 then
+        1
+    else if b < 0 then
+        0
+    else
+        a * power a (b - 1)
+    
 ```
 
 **Ejemplos:**
@@ -44,6 +52,11 @@ power : Int -> Int -> Int
 
 ```elm
 factorial : Int -> Int
+factorial n =
+    if n <= 1 then
+        1
+    else
+        n * factorial (n - 1)
 ```
 
 **Ejemplos:**
@@ -70,7 +83,23 @@ factorial : Int -> Int
 
 ```elm
 fibonacciExponential : Int -> Int
+fibonacciExponential n =
+    if n == 0 then
+        0
+    else if n == 1 then
+        1
+    else
+        fibonacciExponential (n - 1) + fibonacciExponential (n - 2)
 fibonacciLinear : Int -> Int
+fibonacciLinear n =
+    let
+        helper a b k =
+            if k == 0 then
+                a
+            else
+                helper b (a + b) (k - 1)
+    in
+    helper 0 1 n
 ```
 
 **Ejemplos:**
@@ -94,6 +123,11 @@ fibonacciLinear : Int -> Int
 
 ```elm
 pascalTriangle : Int -> Int -> Int
+pascalTriangle x y =
+    if x == 0 || x == y then
+        1
+    else
+        pascalTriangle (x - 1) (y - 1) + pascalTriangle x (y - 1)
 ```
 
 **Ejemplos:**
@@ -116,7 +150,12 @@ pascalTriangle : Int -> Int -> Int
 **Firma:**
 
 ```elm
-gcd : Int -> Int -> Int
+gcd : Int -> Int -> 
+gcd a b =
+    if b == 0 then
+        abs a
+    else
+        gcd b (modBy b a)
 ```
 
 **Ejemplos:**
@@ -140,6 +179,14 @@ gcd : Int -> Int -> Int
 
 ```elm
 countDigits : Int -> Int
+countDigits n =
+    let
+        num = abs n
+    in
+    if num < 10 then
+        1
+    else
+        1 + countDigits (num // 10)
 ```
 
 **Ejemplos:**
@@ -163,6 +210,14 @@ countDigits : Int -> Int
 
 ```elm
 sumDigits : Int -> Int
+sumDigits n =
+    let
+        num = abs n
+    in
+    if num < 10 then
+        num
+    else
+        (modBy 10 num) + sumDigits (num // 10)
 ```
 
 **Ejemplos:**
@@ -186,7 +241,21 @@ sumDigits : Int -> Int
 
 ```elm
 isPalindrome : Int -> Bool
+isPalindrome n =
+    let
+        num = abs n
+    in
+    num == reverseNumber num
 reverseNumber : Int -> Int
+reverseNumber n =
+    let
+        helper num acc =
+            if num == 0 then
+                acc
+            else
+                helper (num // 10) (acc * 10 + (modBy 10 num))
+    in
+    helper (abs n) 0
 ```
 
 **Ejemplos:**
@@ -211,6 +280,28 @@ reverseNumber : Int -> Int
 
 ```elm
 isBalanced : String -> Bool
+isBalanced str =
+    let
+        chars = String.toList str
+
+        helper list count =
+            case list of
+                [] ->
+                    count == 0
+
+                '(' :: rest ->
+                    helper rest (count + 1)
+
+                ')' :: rest ->
+                    if count <= 0 then
+                        False
+                    else
+                        helper rest (count - 1)
+
+                _ :: rest ->
+                    helper rest count
+    in
+    helper chars 0
 ```
 
 **Ejemplos:**
