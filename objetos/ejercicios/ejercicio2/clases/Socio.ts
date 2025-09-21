@@ -1,11 +1,7 @@
+export type Duracion = number;
+
 import { Libro } from "./Libro";
-
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
-
-/** Duracion en dias de un prestamo */
-type Duracion = number;
+import { Prestamo, PrestamoRegular, PrestamoCorto, PrestamoReferencia, PrestamoDigital, TipoPrestamo } from "./Prestamo";
 
 export abstract class Socio {
   protected prestamos: Prestamo[] = [];
@@ -35,28 +31,46 @@ export abstract class Socio {
   abstract getDuracionPrestamo(): Duracion;
   abstract getMaximoLibros(): number;
 
-  retirar(libro: Libro, duracion?: Duracion) {
+  // Nuevo método para retirar con tipo de préstamo
+  retirar(libro: Libro, tipoPrestamo: TipoPrestamo = 'regular') {
     if (!this.puedeRetirar(libro)) {
       throw new Error("No tiene permisos para retirar este libro");
     }
 
-    const duracionFinal = duracion ?? this.getDuracionPrestamo();
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+    let prestamo: Prestamo;
+    switch (tipoPrestamo) {
+      case 'regular':
+        prestamo = new PrestamoRegular(libro);
+        break;
+      case 'corto':
+        prestamo = new PrestamoCorto(libro);
+        break;
+      case 'referencia':
+        prestamo = new PrestamoReferencia(libro);
+        break;
+      case 'digital':
+        prestamo = new PrestamoDigital(libro);
+        break;
+      default:
+        throw new Error("Tipo de préstamo no válido");
+    }
+    this.prestamos.push(prestamo);
   }
 
-  devolver(libro: Libro) {
+  devolver(libro: Libro, fechaDevolucion: Date = new Date()) {
     const prestamo = this.tienePrestadoLibro(libro);
 
     if (!prestamo) {
       throw new Error("No esta prestado");
     }
 
+    // Calcula multa usando polimorfismo
+    const multa = prestamo.calcularMulta(fechaDevolucion);
+
     const indice = this.prestamos.indexOf(prestamo);
     this.prestamos.splice(indice, 1);
 
-    return prestamo;
+    return { prestamo, multa };
   }
 
   tienePrestadoLibro(libro: Libro): Prestamo | null {
@@ -70,6 +84,11 @@ export abstract class Socio {
   puedeRetirar(libro: Libro): boolean {
     return this.prestamos.length < this.getMaximoLibros();
   }
+
+  // Agrega este getter público
+  getPrestamos(): Prestamo[] {
+    return this.prestamos;
+  }
 }
 
 export class SocioRegular extends Socio {
@@ -81,9 +100,9 @@ export class SocioRegular extends Socio {
     return 3;
   }
 
-  devolver(libro: Libro): Prestamo {
-    // Manejar potenciales multas
-    return super.devolver(libro);
+  // Corrige el tipo de retorno
+  devolver(libro: Libro, fechaDevolucion: Date = new Date()) {
+    return super.devolver(libro, fechaDevolucion);
   }
 }
 
