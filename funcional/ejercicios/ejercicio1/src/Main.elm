@@ -116,8 +116,7 @@ gcd a b =
 
 
  
--- Ejercicio 6: Contar Dígitos
--- Ejercicio 6: Contar Dígitos
+
 -- Ejercicio 6: Contar Dígitos
 countDigits : Int -> Int
 countDigits n =
@@ -145,25 +144,26 @@ sumDigits n =
 -- Ejercicio 8: Verificar Palíndromo
 isPalindrome : Int -> Bool
 isPalindrome n =
-    if n < 0 then
+    if n < 0 then -- teoricamente no haria falta debido a que reverse number usa el absoluto, en dado caso, seria tan facil como comparar con el absoluto y asi.
         False
     else
-        n == reverseNumber n
+        n == reverseNumber n -- llama a reverse number para que le devuelva el numero inverso y si es igual a n, devuelve true
 
 
 -- Función para invertir los dígitos de un número
 reverseNumber : Int -> Int
 reverseNumber n =
-    reverseHelper (abs n) 0
+    reverseHelper (abs n) 0 -- ingresa el absoluto de n con el inicio del acumulador en 0
 
 
 -- Función auxiliar recursiva
 reverseHelper : Int -> Int -> Int
 reverseHelper n acc =
-    if n == 0 then
+    if n == 0 then --verifica si ya termino de hacer el reverso del numero ingresado en el primer n
         acc
     else
-        reverseHelper (toFloat n / 10 |> floor) (acc * 10 + remainderBy 10 n)
+        reverseHelper (toFloat n / 10 |> floor)-- quita el ultimo digito para seguir el ciclo y volverse el nuevo n, ejemplo empieza 121, pasara a ser n = 12
+        (acc * 10 + remainderBy 10 n)-- agrega ese digito al acumulador, ejemplo de 121, acc = 1, luego sera 1*10+2 (10+2) acc = 12
 
 --no se hace
 -- Ejercicio 9: Paréntesis Balanceados
