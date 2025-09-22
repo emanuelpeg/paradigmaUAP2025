@@ -34,7 +34,9 @@ en lugar de usar Maybe. Trabajamos con List en lugar del List de Scala.
 
 concatenar : List Int -> List Int -> List Int
 concatenar lista1 lista2 =
-    []
+    if isEmpty lista1 then lista2
+    else
+        (head lista1) :: concatenar (tail lista1) lista2
 
 
 
@@ -55,7 +57,10 @@ buscar lista com =
 
 max : List Int -> Int
 max lista =
-    0
+    if isEmpty lista then 0
+    else if (isEmpty tail lista) then head lista
+    else
+        
 
 
 
