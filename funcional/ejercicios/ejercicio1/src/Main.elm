@@ -1,8 +1,12 @@
 module Main exposing (..)
 
+<<<<<<< HEAD
 import Html exposing (Html, text)
 import Html exposing (a)
 import Html.Attributes exposing (list)
+=======
+import Html exposing (Html, a, text)
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 main : Html msg
@@ -14,7 +18,11 @@ main = text <|
 
 add : Int -> Int -> Int
 add a b =
-    a + b
+    if b == 0 then
+        a
+
+    else
+        add (a + 1) (b - 1)
 
 
 --multiply : Int -> Int -> Int
@@ -29,27 +37,58 @@ multiply : Int -> Int -> Int
 multiply a b =
     if b == 0 then
         0
+<<<<<<< HEAD
     else if b > 0 then
         a + multiply a (b - 1)
     else
         -- manejar negativos: opcional
         -(multiply a (negate b))
    
+=======
+
+    else if b == 1 then
+        a
+
+    else
+        a + multiply a (b - 1)
+
+
+multiply2 : Int -> Int -> Int -> Int
+multiply2 a b acc =
+    if b == 0 then
+        acc
+
+    else
+        multiply2 a (b - 1) (acc + a)
+
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Ejercicio 1: Función Potencia
+
+
 power : Int -> Int -> Int
 power a b =
     if b == 0 then
         1
+<<<<<<< HEAD
     else
         a * power a (b - 1)
     -- TODO: Implementar función potencia
     
+=======
+
+    else
+        a * power a (b - 1)
+
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Ejercicio 2: Factorial
+
+
 factorial : Int -> Int
+<<<<<<< HEAD
 factorial n = 
     if n <= 1 && n > -1 then
         1
@@ -58,10 +97,22 @@ factorial n =
 
     -- TODO: Implementar factorial
     
+=======
+factorial n =
+    if n <= 1 then
+        1
+
+    else
+        n * factorial (n - 1)
+
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Ejercicio 3: Fibonacci
+
+
 fibonacciExponential : Int -> Int
+<<<<<<< HEAD
 fibonacciExponential n = 
     if n <= 0 then
     0
@@ -71,15 +122,27 @@ fibonacciExponential n =
     fibonacciExponential(n - 1)+fibonacciExponential(n - 2)
     -- TODO: Implementar fibonacci exponencial
     
+=======
+fibonacciExponential n =
+    if n <= 1 then
+        n
+
+    else
+        fibonacciExponential (n - 1) + fibonacciExponential (n - 2)
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Ejercicio 3: Fibonacci lineal con acumuladores
 fibonacciLinear : Int -> Int
 fibonacciLinear n =
+<<<<<<< HEAD
     if n < 0 then
         0
     else
         fibonacciHelper n 0 1
+=======
+    fibonacciHelper n 0 1
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Función auxiliar con acumuladores
@@ -87,13 +150,26 @@ fibonacciHelper : Int -> Int -> Int -> Int
 fibonacciHelper n acc1 acc2 =
     if n == 0 then
         acc1
+<<<<<<< HEAD
     else
         fibonacciHelper(n - 1) acc2 (acc1 + acc2) -- se llama a fibonacci helper pero ahora dandole a acc 1 el valor viejo de acc 2 y acc2 toma el valor de la suma de acc2 y 1
+=======
+
+    else if n == 1 then
+        acc2
+
+    else
+        fibonacciHelper (n - 1) acc2 (acc1 + acc2)
+
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Ejercicio 4: Triángulo de Pascal
+
+
 pascalTriangle : Int -> Int -> Int
 pascalTriangle x y =
+<<<<<<< HEAD
     if x < 0 || y < 0 then
         0
     else if x == 0 || x == y then -- lo que hace es verificar si se llego a la ultima linea del triangulo de pascal
@@ -102,24 +178,44 @@ pascalTriangle x y =
         pascalTriangle (x - 1) (y - 1) + pascalTriangle x (y - 1) -- devuelve la suma del triangulo de pascal de arriba a la izquierda con el de arriba directo, dando asi a la coordenada de abajo inmediata
     -- TODO: Implementar triángulo de Pascal
     
+=======
+    if x == 0 || x == y then
+        1
+
+    else
+        pascalTriangle (x - 1) (y - 1) + pascalTriangle x (y - 1)
+
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Ejercicio 5: Máximo Común Divisor (MCD)
+
+
 gcd : Int -> Int -> Int
 gcd a b =
     if b == 0 then
         abs a
+<<<<<<< HEAD
     else
         gcd b (remainderBy b a)
     -- TODO: Implementar algoritmo euclidiano
     
+=======
+
+    else
+        gcd b (modBy b a)
+
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
  
 
 -- Ejercicio 6: Contar Dígitos
+
+
 countDigits : Int -> Int
 countDigits n =
+<<<<<<< HEAD
     let
         nAbs = abs n
     in
@@ -127,11 +223,25 @@ countDigits n =
         1
     else
         1 + countDigits (toFloat nAbs / 10 |> floor)
+=======
+    if n < 0 then
+        countDigits (-1 * n)
+
+    else if n < 10 then
+        1
+
+    else
+        1 + countDigits (n // 10)
+
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Ejercicio 7: Suma de Dígitos
+
+
 sumDigits : Int -> Int
 sumDigits n =
+<<<<<<< HEAD
     let
         nAbs = abs n
     in
@@ -148,17 +258,41 @@ isPalindrome n =
         False
     else
         n == reverseNumber n -- llama a reverse number para que le devuelva el numero inverso y si es igual a n, devuelve true
+=======
+    if n < 0 then
+        sumDigits (-1 * n)
+
+    else if n < 10 then
+        n
+
+    else
+        modBy 10 n + sumDigits (n // 10)
+
+
+
+-- Ejercicio 8: Verificar Palíndromo
+
+
+isPalindrome : Int -> Bool
+isPalindrome n =
+    n >= 0 && n == reverseNumber n
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Función para invertir los dígitos de un número
 reverseNumber : Int -> Int
 reverseNumber n =
+<<<<<<< HEAD
     reverseHelper (abs n) 0 -- ingresa el absoluto de n con el inicio del acumulador en 0
+=======
+    reverseHelper n 0
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Función auxiliar recursiva
 reverseHelper : Int -> Int -> Int
 reverseHelper n acc =
+<<<<<<< HEAD
     if n == 0 then --verifica si ya termino de hacer el reverso del numero ingresado en el primer n
         acc
     else
@@ -183,3 +317,14 @@ isBalanced str =
 --        if current == Just                         then is BalancedHelper (Maybe.withDefault [] List.tail)
 --    False
 
+=======
+    if n < 10 then
+        acc * 10 + n
+
+    else
+        let
+            digit =
+                modBy 10 n
+        in
+        reverseHelper (n // 10) (acc * 10 + digit)
+>>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
