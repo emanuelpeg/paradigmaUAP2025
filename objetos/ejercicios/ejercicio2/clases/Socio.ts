@@ -8,7 +8,7 @@ class Prestamo {
 type Duracion = number;
 
 export abstract class Socio {
-  protected prestamos: Prestamo[] = [];
+  public prestamos: Prestamo[] = [];
 
   constructor(
     private _id: number,
@@ -69,6 +69,16 @@ export abstract class Socio {
 
   puedeRetirar(libro: Libro): boolean {
     return this.prestamos.length < this.getMaximoLibros();
+  }
+
+  // Método para verificar si tiene préstamos vencidos
+  public tieneLibrosVencidos(): boolean {
+    return this.prestamos.some(prestamo => new Date() > prestamo.vencimiento);
+  }
+
+  // Método para obtener préstamos vencidos
+  public getPrestamosVencidos(): Prestamo[] {
+    return this.prestamos.filter(prestamo => new Date() > prestamo.vencimiento);
   }
 }
 
