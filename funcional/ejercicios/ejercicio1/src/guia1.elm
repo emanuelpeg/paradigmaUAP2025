@@ -1,47 +1,24 @@
-module Main exposing (..)
+module Guia1 exposing (..)
 
-import Html exposing (Html, a, text)
-
-
-main : Html msg
-main =
-    text "Hello, Elm!"
-
-
+--Sumar y Multiplicar Basicos
 add : Int -> Int -> Int
 add a b =
     if b == 0 then
         a
-
     else
-        add (a + 1) (b - 1)
+        add (a+1) (b-1)
 
-
-multiply : Int -> Int -> Int
+multiply :  Int -> Int -> Int
 multiply a b =
     if b == 0 then
         0
-
-    else if b == 1 then
+    else if b == 1 then -- Este caso base ahorra 1 paso de compilado.
         a
-
     else
         a + multiply a (b - 1)
 
 
-multiply2 : Int -> Int -> Int -> Int
-multiply2 a b acc =
-    if b == 0 then
-        acc
-
-    else
-        multiply2 a (b - 1) (acc + a)
-
-
-
--- Ejercicio 1: Función Potencia
-
-
+-- Funcion Potencia 1
 power : Int -> Int -> Int
 power a b =
     if b == 0 then
@@ -50,112 +27,74 @@ power a b =
     else
         a * power a (b - 1)
 
-
-
--- Ejercicio 2: Factorial
-
-
+--Factorial 2
 factorial : Int -> Int
-factorial n =
-    if n <= 1 then
+factorial a = 
+    if a <= 1 then
         1
-
     else
-        n * factorial (n - 1)
+        a * factorial (a - 1)
 
-
-
--- Ejercicio 3: Fibonacci
-
-
+--Fibbonachi 3 (Exponencial y Lineal)
 fibonacciExponential : Int -> Int
-fibonacciExponential n =
-    if n <= 1 then
-        n
-
+fibonacciExponential a =
+    if a <= 1 then
+        a
     else
-        fibonacciExponential (n - 1) + fibonacciExponential (n - 2)
-
+        fibonacciExponential(a-1) + fibonacciExponential(a-2)
 
 fibonacciLinear : Int -> Int
-fibonacciLinear n =
-    fibonacciHelper n 0 1
+fibonacciLinear a =
+    fHelper a 0 1
 
-
-fibonacciHelper : Int -> Int -> Int -> Int
-fibonacciHelper n acc1 acc2 =
-    if n == 0 then
-        acc1
-
-    else if n == 1 then
-        acc2
-
+fHelper : Int -> Int -> Int -> Int
+fHelper a acu1 acu2 =
+    if a == 0 then
+        acu1
+    else if a == 1 then
+        acu2
     else
-        fibonacciHelper (n - 1) acc2 (acc1 + acc2)
+        fHelper (a-1) acu2 (acu1 + acu2)
 
-
-
--- Ejercicio 4: Triángulo de Pascal
-
+-- Pascal 4
 
 pascalTriangle : Int -> Int -> Int
 pascalTriangle x y =
-    if x == 0 || x == y then
+    if x == 0 || y == x then
         1
-
     else
-        pascalTriangle (x - 1) (y - 1) + pascalTriangle x (y - 1)
+        pascalTriangle (x-1) (y-1) + pascalTriangle x (y-1)
 
-
-
--- Ejercicio 5: Máximo Común Divisor (MCD)
-
-
+-- Maximo Comun Divisor 5
 gcd : Int -> Int -> Int
 gcd a b =
     if b == 0 then
-        abs a
-
+    a
     else
-        gcd b (modBy b a)
+    gcd b (modBy b a)
 
-
-
--- Ejercicio 6: Contar Dígitos
-
-
+--  Contar Digitos 6
 countDigits : Int -> Int
-countDigits n =
-    if n < 0 then
-        countDigits (-1 * n)
-
-    else if n < 10 then
+countDigits a =
+    if abs a < 10 then
         1
 
     else
-        1 + countDigits (n // 10)
+        1 + countDigits (abs a // 10)
 
-
-
--- Ejercicio 7: Suma de Dígitos
-
-
+-- Suma de Digitos 7
 sumDigits : Int -> Int
-sumDigits n =
-    if n < 0 then
-        sumDigits (-1 * n)
+sumDigits a =
+    if a < 0 then
+        sumDigits (-1 * a)
 
-    else if n < 10 then
-        n
+    else if a < 10 then
+        a
 
     else
-        modBy 10 n + sumDigits (n // 10)
+        modBy 10 a + sumDigits (a // 10)
 
-
-
--- Ejercicio 8: Verificar Palíndromo
-
-
+-- Verificar Palindromo 8
 isPalindrome : Int -> Bool
 isPalindrome n =
     n >= 0 && n == reverseNumber n
@@ -178,9 +117,7 @@ reverseHelper n acc =
         in
         reverseHelper (n // 10) (acc * 10 + digit)
 
-
--- Ejercicio 9: Paréntesis Balanceados
-
+-- Balance Parentesis 9
 isBalanced : String -> Bool
 isBalanced str =
     let
