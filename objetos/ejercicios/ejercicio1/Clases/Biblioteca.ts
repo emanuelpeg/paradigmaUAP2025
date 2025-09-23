@@ -1,137 +1,165 @@
 import { Libro } from "./Libro";
-import { Autor } from "./Autor";
-import { EventoBiblioteca } from "./EventoBiblioteca";
-import { Socio, SocioRegular, SocioVIP, Empleado, Visitante } from "./Socio";
-import { Prestamo, crearPrestamo, TipoPrestamo } from "./Prestamo";
-import { PoliticaPrestamo, PoliticaEstricta } from "./Politicas";
-import { BuscadorUniversal, CatalogoBiblioteca, BibliotecaDigital, ArchivoHistorico, BaseConocimiento } from "./Busquedas";
+import {
+  Socio, TipoSocio, SocioRegular, SocioVIP, Empleado, Visitante
+} from "./Socio";
+import {
+  Prestamo, PrestamoRegular, PrestamoCorto, PrestamoReferencia, PrestamoDigital
+} from "./Prestamo";
+import {
+  PoliticaPrestamo, PoliticaFlexible
+} from "./Politicas";
+import { CatalogoBiblioteca } from "./CatalogoBiblioteca";
+import { BibliotecaDigital, type RecursoDigital } from "./BibliotecaDigital";
+import { ArchivoHistorico, type DocumentoAntiguo } from "./ArchivoHistorico";
+import { BaseConocimiento, type Articulo } from "./BaseConocimiento";
+import { BuscadorUniversal } from "./BuscadorUniversal";
+
+type ModoPrestamo = "regular" | "corto" | "referencia" | "digital";
 
 export class Biblioteca {
-  private inventario: Libro[] = [];
-  private socios: Map<number, Socio> = new Map();
-  private autores: Autor[] = [];
-  private reservas: Map<string, Socio[]> = new Map(); // ISBN -> cola
-  private politica: PoliticaPrestamo = new PoliticaEstricta();
-  private buscador: BuscadorUniversal = new BuscadorUniversal([]);
+  private libros = new Map<string, Libro>();                    // isbn -> Libro
+  private disponibles = new Map<string, boolean>();             // isbn -> disponible?
+  private socios = new Map<number, Socio>();                    // id -> Socio
+  private prestamos = new Map<string, Prestamo>();              // isbn -> Prestamo activo
+  private espera = new Map<string, number[]>();                 // isbn -> cola
+  private politica: PoliticaPrestamo = new PoliticaFlexible();
+
+  // Sistemas de búsqueda
+  private catalogo = new CatalogoBiblioteca([]);
+  private digital = new BibliotecaDigital([]);
+  private archivo = new ArchivoHistorico([]);
+  private baseConocimiento = new BaseConocimiento([]);
+  private buscador = new BuscadorUniversal([
+    this.catalogo, this.digital, this.archivo, this.baseConocimiento
+  ]);
+
+  // ======== API ========
 
   setPolitica(p: PoliticaPrestamo) { this.politica = p; }
-  getPolitica() { return this.politica; }
 
-  // Libros / Autores
-  agregarLibro(titulo: string, autorNombre: string, isbn: string, esReferencia = false): Libro {
-    const autor = this.ensureAutor(autorNombre);
+  agregarLibro(titulo: string, autor: string, isbn: string, esReferencia = false) {
     const libro = new Libro(titulo, autor, isbn, esReferencia);
-    this.inventario.push(libro);
-    // refrescar fuentes del buscador
-    this.buscador = new BuscadorUniversal([
-      new CatalogoBiblioteca(this.inventario),
-      new BibliotecaDigital(this.inventario),
-      new ArchivoHistorico(this.inventario),
-      new BaseConocimiento(this.inventario)
-    ]);
-    return libro;
-  }
-  private ensureAutor(nombre: string): Autor {
-    const ex = this.autores.find(a => a.nombre.toLowerCase() === nombre.toLowerCase());
-    if (ex) return ex;
-    const nuevo = new Autor(nombre); this.autores.push(nuevo); return nuevo;
-  }
-  buscarLibro(isbn: string) { return this.inventario.find(l => l.isbn === isbn); }
-  buscarLibrosPorAutorNombre(nombre: string) {
-    return this.inventario.filter(l => l.autor.nombre.toLowerCase() === nombre.toLowerCase());
+    this.libros.set(isbn, libro);
+    this.disponibles.set(isbn, true);
+    this.espera.set(isbn, []);
+    // catalogable
+    (this.catalogo as any).constructor === CatalogoBiblioteca && (this.catalogo as CatalogoBiblioteca);
+    (this.catalogo as any).libros
+      ? (this.catalogo as any).libros.push(libro)
+      : Object.assign(this.catalogo, new CatalogoBiblioteca([libro]));
   }
 
-  // Socios
-  registrarSocio(tipo: "regular"|"vip"|"empleado"|"visitante", id: number, nombre: string, apellido: string): Socio {
-    if (this.socios.has(id)) return this.socios.get(id)!;
-    let socio: Socio;
+  registrarSocio(tipo: TipoSocio, id: number, nombre: string, apellido: string): Socio {
+    let s: Socio;
     switch (tipo) {
-      case "vip": socio = new SocioVIP(id, nombre, apellido); break;
-      case "empleado": socio = new Empleado(id, nombre, apellido); break;
-      case "visitante": socio = new Visitante(id, nombre, apellido); break;
-      default: socio = new SocioRegular(id, nombre, apellido);
+      case "regular": s = new SocioRegular(id, nombre, apellido); break;
+      case "vip": s = new SocioVIP(id, nombre, apellido); break;
+      case "empleado": s = new Empleado(id, nombre, apellido); break;
+      case "visitante": s = new Visitante(id, nombre, apellido); break;
+      default: s = new SocioRegular(id, nombre, apellido);
     }
-    this.socios.set(id, socio);
-    return socio;
-  }
-  buscarSocio(id: number) { return this.socios.get(id); }
-
-  // Buscador universal
-  buscarEnSistemas(criterio: Partial<{ titulo: string; autor: string; isbn: string }>) {
-    return this.buscador.buscar(criterio);
+    this.socios.set(id, s);
+    return s;
   }
 
-  // ---- Préstamos polimórficos ----
-  prestarLibro(socioId: number, isbn: string, tipo: TipoPrestamo = "regular", fecha: Date = new Date()) {
-    const socio = this.buscarSocio(socioId);
-    const libro = this.buscarLibro(isbn);
-    if (!socio || !libro) throw new Error("Socio o libro no encontrado.");
-
-    if (socio instanceof Visitante) throw new Error("El visitante no puede pedir prestado.");
-    if (!socio.puedeTomarOtro()) throw new Error("Cupo de préstamos alcanzado.");
-    if (libro.esReferencia && !(socio instanceof Empleado)) tipo = "referencia";
-
-    const veredicto = this.politica.puedePrestar(socio);
-    if (!veredicto.permitido) throw new Error(`Préstamo denegado por política: ${veredicto.motivo}`);
-
-    const prestado = Array.from(this.socios.values())
-      .some(s => s.prestamos.some(p => p.libro.isbn === isbn));
-    if (prestado && tipo !== "referencia") {
-      this.reservarLibro(socio, isbn);
-      return { reservado: true as const };
+  /** ¿el socio tiene al menos un préstamo vencido? */
+  private tieneVencidos(socio: Socio): boolean {
+    for (const p of this.prestamos.values()) {
+      if (p.socio.id === socio.id && p.estaVencido()) return true;
     }
-
-    const p: Prestamo = crearPrestamo(tipo, libro, fecha);
-
-    // ajuste según política (si aplica) para préstamos con vencimiento
-    const v = p.calcularVencimiento();
-    if (v && veredicto.diasExtra) {
-      v.setDate(v.getDate() + veredicto.diasExtra);
-      const base = (tipo === "corto") ? 7 : 14;
-      const nuevoInicio = new Date(v); nuevoInicio.setDate(nuevoInicio.getDate() - base);
-      (p as any).fechaInicio = nuevoInicio;
-    }
-
-    socio.agregarPrestamo(p);
-    EventoBiblioteca.notificarPrestamo(socio.nombreCompleto, libro.titulo, v ?? new Date());
-    return { reservado: false as const, vencimiento: v ?? null, tipo };
+    return false;
   }
 
-  devolverLibro(socioId: number, isbn: string, fecha: Date = new Date()) {
-    const socio = this.buscarSocio(socioId);
-    const libro = this.buscarLibro(isbn);
-    if (!socio || !libro) throw new Error("Socio o libro no encontrado.");
+  prestarLibro(socioId: number, isbn: string, modo: ModoPrestamo): string {
+    const socio = this.socios.get(socioId);
+    const libro = this.libros.get(isbn);
+    if (!socio) return `Error: socio ${socioId} inexistente`;
+    if (!libro) return `Error: libro ${isbn} inexistente`;
+    if (!socio.puedePedir()) return `El tipo ${socio.tipo} no puede pedir prestado`;
 
-    const multa = socio.registrarDevolucion(isbn, fecha);
-    EventoBiblioteca.notificarDevolucion(socio.nombreCompleto, libro.titulo, multa);
+    // referencia solo para empleados
+    if ((libro.esReferencia || modo === "referencia") && !socio.puedeReferencia()) {
+      return `Rechazado: solo empleados pueden llevar referencia`;
+    }
 
-    const cola = this.reservas.get(isbn) ?? [];
+    // política + límites
+    const vencidos = this.tieneVencidos(socio);
+    if (!this.politica.puedePrestar(socio, vencidos)) {
+      return `Rechazado por política de préstamo`;
+    }
+
+    const disp = this.disponibles.get(isbn) ?? true;
+    const limite = socio.limite();
+    if (!disp) {
+      const cola = this.espera.get(isbn)!;
+      if (!cola.includes(socioId)) cola.push(socioId);
+      return `En espera (#${cola.length})`;
+    }
+    if (limite !== "ilimitado" && socio.prestamosActivos >= limite) {
+      return `Límite alcanzado (${limite})`;
+    }
+
+    // instanciar préstamo polimórfico
+    const prestamo = this.crearPrestamo(modo, socio, libro, socio.diasPrestamo());
+    this.prestamos.set(isbn, prestamo);
+    this.disponibles.set(isbn, false);
+    socio.prestamosActivos++;
+    return `Prestado (${modo}) a ${socio.nombre}, vence ${prestamo.vencimiento.toDateString()}`;
+  }
+
+  private crearPrestamo(modo: ModoPrestamo, socio: Socio, libro: Libro, baseDias: number): Prestamo {
+    // ajustar días por política
+    const dias = this.politica.ajustarDiasBase(baseDias);
+
+    switch (modo) {
+      case "corto": return new PrestamoCorto(socio, libro);
+      case "referencia": return new PrestamoReferencia(socio, libro);
+      case "digital": return new PrestamoDigital(socio, libro);
+      case "regular":
+      default:
+        // “simular” días distintos: desplazamos fecha en el objeto (opcional)
+        const p = new PrestamoRegular(socio, libro);
+        // no cambiamos el tipo, solo dejamos el default de la subclase
+        return p;
+    }
+  }
+
+  devolverLibro(socioId: number, isbn: string): string {
+    const socio = this.socios.get(socioId);
+    const p = this.prestamos.get(isbn);
+    if (!socio) return `Error: socio ${socioId} inexistente`;
+    if (!p) { this.disponibles.set(isbn, true); return `No había préstamo activo`; }
+
+    // calcular multa (si corresponde y si el socio paga multa)
+    const multa = p.socio.pagaMulta() ? p.calcularMulta() : 0;
+
+    // liberar
+    this.prestamos.delete(isbn);
+    this.disponibles.set(isbn, true);
+    p.socio.prestamosActivos = Math.max(0, p.socio.prestamosActivos - 1);
+
+    // asignar a siguiente en cola
+    const cola = this.espera.get(isbn) ?? [];
     if (cola.length > 0) {
-      const sig = cola.shift()!;
-      this.reservas.set(isbn, cola);
-      this.prestarLibro(sig.id, isbn, libro.esReferencia ? "referencia" : "regular", fecha);
-      EventoBiblioteca.notificarReserva(sig.nombreCompleto, libro.titulo);
+      const nextId = cola.shift()!;
+      this.espera.set(isbn, cola);
+      return `Devuelto. Multa: $${multa}. Siguiente: ${this.socios.get(nextId)?.nombre ?? nextId}`;
     }
+    return `Devuelto. Multa: $${multa}. Ahora disponible`;
   }
 
-  private reservarLibro(socio: Socio, isbn: string) {
-    const cola = this.reservas.get(isbn) ?? [];
-    if (!cola.some(s => s.id === socio.id)) { cola.push(socio); this.reservas.set(isbn, cola); }
+  // ===== Buscadores internos (componen el BuscadorUniversal) =====
+  agregarRecursoDigital(r: RecursoDigital) { (this.digital as any).recursos?.push?.(r); }
+  agregarDocumentoAntiguo(d: DocumentoAntiguo) { (this.archivo as any).docs?.push?.(d); }
+  agregarArticulo(a: Articulo) { (this.baseConocimiento as any).articulos?.push?.(a); }
+
+  buscarEnSistemas(criterio: { titulo?: string; autor?: string; isbn?: string }): any[] {
+    return this.buscador.buscarEnTodos(criterio);
   }
 
-  recomendarLibros(socioId: number): Libro[] {
-    const socio = this.buscarSocio(socioId); if (!socio) return [];
-    const autoresLeidos = new Set(socio.historialLectura.map(l => l.autor.nombre.toLowerCase()));
-    const yaLeidos = new Set(socio.historialLectura.map(l => l.isbn));
-    const prestados = new Set(
-      Array.from(this.socios.values()).flatMap(s => s.prestamos.map(p => p.libro.isbn))
-    );
-    const cand = this.inventario.filter(l =>
-      autoresLeidos.has(l.autor.nombre.toLowerCase()) && !yaLeidos.has(l.isbn) && !prestados.has(l.isbn)
-    );
-    return cand.length ? cand : this.inventario.filter(l => !yaLeidos.has(l.isbn) && !prestados.has(l.isbn));
-  }
+  listarLibros(): Libro[] { return [...this.libros.values()]; }
+  disponible(isbn: string): boolean { return this.disponibles.get(isbn) ?? true; }
 }
 
 export const biblioteca = new Biblioteca();
-export default biblioteca;
+export type { TipoSocio, Socio, Libro };

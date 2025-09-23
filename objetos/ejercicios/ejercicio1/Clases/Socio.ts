@@ -1,75 +1,66 @@
-import { Libro } from "./Libro";
-import { Prestamo } from "./Prestamo";
+export type TipoSocio = "regular" | "vip" | "empleado" | "visitante";
 
 export abstract class Socio {
-  protected _prestamos: Prestamo[] = [];
-  protected _historial: Libro[] = [];
-  protected _deuda: number = 0;
-
+  prestamosActivos: number = 0;
   constructor(
-    private _id: number,
-    private _nombre: string,
-    private _apellido: string
+    public id: number,
+    public nombre: string,
+    public apellido: string,
+    public tipo: TipoSocio
   ) {}
 
-  get id() { return this._id; }
-  get nombreCompleto() { return `${this._nombre} ${this._apellido}`; }
-  get prestamos(): ReadonlyArray<Prestamo> { return this._prestamos; }
-  get historialLectura(): ReadonlyArray<Libro> { return this._historial; }
-  get deudaPendiente(): number { return this._deuda; }
-
-  abstract capacidadMaxima(): number | "ilimitado";
-  abstract periodoBaseDias(): number;
-  abstract aplicaMultas(): boolean; // VIP no paga multa
-
-  puedeTomarOtro(): boolean {
-    if (this.capacidadMaxima() === "ilimitado") return true;
-    return this._prestamos.length < (this.capacidadMaxima() as number);
-  }
-
-  tienePrestado(isbn: string): boolean {
-    return this._prestamos.some(p => p.libro.isbn === isbn);
-  }
-
-  agregarPrestamo(p: Prestamo) {
-    if (!this.tienePrestado(p.libro.isbn)) this._prestamos.push(p);
-  }
-
-  registrarDevolucion(isbn: string, fecha: Date): number {
-    const idx = this._prestamos.findIndex(p => p.libro.isbn === isbn);
-    if (idx === -1) throw new Error("El socio no tenía este libro.");
-    const p = this._prestamos[idx];
-    this._prestamos.splice(idx, 1);
-
-    const multa = p.calcularMulta(this, fecha);
-    this._deuda += multa;
-
-    if (!this._historial.some(l => l.isbn === p.libro.isbn)) this._historial.push(p.libro);
-    return multa;
-  }
-
-  pagarDeuda(monto: number) { if (monto > 0) this._deuda = Math.max(0, this._deuda - monto); }
+  /** límite de préstamos en simultáneo */
+  abstract limite(): number | "ilimitado";
+  /** días de préstamo por defecto */
+  abstract diasPrestamo(): number;
+  /** si paga multa */
+  abstract pagaMulta(): boolean;
+  /** ¿puede referencia? */
+  abstract puedeReferencia(): boolean;
+  /** ¿puede pedir libros? */
+  abstract puedePedir(): boolean;
 }
 
-// ---- Tipos de socio
 export class SocioRegular extends Socio {
-  capacidadMaxima() { return 3; }
-  periodoBaseDias() { return 14; }
-  aplicaMultas()    { return true; }
+  constructor(id: number, nombre: string, apellido: string) {
+    super(id, nombre, apellido, "regular");
+  }
+  limite(): number | "ilimitado" { return 3; }
+  diasPrestamo(): number { return 14; }
+  pagaMulta(): boolean { return true; }
+  puedeReferencia(): boolean { return false; }
+  puedePedir(): boolean { return true; }
 }
+
 export class SocioVIP extends Socio {
-  capacidadMaxima() { return 5; }
-  periodoBaseDias() { return 21; }
-  aplicaMultas()    { return false; } // sin multas
+  constructor(id: number, nombre: string, apellido: string) {
+    super(id, nombre, apellido, "vip");
+  }
+  limite(): number | "ilimitado" { return 5; }
+  diasPrestamo(): number { return 21; } // extendido
+  pagaMulta(): boolean { return false; } // sin multas
+  puedeReferencia(): boolean { return false; }
+  puedePedir(): boolean { return true; }
 }
+
 export class Empleado extends Socio {
-  capacidadMaxima(): "ilimitado" { return "ilimitado"; }  // ← tipo literal explícito
-  periodoBaseDias() { return 28; }
-  aplicaMultas()    { return true; }
+  constructor(id: number, nombre: string, apellido: string) {
+    super(id, nombre, apellido, "empleado");
+  }
+  limite(): number | "ilimitado" { return "ilimitado"; }
+  diasPrestamo(): number { return 28; }
+  pagaMulta(): boolean { return false; }
+  puedeReferencia(): boolean { return true; } // acceso a referencia
+  puedePedir(): boolean { return true; }
 }
 
 export class Visitante extends Socio {
-  capacidadMaxima() { return 0; }
-  periodoBaseDias() { return 0; }
-  aplicaMultas()    { return false; }
+  constructor(id: number, nombre: string, apellido: string) {
+    super(id, nombre, apellido, "visitante");
+  }
+  limite(): number | "ilimitado" { return 0; }
+  diasPrestamo(): number { return 0; }
+  pagaMulta(): boolean { return false; }
+  puedeReferencia(): boolean { return false; }
+  puedePedir(): boolean { return false; } // solo catálogo
 }
