@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// objetos/ejercicios/index.ts
 const Biblioteca_1 = require("./ejercicio1/Clases/Biblioteca");
 const Politicas_1 = require("./ejercicio1/Clases/Politicas");
 // Libros (uno de referencia)
@@ -16,9 +17,8 @@ Biblioteca_1.biblioteca.setPolitica(new Politicas_1.PoliticaFlexible());
 // Préstamos polimórficos
 console.log("Facu → regular:", Biblioteca_1.biblioteca.prestarLibro(facu.id, "987", "regular"));
 console.log("Juan → reserva:", Biblioteca_1.biblioteca.prestarLibro(juan.id, "987", "regular"));
-Biblioteca_1.biblioteca.devolverLibro(facu.id, "987"); // pasa a Juan
+console.log("Devolver:", Biblioteca_1.biblioteca.devolverLibro(facu.id, "987")); // pasa a Juan
 // Referencia: solo empleado
 console.log("Empleado → referencia:", Biblioteca_1.biblioteca.prestarLibro(ana.id, "REF-001", "referencia"));
-// biblioteca.prestarLibro(facu.id, "REF-001", "referencia"); // debería lanzar error
 // Buscador universal
-console.log("Buscar '1984':", Biblioteca_1.biblioteca.buscarEnSistemas({ titulo: "1984" }).map(l => l.obtenerInformacion()));
+console.log("Buscar '1984':", Biblioteca_1.biblioteca.buscarEnSistemas({ titulo: "1984" }).map((l) => l.obtenerInformacion()));

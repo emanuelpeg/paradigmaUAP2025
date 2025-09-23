@@ -1,4 +1,5 @@
-import { biblioteca } from "./ejercicio1/Clases/Biblioteca";
+// objetos/ejercicios/index.ts
+import { biblioteca, type Libro } from "./ejercicio1/Clases/Biblioteca";
 import { PoliticaFlexible } from "./ejercicio1/Clases/Politicas";
 
 // Libros (uno de referencia)
@@ -18,11 +19,13 @@ biblioteca.setPolitica(new PoliticaFlexible());
 // Préstamos polimórficos
 console.log("Facu → regular:", biblioteca.prestarLibro(facu.id, "987", "regular"));
 console.log("Juan → reserva:", biblioteca.prestarLibro(juan.id, "987", "regular"));
-biblioteca.devolverLibro(facu.id, "987"); // pasa a Juan
+console.log("Devolver:", biblioteca.devolverLibro(facu.id, "987")); // pasa a Juan
 
 // Referencia: solo empleado
 console.log("Empleado → referencia:", biblioteca.prestarLibro(ana.id, "REF-001", "referencia"));
-// biblioteca.prestarLibro(facu.id, "REF-001", "referencia"); // debería lanzar error
 
 // Buscador universal
-console.log("Buscar '1984':", biblioteca.buscarEnSistemas({ titulo: "1984" }).map(l => l.obtenerInformacion()));
+console.log(
+  "Buscar '1984':",
+  biblioteca.buscarEnSistemas({ titulo: "1984" }).map((l: Libro) => l.obtenerInformacion())
+);
