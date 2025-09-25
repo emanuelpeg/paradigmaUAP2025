@@ -1,58 +1,50 @@
 import { Libro } from "./Libro";
 
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
-
-/** Duracion en dias de un prestamo */
-type Duracion = number;
-
 export class Socio {
-  private prestamos: Prestamo[] = [];
+    private prestamos: Map<Libro, Date> = new Map();
+    private historial: Libro[] = [];
+    private deuda: number = 0;
 
-  constructor(
-    private _id: number,
-    private _nombre: string,
-    private _apellido: string
-  ) {}
+    constructor(
+        public id: number,
+        public nombre: string
+    ) {}
 
-  get id() {
-    return this._id;
-  }
-
-  get nombre() {
-    return this._nombre;
-  }
-
-  get apellido() {
-    return this._apellido;
-  }
-
-  get nombreCompleto() {
-    return `${this.nombre} ${this.apellido}`;
-  }
-
-  retirar(libro: Libro, duracion: Duracion) {
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracion);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
-  }
-
-  devolver(libro: Libro) {
-    const prestamo = this.tienePrestadoLibro(libro);
-
-    if (!prestamo) {
-      throw new Error("No esta prestado");
+    puedePedirPrestamo(): boolean {
+        return this.deuda == 0;
     }
 
-    const indice = this.prestamos.indexOf(prestamo);
-    // Eliminar el elemento en el indice
-    this.prestamos.splice(indice, 1);
+    tomarPrestado(libro: Libro, fechaPrestamo: Date): void {
+        this.prestamos.set(libro, fechaPrestamo);
+        this.historial.push(libro);
+    }
 
-    return prestamo;
-  }
+    devolverLibro(libro: Libro, fechaDevolucion: Date, multaPorDia: number): number {
+        const fechaPrestamo = this.prestamos.get(libro);
+        if (!fechaPrestamo) return 0;
 
-  tienePrestadoLibro(libro: Libro): Prestamo | null {
-    return this.prestamos.find((p) => p.libro === libro) ?? null;
-  }
+        const diasPrestamo = Math.floor((fechaDevolucion.getTime() - fechaPrestamo.getTime()) / (1000 * 60 * 60 * 24));
+        const diasPermitidos = 7; // 7 dias de prestamo
+        let multa = 0;
+
+        if (diasPrestamo > diasPermitidos) {
+            multa = (diasPrestamo - diasPermitidos) * multaPorDia;
+            this.deuda += multa;
+        }
+
+        this.prestamos.delete(libro);
+        return multa;
+    }
+
+    pagarDeuda(monto: number): void {
+        this.deuda = Math.max(0, this.deuda - monto);
+    }
+
+    getHistorial(): Libro[] {
+        return [...this.historial];
+    }
+
+    getDeuda(): number {
+        return this.deuda;
+    }
 }

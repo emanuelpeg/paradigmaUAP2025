@@ -1,17 +1,39 @@
-export class Libro {
-  constructor(
-    private _titulo: string,
-    private _autor: string,
-    private _isbn: string
-  ) {}
+import { Autor } from "./Autor";
+import { Socio } from "./Socio";
 
-  get titulo() {
-    return this._titulo;
-  }
-  get autor() {
-    return this._autor;
-  }
-  get isbn() {
-    return this._isbn;
-  }
+export class Libro {
+    private disponible: boolean = true;
+    private reservas: Socio[] = [];
+
+    constructor(
+        public titulo: string,
+        public autor: Autor,
+        public isbn: string,
+    ) {}
+
+    estaDisponible(): boolean {
+        return this.disponible;
+    }
+
+    prestar(): boolean {
+        if (this.disponible) {
+            this.disponible = false;
+            return true;
+        }
+        return false;
+    }
+
+    devolver(): Socio | null {
+        this.disponible = true;
+        return this.reservas.length > 0 ? this.reservas.shift()! : null;
+    }
+
+    reservar(socio: Socio): void {
+        if (!this.reservas.includes(socio)) {
+            this.reservas.push(socio);        }
+    }
+
+    getReservas(): Socio[] {
+        return [...this.reservas];
+    }
 }
