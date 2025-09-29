@@ -1,0 +1,28 @@
+import Html
+
+type Tree 
+    = EmptyTree
+    | TreeImpl Int Tree Tree
+    
+add: Tree -> Int -> Tree
+add tree data = 
+  case tree of 
+    EmptyTree -> TreeImpl data EmptyTree EmptyTree
+    TreeImpl treeData left rigth -> 
+      if (treeData > data) then TreeImpl treeData (add left data) rigth
+      else TreeImpl treeData left (add rigth data)
+      
+print: Tree -> String
+print tree = 
+  case tree of 
+    EmptyTree -> ""
+    TreeImpl treeData left rigth -> 
+      print left ++ (String.fromInt treeData) ++ print rigth
+
+
+
+
+ejemplo = add (add (add EmptyTree 4) 2) 7
+
+main =
+  Html.text (print ejemplo)
