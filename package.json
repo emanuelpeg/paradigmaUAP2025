@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev": "ts-node --files --cwd-mode ./objetos/ejercicios/ejercicio1/index.ts",
+    "build": "tsc",
+    "start": "node dist/objetos/ejercicios/ejercicio1/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0"
+  }
+}
