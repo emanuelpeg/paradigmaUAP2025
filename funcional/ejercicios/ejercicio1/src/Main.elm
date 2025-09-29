@@ -12,15 +12,38 @@ main =
 
 add : Int -> Int -> Int
 add a b =
-    a + b
+    if b == 0 then
+        a
+
+    else
+        add (a + 1) (b - 1)
 
 
 multiply : Int -> Int -> Int
 multiply a b =
-    a * b
+    if b == 0 then
+        0
+
+    else if b == 1 then
+        a
+
+    else
+        a + multiply a (b - 1)
+
+
+multiply2 : Int -> Int -> Int -> Int
+multiply2 a b acc =
+    if b == 0 then
+        acc
+
+    else
+        multiply2 a (b - 1) (acc + a)
+
 
 
 -- Ejercicio 1: Función Potencia
+
+
 power : Int -> Int -> Int
 power a b =
     -- TODO: Implementar función potencia
@@ -30,6 +53,8 @@ power a b =
 
 
 -- Ejercicio 2: Factorial
+
+
 factorial : Int -> Int
 factorial n =
     -- TODO: Implementar factorial
@@ -43,6 +68,8 @@ factorial n =
 
 
 -- Ejercicio 3: Fibonacci
+
+
 fibonacciExponential : Int -> Int
 fibonacciExponential n =
     -- TODO: Implementar fibonacci exponencial
@@ -74,6 +101,8 @@ fibonacciHelper n acc1 acc2 =
 
 
 -- Ejercicio 4: Triángulo de Pascal
+
+
 pascalTriangle : Int -> Int -> Int
 pascalTriangle x y =
     -- TODO: Implementar triángulo de Pascal
@@ -88,6 +117,8 @@ pascalTriangle x y =
         -- clacula las posiciones por encima del numero que se pide
 
 -- Ejercicio 5: Máximo Común Divisor (MCD)
+
+
 gcd : Int -> Int -> Int
 gcd a b =
     -- TODO: Implementar algoritmo euclidiano
@@ -97,6 +128,8 @@ gcd a b =
         gcd b (remainderBy b a)
 
 -- Ejercicio 6: Contar Dígitos
+
+
 countDigits : Int -> Int
 countDigits n =
     -- TODO: Implementar contador de dígitos
@@ -110,6 +143,8 @@ countDigits n =
 
 
 -- Ejercicio 7: Suma de Dígitos
+
+
 sumDigits : Int -> Int
 sumDigits n =
     -- TODO: Implementar suma de dígitos
@@ -123,6 +158,8 @@ sumDigits n =
 
 
 -- Ejercicio 8: Verificar Palíndromo
+
+
 isPalindrome : Int -> Bool
 isPalindrome n =
     -- TODO: Implementar verificador de palíndromo
