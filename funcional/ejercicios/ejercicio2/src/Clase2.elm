@@ -270,7 +270,6 @@ transformar lista fx =
 
 
 
--- Retorna true si un elemento existe en la lista
 
 
 existe : List Int -> Int -> Bool
@@ -306,10 +305,6 @@ removerDuplicados lista =
 
 
 
--- OPCIONAL: Subconjuntos
--- Dada una lista de enteros, retorna una lista con todos los posibles subconjuntos
--- Por ejemplo: [1,2,3] -> [[], [1], [2], [3], [1,2], [1,3], [2,3], [1,2,3]]
-
 
 subSets : List Int -> List (List Int)
 subSets lista =
@@ -322,13 +317,7 @@ subSets lista =
                 subConjuntosSinX =
                     subSets xs
             in
-            concatenar subConjuntosSinX (List.map (\subConjunto -> x :: subConjunto) subConjuntosSinX)
-
-
-
--- OPCIONAL: Cortar
--- Dada una lista de enteros y un número entero n, retorna subconjuntos con n elementos
--- Ejemplo: [1,2,3,4,5] y 2 -> [[1,2], [3,4], [5]]
+            subConjuntosSinX ++ List.map (\subConjunto -> x :: subConjunto) subConjuntosSinX
 
 
 cortar : List Int -> Int -> List (List Int)
@@ -405,3 +394,61 @@ ejemplos =
     , "existe [1,2,3] 2 debería devolver True"
     , "existe [1,2,3] 4 debería devolver False"
     ]
+
+
+-- Función para ejecutar todas las pruebas
+pruebasEjemplos : List String
+pruebasEjemplos =
+    [ "Resultado de max [1,2,3,4,5]: " ++ String.fromInt (max [1,2,3,4,5])
+    , "Resultado de min [1,2,3,4,5]: " ++ String.fromInt (min [1,2,3,4,5])
+    , "Resultado de maximos [1,2,3,4,5] 3: " ++ Debug.toString (maximos [1,2,3,4,5] 3)
+    , "Resultado de minimos [1,2,3,4,5] 3: " ++ Debug.toString (minimos [1,2,3,4,5] 3)
+    , "Resultado de quickSort [3,1,4,1,5,9,2,6]: " ++ Debug.toString (quickSort [3,1,4,1,5,9,2,6])
+    , "Resultado de contar [1,2,3,4,5]: " ++ String.fromInt (contar [1,2,3,4,5])
+    , "Resultado de acc [1,2,3,4,5]: " ++ String.fromInt (acc [1,2,3,4,5])
+    , "Resultado de filtrarPares [1,2,3,4,5,6]: " ++ Debug.toString (filtrarPares [1,2,3,4,5,6])
+    , "Resultado de filtrarMultiplosDeTres [1,2,3,6,9,10]: " ++ Debug.toString (filtrarMultiplosDeTres [1,2,3,6,9,10])
+    , "Resultado de acumularDoble [1,2,3]: " ++ String.fromInt (acumularDoble [1,2,3])
+    , "Resultado de acumularCuadrado [1,2,3]: " ++ String.fromInt (acumularCuadrado [1,2,3])
+    , "Resultado de concatenar [1,2] [3,4]: " ++ Debug.toString (concatenar [1,2] [3,4])
+    , "Resultado de existe [1,2,3] 2: " ++ Debug.toString (existe [1,2,3] 2)
+    , "Resultado de existe [1,2,3] 4: " ++ Debug.toString (existe [1,2,3] 4)
+    ]
+
+
+-- Pruebas adicionales
+pruebasExtendidas : List String
+pruebasExtendidas =
+    [ "Resultado de obtenerElemento [1,2,3,4,5] 2: " ++ String.fromInt (obtenerElemento [1,2,3,4,5] 2)
+    , "Resultado de obtenerElemento [1,2,3] 5: " ++ String.fromInt (obtenerElemento [1,2,3] 5)
+    , "Resultado de mediana [1,3,5]: " ++ String.fromInt (mediana [1,3,5])
+    , "Resultado de mediana [1,2,3,4]: " ++ String.fromInt (mediana [1,2,3,4])
+    , "Resultado de mediana []: " ++ String.fromInt (mediana [])
+    , "Resultado de acumularUnidad [1,2,3,4,5]: " ++ String.fromInt (acumularUnidad [1,2,3,4,5])
+    , "Resultado de transformar [1,2,3] (\\x -> x * 2): " ++ Debug.toString (transformar [1,2,3] (\x -> x * 2))
+    , "Resultado de unirOfSet [1,2,3] [2,3,4]: " ++ Debug.toString (unirOfSet [1,2,3] [2,3,4])
+    , "Resultado de removerDuplicados [1,2,2,3,3,4]: " ++ Debug.toString (removerDuplicados [1,2,2,3,3,4])
+    ]
+
+
+-- Pruebas opcionales
+pruebasOpcionales : List String
+pruebasOpcionales =
+    [ "Resultado de subSets [1,2]: " ++ Debug.toString (subSets [1,2])
+    , "Resultado de subSets [1,2,3]: " ++ Debug.toString (subSets [1,2,3])
+    , "Resultado de cortar [1,2,3,4,5] 2: " ++ Debug.toString (cortar [1,2,3,4,5] 2)
+    , "Resultado de cortar [1,2,3,4,5,6,7] 3: " ++ Debug.toString (cortar [1,2,3,4,5,6,7] 3)
+    , "Resultado de tomar 3 [1,2,3,4,5]: " ++ Debug.toString (tomar 3 [1,2,3,4,5])
+    , "Resultado de saltar 2 [1,2,3,4,5]: " ++ Debug.toString (saltar 2 [1,2,3,4,5])
+    ]
+
+
+-- Mostrar todas las pruebas
+todasLasPruebas : List String
+todasLasPruebas =
+    [ "=== PRUEBAS EJEMPLOS BÁSICOS ===" ]
+        ++ pruebasEjemplos
+        ++ [ "", "=== + PRUEBAS ===" ]
+        ++ pruebasExtendidas
+        ++ [ "", "=== PRUEBAS OPCIONALES ===" ]
+        ++ pruebasOpcionales
