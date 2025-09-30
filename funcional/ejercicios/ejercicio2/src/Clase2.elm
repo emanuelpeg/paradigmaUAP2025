@@ -110,6 +110,10 @@ quickSort xs =
             []
 
         pivot :: resto ->
+        -- TODO: Implementar quicksort recursivamente
+        -- 1. Dividir resto en menores y mayores que pivot
+        -- 2. Ordenar recursivamente ambas particiones
+        -- 3. Concatenar: (menores ordenados) ++ [pivot] ++ (mayores ordenados)
             let
                 menores = List.filter (\x -> x <= pivot) resto
                 mayores = List.filter (\x -> x > pivot) resto
@@ -196,6 +200,7 @@ filtrar xs p =
 
 filtrarPares : List Int -> List Int
 filtrarPares xs =
+    -- Pista: Usar modBy 2 para verificar números pares
     filtrar xs (\x -> modBy 2 x == 0)
 
 
@@ -225,6 +230,7 @@ acumular lista fx =
 
 acumularUnidad : List Int -> Int
 acumularUnidad lista =
+    -- Pista: (\x -> x)
     acumular lista (\x -> x)
 
 
@@ -234,6 +240,7 @@ acumularUnidad lista =
 
 acumularDoble : List Int -> Int
 acumularDoble lista =
+    -- Pista: (\x -> x * 2)
     acumular lista (\x -> x * 2)
 
 
@@ -243,6 +250,7 @@ acumularDoble lista =
 
 acumularCuadrado : List Int -> Int
 acumularCuadrado lista =
+    -- Pista: (\x -> x * x)
     acumular lista (\x -> x * x)
 
 
@@ -271,6 +279,7 @@ existe lista nro =
 
 unirOfSet : List Int -> List Int -> List Int
 unirOfSet lista otraLista =
+    -- Vas a necesitar una función auxiliar para remover duplicados
     removerDuplicados (lista ++ otraLista)
 
 
