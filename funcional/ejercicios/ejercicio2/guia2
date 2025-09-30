@@ -1,0 +1,160 @@
+module GuiaListas exposing
+    ( buscar
+    , max
+    , min
+    , maximos
+    , minimos
+    , quickSort
+    , obtenerElemento
+    , mediana
+    , contar
+    , acc
+    , filtrar
+    , filtrarPares
+    , filtrarMultiplosDeTres
+    , acumular
+    , acumularUnidad
+    , acumularDoble
+    , acumularCuadrado
+    , unir
+    , transformar
+    , existe
+    , unirOfSet
+    , removerDuplicados
+    , subSets
+    , cortar
+    , tomar
+    , saltar
+    )
+
+-- Ejercicio 1: Búsqueda Genérica
+buscar : List Int -> (Int -> Int -> Bool) -> Int
+buscar xs cmp =
+    case List.head xs of
+        Nothing ->
+            0
+
+        Just y ->
+            List.foldl (\a b -> if cmp a b then a else b) y (List.tail xs |> Maybe.withDefault [])
+-- Ejercicio 2: Máximo y Mínimo
+max : List Int -> Int
+max xs = buscar xs (\a b -> a > b)
+
+min : List Int -> Int
+min xs = buscar xs (\a b -> a < b)
+
+-- Ejercicio 3: Filtros por Umbral
+maximos : List Int -> Int -> List Int
+maximos xs n = List.filter (\x -> x > n) xs
+
+minimos : List Int -> Int -> List Int
+minimos xs n = List.filter (\x -> x < n) xs
+
+-- Ejercicio 4: QuickSort
+quickSort : List Int -> List Int
+quickSort xs =
+    case xs of
+        [] -> []
+        pivot :: rest ->
+            let
+                menores = List.filter (\x -> x < pivot) rest
+                mayores = List.filter (\x -> x >= pivot) rest
+            in
+            quickSort menores ++ [pivot] ++ quickSort mayores
+
+-- Ejercicio 5: Acceso por Índice
+obtenerElemento : List Int -> Int -> Int
+obtenerElemento xs idx =
+    case xs of
+        [] -> 0
+        y :: ys ->
+            if idx == 0 then y
+            else obtenerElemento ys (idx - 1)
+
+-- Ejercicio 6: Mediana
+mediana : List Int -> Int
+mediana xs =
+    let
+        ordenada = quickSort xs
+        len = List.length ordenada
+    in
+    if len == 0 then
+        0
+    else
+        let
+            medio = len // 2
+        in
+        obtenerElemento ordenada medio
+
+-- Ejercicio 7: Contar y Acumular
+contar : List Int -> Int
+contar xs = List.length xs
+
+acc : List Int -> Int
+acc xs = List.sum xs
+
+-- Ejercicio 8: Filtrado Genérico
+filtrar : List Int -> (Int -> Bool) -> List Int
+filtrar xs pred = List.filter pred xs
+
+filtrarPares : List Int -> List Int
+filtrarPares xs = filtrar xs (\x -> modBy 2 x == 0)
+
+filtrarMultiplosDeTres : List Int -> List Int
+filtrarMultiplosDeTres xs = filtrar xs (\x -> modBy 3 x == 0)
+
+-- Ejercicio 9: Acumulación con Transformación
+acumular : List Int -> (Int -> Int) -> Int
+acumular xs f = List.foldl (\x acc -> f x + acc) 0 xs
+
+acumularUnidad : List Int -> Int
+acumularUnidad xs = acumular xs (\x -> x)
+
+acumularDoble : List Int -> Int
+acumularDoble xs = acumular xs (\x -> x * 2)
+
+acumularCuadrado : List Int -> Int
+acumularCuadrado xs = acumular xs (\x -> x * x)
+
+-- Ejercicio 10: Operaciones con Listas
+unir : List Int -> List Int -> List Int
+unir xs ys = xs ++ ys
+
+transformar : List Int -> (Int -> a) -> List a
+transformar xs f = List.map f xs
+
+existe : List Int -> Int -> Bool
+existe xs n = List.member n xs
+
+-- Ejercicio 11: Unión sin Duplicados
+unirOfSet : List Int -> List Int -> List Int
+unirOfSet xs ys = removerDuplicados (unir xs ys)
+
+removerDuplicados : List Int -> List Int
+removerDuplicados xs =
+    List.foldr (\x acc -> if List.member x acc then acc else x :: acc) [] xs
+
+-- Ejercicio Opcional: Subconjuntos
+subSets : List Int -> List (List Int)
+subSets xs =
+    case xs of
+        [] -> [ [] ]
+        y :: ys ->
+            let
+                subs = subSets ys
+            in
+            subs ++ List.map (\s -> y :: s) subs
+
+-- Ejercicio Opcional: Dividir en Grupos
+cortar : List Int -> Int -> List (List Int)
+cortar xs n =
+    if List.isEmpty xs then
+        []
+    else
+        tomar n xs :: cortar (saltar n xs) n
+
+tomar : Int -> List a -> List a
+tomar n xs = List.take n xs
+
+saltar : Int -> List a -> List a
+saltar n xs = List.drop n xs
