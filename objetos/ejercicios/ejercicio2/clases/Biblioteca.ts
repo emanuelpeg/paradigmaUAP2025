@@ -1,67 +1,68 @@
 import { Libro } from "./Libro";
-import { Socio, SocioFactory, TipoSocio } from "./Socio";
+import { Socio, SocioRegular, SocioVIP, Empleado, Visitante, Duracion } from "./Socio";
+import { PoliticaPrestamo, PoliticaEstricta } from "./Politica";
 
-class Biblioteca {
+export class Biblioteca {
   private inventario: Libro[] = [];
   private socios: Socio[] = [];
+  private politica: PoliticaPrestamo = new PoliticaEstricta();
 
-  // Funciones de libros
+  cambiarPolitica(nueva: PoliticaPrestamo) {
+    this.politica = nueva;
+  }
+
+  // Libros
   agregarLibro(titulo: string, autor: string, isbn: string): Libro {
-    const libroCreado = new Libro(titulo, autor, isbn);
-    this.inventario.push(libroCreado);
-    return libroCreado;
+    const libro = new Libro(titulo, autor, isbn);
+    this.inventario.push(libro);
+    return libro;
   }
-
   buscarLibro(isbn: string): Libro | null {
-    // return this.inventario.find(libro => libro.isbn === isbn) ?? null;
-    const libroEncontrado = this.inventario.find(
-      (libro) => libro.isbn === isbn
-    );
-    if (libroEncontrado) {
-      return libroEncontrado;
+    return this.inventario.find(l => l.isbn === isbn) ?? null;
+  }
+
+  // Socios
+  registrarSocio(id: number, nombre: string, apellido: string, tipo: "regular" | "vip" | "empleado" | "visitante" = "regular"): Socio {
+    let socio: Socio;
+    switch (tipo) {
+      case "vip": socio = new SocioVIP(id, nombre, apellido); break;
+      case "empleado": socio = new Empleado(id, nombre, apellido); break;
+      case "visitante": socio = new Visitante(id, nombre, apellido); break;
+      default: socio = new SocioRegular(id, nombre, apellido);
     }
-    return null;
+    this.socios.push(socio);
+    return socio;
   }
-
-  // Funciones de socios
-  registrarSocio(tipo: TipoSocio, id: number, nombre: string, apellido: string): Socio {
-    const socioCreado = SocioFactory.crearSocio(tipo, id, nombre, apellido);
-    this.socios.push(socioCreado);
-    return socioCreado;
-  }
-
   buscarSocio(id: number): Socio | null {
-    return this.socios.find((socio) => socio.id === id) ?? null;
+    return this.socios.find(s => s.id === id) ?? null;
   }
 
-  retirarLibro(socioId: number, libroISBN: string): void {
+  // Préstamos
+  prestarLibro(socioId: number, isbn: string) {
     const socio = this.buscarSocio(socioId);
-    const libro = this.buscarLibro(libroISBN);
+    const libro = this.buscarLibro(isbn);
+    if (!socio || !libro) throw new Error("Socio o libro inexistente");
 
-    if (!socio || !libro) {
-      throw new Error("No se encontro");
+    if (!this.politica.puedePrestar(socio)) {
+      throw new Error("El socio no puede retirar libros según la política actual");
     }
-    // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
-        throw new Error("Libro no esta disponible");
-      }
-    }
+    const duracion: Duracion = this.politica.calcularDuracion(socio);
 
-    socio.retirar(libro);
+    socio.retirar(libro, duracion);
   }
 
-  devolverLibro(socioId: number, libroISBN: string) {
+  devolverLibro(socioId: number, isbn: string): number {
     const socio = this.buscarSocio(socioId);
-    const libro = this.buscarLibro(libroISBN);
+    const libro = this.buscarLibro(isbn);
+    if (!socio || !libro) throw new Error("Socio o libro inexistente");
 
-    if (!socio || !libro) {
-      throw new Error("No se encontro");
-    }
+    return socio.devolver(libro);
+  }
 
-    socio.devolver(libro);
+  // utilidades
+  listarLibros(): string[] {
+    return this.inventario.map(l => l.toString());
   }
 }
 
 export const biblioteca = new Biblioteca();
-export type { Biblioteca };
