@@ -9,102 +9,102 @@ suite : Test
 suite =
     describe "Main module - Comprehensive Test Suite"
         [ describe "Basic functions"
-            [ --         describe "add function"
-              --         [ test "adds two positive numbers" <|
-              --             \_ ->
-              --                 Main.add 2 3
-              --                     |> Expect.equal 5
-              --         , test "adds negative and positive numbers" <|
-              --             \_ ->
-              --                 Main.add (-5) 3
-              --                     |> Expect.equal (-2)
-              --         , test "adds zero" <|
-              --             \_ ->
-              --                 Main.add 0 5
-              --                     |> Expect.equal 5
-              --         ]
-              --     , describe "multiply function"
-              --         [ test "multiplies two positive numbers" <|
-              --             \_ ->
-              --                 Main.multiply 3 4
-              --                     |> Expect.equal 12
-              --         , test "multiplies by zero" <|
-              --             \_ ->
-              --                 Main.multiply 5 0
-              --                     |> Expect.equal 0
-              --         , test "multiplies negative numbers" <|
-              --             \_ ->
-              --                 Main.multiply (-2) 3
-              --                     |> Expect.equal (-6)
-              --         ]
-              --     ]
-              -- , describe "Ejercicio 1: Función Potencia"
-              --     [ test "power of zero" <|
-              --         \_ ->
-              --             Main.power 5 0
-              --                 |> Expect.equal 1
-              --     , test "power example from guide" <|
-              --         \_ ->
-              --             Main.power 2 3
-              --                 |> Expect.equal 8
-              --     , test "another power example" <|
-              --         \_ ->
-              --             Main.power 10 2
-              --                 |> Expect.equal 100
-              --     , test "power of one" <|
-              --         \_ ->
-              --             Main.power 7 1
-              --                 |> Expect.equal 7
-              --     , test "negative base" <|
-              --         \_ ->
-              --             Main.power (-2) 3
-              --                 |> Expect.equal (-8)
-              --     ]
-              -- , describe "Ejercicio 2: Factorial"
-              --     [ test "factorial of 0" <|
-              --         \_ ->
-              --             Main.factorial 0
-              --                 |> Expect.equal 1
-              --     , test "factorial of 1" <|
-              --         \_ ->
-              --             Main.factorial 1
-              --                 |> Expect.equal 1
-              --     , test "factorial of 5" <|
-              --         \_ ->
-              --             Main.factorial 5
-              --                 |> Expect.equal 120
-              --     , test "factorial of 4" <|
-              --         \_ ->
-              --             Main.factorial 4
-              --                 |> Expect.equal 24
-              --     , test "factorial of 6" <|
-              --         \_ ->
-              --             Main.factorial 6
-              --                 |> Expect.equal 720
-              --     ]
-              --   describe "Ejercicio 3: Fibonacci"
-              --     [ describe "Fibonacci Exponential"
-              --         [ test "fibonacci of 0" <|
-              --             \_ ->
-              --                 Main.fibonacciExponential 0
-              --                     |> Expect.equal 0
-              --         , test "fibonacci of 1" <|
-              --             \_ ->
-              --                 Main.fibonacciExponential 1
-              --                     |> Expect.equal 1
-              --         , test "fibonacci of 10" <|
-              --             \_ ->
-              --                 Main.fibonacciExponential 10
-              --                     |> Expect.equal 55
-              --         , test "fibonacci exponential of 50" <|
-              --             \_ ->
-              --                 Main.fibonacciExponential 10
-              --                     |> Expect.equal 55
-              --         , test "fibonacci of 7" <|
-              --             \_ ->
-              --                 Main.fibonacciExponential 7
-              --                     |> Expect.equal 13
-              --         ]
+            [          describe "add function"
+                       [ test "adds two positive numbers" <|
+                           \_ ->
+                               Main.add 2 3
+                                   |> Expect.equal 5
+                       , test "adds negative and positive numbers" <|
+                           \_ ->
+                               Main.add (-5) 3
+                                   |> Expect.equal (-2)
+                       , test "adds zero" <|
+                           \_ ->
+                               Main.add 0 5
+                                   |> Expect.equal 5
+                       ]
+                   , describe "multiply function"
+                       [ test "multiplies two positive numbers" <|
+                           \_ ->
+                               Main.multiply 3 4
+                                   |> Expect.equal 12
+                       , test "multiplies by zero" <|
+                           \_ ->
+                               Main.multiply 5 0
+                                   |> Expect.equal 0
+                       , test "multiplies negative numbers" <|
+                           \_ ->
+                               Main.multiply (-2) 3
+                                   |> Expect.equal (-6)
+                       ]
+                   ]
+               , describe "Ejercicio 1: Función Potencia"
+                   [ test "power of zero" <|
+                       \_ ->
+                           Main.power 5 0
+                               |> Expect.equal 1
+                   , test "power example from guide" <|
+                       \_ ->
+                           Main.power 2 3
+                               |> Expect.equal 8
+                   , test "another power example" <|
+                       \_ ->
+                           Main.power 10 2
+                               |> Expect.equal 100
+                   , test "power of one" <|
+                       \_ ->
+                           Main.power 7 1
+                               |> Expect.equal 7
+                   , test "negative base" <|
+                       \_ ->
+                           Main.power (-2) 3
+                               |> Expect.equal (-8)
+                   ]
+               , describe "Ejercicio 2: Factorial"
+                   [ test "factorial of 0" <|
+                       \_ ->
+                           Main.factorial 0
+                               |> Expect.equal 1
+                   , test "factorial of 1" <|
+                       \_ ->
+                           Main.factorial 1
+                               |> Expect.equal 1
+                   , test "factorial of 5" <|
+                       \_ ->
+                           Main.factorial 5
+                               |> Expect.equal 120
+                   , test "factorial of 4" <|
+                       \_ ->
+                           Main.factorial 4
+                               |> Expect.equal 24
+                   , test "factorial of 6" <|
+                       \_ ->
+                           Main.factorial 6
+                               |> Expect.equal 720
+                   ]
+                 describe "Ejercicio 3: Fibonacci"
+                   [ describe "Fibonacci Exponential"
+                       [ test "fibonacci of 0" <|
+                           \_ ->
+                               Main.fibonacciExponential 0
+                                   |> Expect.equal 0
+                       , test "fibonacci of 1" <|
+                           \_ ->
+                               Main.fibonacciExponential 1
+                                   |> Expect.equal 1
+                       , test "fibonacci of 10" <|
+                           \_ ->
+                               Main.fibonacciExponential 10
+                                   |> Expect.equal 55
+                       , test "fibonacci exponential of 50" <|
+                           \_ ->
+                               Main.fibonacciExponential 10
+                                   |> Expect.equal 55
+                       , test "fibonacci of 7" <|
+                           \_ ->
+                               Main.fibonacciExponential 7
+                                   |> Expect.equal 13
+                       ]
               describe "Fibonacci Linear"
                 [ test "fibonacci linear of 0" <|
                     \_ ->
@@ -262,46 +262,47 @@ suite =
                     ]
                 ]
 
-            -- , describe "Ejercicio 9: Paréntesis Balanceados"
-            --     [ test "simple balanced" <|
-            --         \_ ->
-            --             Main.isBalanced "()"
-            --                 |> Expect.equal True
-            --     , test "nested balanced" <|
-            --         \_ ->
-            --             Main.isBalanced "((()))()"
-            --                 |> Expect.equal True
-            --     , test "mixed balanced" <|
-            --         \_ ->
-            --             Main.isBalanced "(()())"
-            --                 |> Expect.equal True
-            --     , test "unbalanced - missing opening" <|
-            --         \_ ->
-            --             Main.isBalanced "(()(())"
-            --                 |> Expect.equal False
-            --     , test "unbalanced - extra closing" <|
-            --         \_ ->
-            --             Main.isBalanced "(()(()))"
-            --                 |> Expect.equal True
-            --     , test "wrong order" <|
-            --         \_ ->
-            --             Main.isBalanced ")("
-            --                 |> Expect.equal False
-            --     , test "empty string" <|
-            --         \_ ->
-            --             Main.isBalanced ""
-            --                 |> Expect.equal True
-            --     , test "only opening" <|
-            --         \_ ->
-            --             Main.isBalanced "((("
-            --                 |> Expect.equal False
-            --     , test "only closing" <|
-            --         \_ ->
-            --             Main.isBalanced ")))"
-            --                 |> Expect.equal False
-            --     , test "with other characters" <|
-            --         \_ ->
-            --             Main.isBalanced "a(b)c"
-            --                 |> Expect.equal True
+             , describe "Ejercicio 9: Paréntesis Balanceados"
+                 [ test "simple balanced" <|
+                     \_ ->
+                         Main.isBalanced "()"
+                             |> Expect.equal True
+                 , test "nested balanced" <|
+                     \_ ->
+                         Main.isBalanced "((()))()"
+                             |> Expect.equal True
+                 , test "mixed balanced" <|
+                     \_ ->
+                         Main.isBalanced "(()())"
+                             |> Expect.equal True
+                 , test "unbalanced - missing opening" <|
+                     \_ ->
+                         Main.isBalanced "(()(())"
+                             |> Expect.equal False
+                 , test "unbalanced - extra closing" <|
+                     \_ ->
+                         Main.isBalanced "(()(()))"
+                             |> Expect.equal True
+                 , test "wrong order" <|
+                     \_ ->
+                         Main.isBalanced ")("
+                             |> Expect.equal False
+                 , test "empty string" <|
+                     \_ ->
+                         Main.isBalanced ""
+                             |> Expect.equal True
+                 , test "only opening" <|
+                     \_ ->
+                         Main.isBalanced "((("
+                             |> Expect.equal False
+                 , test "only closing" <|
+                     \_ ->
+                         Main.isBalanced ")))"
+                             |> Expect.equal False
+                 , test "with other characters" <|
+                     \_ ->
+                         Main.isBalanced "a(b)c"
+                             |> Expect.equal True
             ]
         ]
+        
