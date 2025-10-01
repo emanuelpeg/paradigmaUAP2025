@@ -1,5 +1,6 @@
 import { Libro } from "./Libro";
 import { Socio, SocioFactory, TipoSocio } from "./Socio";
+import { TipoPrestamo } from "./Socio";
 
 class Biblioteca {
   private inventario: Libro[] = [];
@@ -34,21 +35,21 @@ class Biblioteca {
     return this.socios.find((socio) => socio.id === id) ?? null;
   }
 
-  retirarLibro(socioId: number, libroISBN: string): void {
+  retirarLibro(socioId: number, libroISBN: string, tipoPrestamo: TipoPrestamo = TipoPrestamo.REGULAR): void {
     const socio = this.buscarSocio(socioId);
     const libro = this.buscarLibro(libroISBN);
 
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-    // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
+
+    for (const s of this.socios) {
+      if (s.tienePrestadoLibro(libro)) {
         throw new Error("Libro no esta disponible");
       }
     }
 
-    socio.retirar(libro);
+    socio.retirar(libro, tipoPrestamo);
   }
 
   devolverLibro(socioId: number, libroISBN: string) {

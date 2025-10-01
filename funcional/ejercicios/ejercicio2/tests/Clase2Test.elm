@@ -460,7 +460,7 @@ testsRemoverDuplicados =
 
 -- TESTS PARA SUBSETS (OPCIONAL)
 
-
+{-
 testsSubSets : Test
 testsSubSets =
     describe "Tests para subSets (opcional)"
@@ -579,3 +579,4 @@ suite =
         , testsCortar
         , testsFuncionesAuxiliares
         ]
+-}

@@ -19,24 +19,7 @@ add a b =
 
 multiply : Int -> Int -> Int
 multiply a b =
-    if b == 0 then
-        0
-
-    else if b == 1 then
-        a
-
-    else
-        a + multiply a (b - 1)
-
-
-multiply2 : Int -> Int -> Int -> Int
-multiply2 a b acc =
-    if b == 0 then
-        acc
-
-    else
-        multiply2 a (b - 1) (acc + a)
-
+    a * b
 
 
 -- Ejercicio 1: Función Potencia
@@ -44,12 +27,8 @@ multiply2 a b acc =
 
 power : Int -> Int -> Int
 power a b =
-    if b == 0 then
-        1
-
-    else
-        a * power a (b - 1)
-
+    -- TODO: Implementar función potencia
+    0
 
 
 -- Ejercicio 2: Factorial
@@ -57,12 +36,8 @@ power a b =
 
 factorial : Int -> Int
 factorial n =
-    if n <= 1 then
-        1
-
-    else
-        n * factorial (n - 1)
-
+    -- TODO: Implementar factorial
+    0
 
 
 -- Ejercicio 3: Fibonacci
@@ -70,11 +45,8 @@ factorial n =
 
 fibonacciExponential : Int -> Int
 fibonacciExponential n =
-    if n <= 1 then
-        n
-
-    else
-        fibonacciExponential (n - 1) + fibonacciExponential (n - 2)
+    -- TODO: Implementar fibonacci exponencial
+    0
 
 
 fibonacciLinear : Int -> Int
@@ -84,15 +56,8 @@ fibonacciLinear n =
 
 fibonacciHelper : Int -> Int -> Int -> Int
 fibonacciHelper n acc1 acc2 =
-    if n == 0 then
-        acc1
-
-    else if n == 1 then
-        acc2
-
-    else
-        fibonacciHelper (n - 1) acc2 (acc1 + acc2)
-
+    -- TODO: Función auxiliar para fibonacci lineal
+    0
 
 
 -- Ejercicio 4: Triángulo de Pascal
@@ -100,12 +65,8 @@ fibonacciHelper n acc1 acc2 =
 
 pascalTriangle : Int -> Int -> Int
 pascalTriangle x y =
-    if x == 0 || x == y then
-        1
-
-    else
-        pascalTriangle (x - 1) (y - 1) + pascalTriangle x (y - 1)
-
+    -- TODO: Implementar triángulo de Pascal
+    0
 
 
 -- Ejercicio 5: Máximo Común Divisor (MCD)
@@ -113,12 +74,8 @@ pascalTriangle x y =
 
 gcd : Int -> Int -> Int
 gcd a b =
-    if b == 0 then
-        abs a
-
-    else
-        gcd b (modBy b a)
-
+    -- TODO: Implementar algoritmo euclidiano
+    0
 
 
 -- Ejercicio 6: Contar Dígitos
@@ -126,15 +83,8 @@ gcd a b =
 
 countDigits : Int -> Int
 countDigits n =
-    if n < 0 then
-        countDigits (-1 * n)
-
-    else if n < 10 then
-        1
-
-    else
-        1 + countDigits (n // 10)
-
+    -- TODO: Implementar contador de dígitos
+    0
 
 
 -- Ejercicio 7: Suma de Dígitos
@@ -142,15 +92,8 @@ countDigits n =
 
 sumDigits : Int -> Int
 sumDigits n =
-    if n < 0 then
-        sumDigits (-1 * n)
-
-    else if n < 10 then
-        n
-
-    else
-        modBy 10 n + sumDigits (n // 10)
-
+    -- TODO: Implementar suma de dígitos
+    0
 
 
 -- Ejercicio 8: Verificar Palíndromo
@@ -158,7 +101,8 @@ sumDigits n =
 
 isPalindrome : Int -> Bool
 isPalindrome n =
-    n >= 0 && n == reverseNumber n
+    -- TODO: Implementar verificador de palíndromo
+    False
 
 
 reverseNumber : Int -> Int
@@ -168,12 +112,18 @@ reverseNumber n =
 
 reverseHelper : Int -> Int -> Int
 reverseHelper n acc =
-    if n < 10 then
-        acc * 10 + n
+    -- TODO: Función auxiliar para invertir número
+    0
 
-    else
-        let
-            digit =
-                modBy 10 n
-        in
-        reverseHelper (n // 10) (acc * 10 + digit)
+
+-- Ejercicio 9: Paréntesis Balanceados
+isBalanced : String -> Bool
+isBalanced str =
+    -- TODO: Implementar verificador de paréntesis balanceados
+    False
+
+
+isBalancedHelper : List Char -> Int -> Bool
+isBalancedHelper chars counter =
+    -- TODO: Función auxiliar para verificar paréntesis balanceados
+    False
