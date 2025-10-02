@@ -1,9 +1,19 @@
 module Clase2 exposing (..)
+import List exposing (isEmpty)
+import List exposing (tail)
+import Html.Attributes exposing (list)
+import List exposing (head)
 
 
-head : List a -> a
+head : List Int -> Int
 head list =
-    Maybe.withDefault (Debug.todo "head called on empty list") (List.head list)
+    case List.head list of
+        Just h ->
+            h
+
+        Nothing ->
+            Debug.todo "head called on empty list"
+        
 
 
 tail : List a -> List a
@@ -34,7 +44,13 @@ en lugar de usar Maybe. Trabajamos con List en lugar del List de Scala.
 
 concatenar : List Int -> List Int -> List Int
 concatenar lista1 lista2 =
-    []
+    if isEmpty lista1 then lista2
+    else (head lista1) :: concatenar (tail lista1) lista2
+    
+--concatenar [1,2,3] [4,5,6] -> 1 :: concatenar [2,3] [4,5,6]
+--concatenar [2,3] [4,5,6] -> 2 :: [3,4,5,6]
+--concatenar [3] [4,5,6] -> 3 :: [4,5,6]
+-- concatenar [] [4,5,6]
 
 
 
@@ -45,7 +61,23 @@ concatenar lista1 lista2 =
 
 buscar : List Int -> (Int -> Int -> Bool) -> Int
 buscar lista com =
+    if isEmpty lista then
     0
+    else if isEmpty (tail lista) then
+    head lista
+    --si solo tiene 1 elemento
+    else
+        let
+            h = head lista 
+
+            m = buscar (tail lista) com 
+
+        in
+
+        if com h m then
+        h 
+
+        else m   
 
 
 
@@ -55,8 +87,21 @@ buscar lista com =
 
 max : List Int -> Int
 max lista =
-    0
+    --if isEmpty lista then 0
+   -- else if (isEmpty (tail lista)) then head lista -- si solo tiene un elemento
+    --else let
+     --   h = head lista
 
+      --  m = (max(tail lista))
+    --in
+     
+   -- if (h) > (m) then (h)
+    --else (m)
+    let
+        com = \x y -> x >y
+
+    in
+    buscar lista com
 
 
 -- Busca el Mínimo
@@ -65,8 +110,18 @@ max lista =
 
 min : List Int -> Int
 min lista =
-    0
-
+    --if isEmpty lista then 0
+    --else if (isEmpty (tail lista)) then head lista -- si solo tiene un elemento
+  --  else let
+    --    h = head lista
+--
+  --      m = (min(tail lista))
+   -- in
+     
+   -- if (h) < (m) then (h)
+    --else (m)
+    --0
+ buscar lista (\x y  -> x < y)
 
 
 -- Filtra la lista de valores mayores que el valor e pasado por parámetro
@@ -74,18 +129,27 @@ min lista =
 
 maximos : List Int -> Int -> List Int
 maximos lista e =
-    []
+  --  if isEmpty lista then lista
+   -- else if (head lista) > e then (head lista) :: (maximos (tail lista) e)
 
+    ---else maximos (tail lista) e
 
+    filtrar lista (\h -> h > e)
+
+    
 
 -- Filtra la lista de valores menores que el valor e pasado por parámetro
 
 
 minimos : List Int -> Int -> List Int
 minimos lista e =
-    []
-
-
+    --if isEmpty lista then lista 
+    --else let h = head lista
+    --in
+    --if h < e then 
+     --    h :: minimos (tail lista) e
+    --else minimos (tail lista) e
+    filtrar lista (\h -> h < e)
 
 -- Ordena los valores de una lista utilizando quicksort
 
@@ -111,7 +175,13 @@ quickSort xs =
 
 obtenerElemento : List Int -> Int -> Int
 obtenerElemento lista posicion =
+    if posicion < 0 then 
     0
+    else if  isEmpty lista then 
+    0
+    else if posicion == 0 then head lista 
+    else obtenerElemento(tail lista) (posicion - 1)
+    
 
 
 
@@ -149,8 +219,20 @@ acc lista =
 
 
 filtrar : List Int -> (Int -> Bool) -> List Int
-filtrar xs p =
-    []
+filtrar lista com =
+
+    if isEmpty lista then 
+        lista 
+    else 
+        let 
+            h =
+                head lista
+            
+        in
+    if (com h)  then 
+         h :: filtrar (tail lista) com
+    else filtrar (tail lista) com
+    
 
 
 

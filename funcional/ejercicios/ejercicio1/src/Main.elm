@@ -195,17 +195,10 @@ gcd : Int -> Int -> Int
 gcd a b =
     if b == 0 then
         abs a
-<<<<<<< HEAD
     else
         gcd b (remainderBy b a)
     -- TODO: Implementar algoritmo euclidiano
     
-=======
-
-    else
-        gcd b (modBy b a)
-
->>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
  
@@ -215,7 +208,6 @@ gcd a b =
 
 countDigits : Int -> Int
 countDigits n =
-<<<<<<< HEAD
     let
         nAbs = abs n
     in
@@ -223,17 +215,6 @@ countDigits n =
         1
     else
         1 + countDigits (toFloat nAbs / 10 |> floor)
-=======
-    if n < 0 then
-        countDigits (-1 * n)
-
-    else if n < 10 then
-        1
-
-    else
-        1 + countDigits (n // 10)
-
->>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Ejercicio 7: Suma de Dígitos
@@ -241,7 +222,6 @@ countDigits n =
 
 sumDigits : Int -> Int
 sumDigits n =
-<<<<<<< HEAD
     let
         nAbs = abs n
     in
@@ -258,41 +238,17 @@ isPalindrome n =
         False
     else
         n == reverseNumber n -- llama a reverse number para que le devuelva el numero inverso y si es igual a n, devuelve true
-=======
-    if n < 0 then
-        sumDigits (-1 * n)
-
-    else if n < 10 then
-        n
-
-    else
-        modBy 10 n + sumDigits (n // 10)
-
-
-
--- Ejercicio 8: Verificar Palíndromo
-
-
-isPalindrome : Int -> Bool
-isPalindrome n =
-    n >= 0 && n == reverseNumber n
->>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Función para invertir los dígitos de un número
 reverseNumber : Int -> Int
 reverseNumber n =
-<<<<<<< HEAD
     reverseHelper (abs n) 0 -- ingresa el absoluto de n con el inicio del acumulador en 0
-=======
-    reverseHelper n 0
->>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
 
 
 -- Función auxiliar recursiva
 reverseHelper : Int -> Int -> Int
 reverseHelper n acc =
-<<<<<<< HEAD
     if n == 0 then --verifica si ya termino de hacer el reverso del numero ingresado en el primer n
         acc
     else
@@ -317,14 +273,3 @@ isBalanced str =
 --        if current == Just                         then is BalancedHelper (Maybe.withDefault [] List.tail)
 --    False
 
-=======
-    if n < 10 then
-        acc * 10 + n
-
-    else
-        let
-            digit =
-                modBy 10 n
-        in
-        reverseHelper (n // 10) (acc * 10 + digit)
->>>>>>> 6503c16d93fb26819380dafdb0211797af43c0f8
