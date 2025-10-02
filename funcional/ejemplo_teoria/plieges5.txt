@@ -1,0 +1,16 @@
+import Html
+
+lista = [0,3,4,88,5,1,2]
+
+qs: List Int -> List Int
+qs l = 
+  case l of
+    [] -> []
+    h :: t -> 
+      (qs (List.filter (\x -> x < h) t)) 
+      ++ h::[] 
+      ++ (qs (List.filter (\x -> x > h) t)) 
+
+main =
+  List.foldr (++) "" (List.map (String.fromInt) (qs lista))
+  |> Html.text 
