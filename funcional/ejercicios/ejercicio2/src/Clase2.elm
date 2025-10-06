@@ -3,7 +3,10 @@ module Clase2 exposing (..)
 
 head : List a -> a
 head list =
-    Maybe.withDefault (Debug.todo "head called on empty list") (List.head list)
+    -- Maybe.withDefault (Debug.todo "head called on empty list") (List.head list)
+    case List.head list of 
+        Just h -> h
+        Nothing -> Debug.todo "head called on an empty list"
 
 
 tail : List a -> List a
@@ -47,7 +50,15 @@ concatenar lista1 lista2 =
 
 buscar : List Int -> (Int -> Int -> Bool) -> Int
 buscar lista com =
-    0
+    if isEmpty lista then 0
+    else if (isEmpty (tail lista)) then head lista
+    else 
+        let 
+            h = head lista
+            m = buscar (tail lista) com
+        in 
+        if com h m then h
+        else m
 
 
 
@@ -57,10 +68,8 @@ buscar lista com =
 
 max : List Int -> Int
 max lista =
-    if isEmpty lista then 0
-    else if (isEmpty tail lista) then head lista
-    else
-        
+    buscar lista (\x y -> x > y)
+
 
 
 
@@ -70,16 +79,26 @@ max lista =
 
 min : List Int -> Int
 min lista =
-    0
+    buscar lista (\x y -> x < y)
+
 
 
 
 -- Filtra la lista de valores mayores que el valor e pasado por parámetro
 
+-- filtrar: List Int -> (Int -> Bool) -> List Int
+-- filtrar lista com = 
+--     if isEmpty lista then lista
+--     else if com (head lista) then
+--         (head lista) :: (filtrar (tail lista) com)
+--     else
+--         filtrar (tail lista) com
+
 
 maximos : List Int -> Int -> List Int
 maximos lista e =
-    []
+    filtrar lista (\h -> h > e)
+
 
 
 
@@ -88,7 +107,8 @@ maximos lista e =
 
 minimos : List Int -> Int -> List Int
 minimos lista e =
-    []
+    filtrar lista (\h -> h < e)
+
 
 
 
@@ -102,11 +122,11 @@ quickSort xs =
             []
 
         pivot :: resto ->
-            -- TODO: Implementar quicksort recursivamente
-            -- 1. Dividir resto en menores y mayores que pivot
-            -- 2. Ordenar recursivamente ambas particiones
-            -- 3. Concatenar: (menores ordenados) ++ [pivot] ++ (mayores ordenados)
-            []
+            let
+                menores = filtrar resto (\x -> x <= pivot)
+                mayores = filtrar resto (\x -> x > pivot)
+            in
+            concatenar (quickSort menores) (pivot :: quickSort mayores)
 
 
 
@@ -116,7 +136,9 @@ quickSort xs =
 
 obtenerElemento : List Int -> Int -> Int
 obtenerElemento lista posicion =
-    0
+    if posicion < 0 || posicion >= contar lista then 0
+    else if posicion == 0 then head lista
+    else obtenerElemento (tail lista) (posicion - 1)
 
 
 
@@ -128,7 +150,17 @@ obtenerElemento lista posicion =
 
 mediana : List Int -> Int
 mediana lista =
-    0
+    if isEmpty lista then 0
+    else 
+        let 
+            ordenada = quickSort lista
+            n = contar ordenada
+            mitad = n // 2
+        in
+        if modBy 2 n == 0 then
+            ((obtenerElemento ordenada (mitad - 1)) + (obtenerElemento ordenada mitad)) // 2
+        else
+            obtenerElemento ordenada mitad
 
 
 
@@ -137,7 +169,8 @@ mediana lista =
 
 contar : List Int -> Int
 contar lista =
-    0
+    if isEmpty lista then 0
+    else 1 + contar (tail lista)
 
 
 
@@ -146,7 +179,8 @@ contar lista =
 
 acc : List Int -> Int
 acc lista =
-    0
+    if isEmpty lista then 0
+    else head lista + acc (tail lista)
 
 
 
@@ -155,7 +189,11 @@ acc lista =
 
 filtrar : List Int -> (Int -> Bool) -> List Int
 filtrar xs p =
-    []
+    if isEmpty xs then xs
+    else if p (head xs) then
+        (head xs) :: (filtrar (tail xs) p)
+    else
+        filtrar (tail xs) p
 
 
 
@@ -165,8 +203,7 @@ filtrar xs p =
 filtrarPares : List Int -> List Int
 filtrarPares xs =
     -- Pista: Usar modBy 2 para verificar números pares
-    []
-
+    filtrar xs (\x -> modBy 2 x == 0)
 
 
 -- Filtra los elementos múltiplos de 3 usando filtrar
@@ -174,7 +211,8 @@ filtrarPares xs =
 
 filtrarMultiplosDeTres : List Int -> List Int
 filtrarMultiplosDeTres xs =
-    []
+    filtrar xs (\x -> modBy 3 x == 0)
+    
 
 
 
@@ -183,7 +221,9 @@ filtrarMultiplosDeTres xs =
 
 acumular : List Int -> (Int -> Int) -> Int
 acumular lista fx =
-    0
+    if isEmpty lista then 0
+    else 
+        fx (head lista) + acumular (tail lista) fx
 
 
 
@@ -193,7 +233,7 @@ acumular lista fx =
 acumularUnidad : List Int -> Int
 acumularUnidad lista =
     -- Pista: (\x -> x)
-    0
+    acumular lista (\x -> x)
 
 
 
@@ -203,7 +243,8 @@ acumularUnidad lista =
 acumularDoble : List Int -> Int
 acumularDoble lista =
     -- Pista: (\x -> x * 2)
-    0
+    acumular lista (\x -> x * 2)
+    
 
 
 
@@ -213,7 +254,8 @@ acumularDoble lista =
 acumularCuadrado : List Int -> Int
 acumularCuadrado lista =
     -- Pista: (\x -> x * x)
-    0
+    acumular lista (\x -> x * x)
+  
 
 
 
@@ -223,7 +265,9 @@ acumularCuadrado lista =
 
 transformar : List Int -> (Int -> a) -> List a
 transformar lista fx =
-    []
+    if isEmpty lista then []
+    else
+        (fx (head lista)) :: transformar (tail lista) fx
 
 
 
@@ -232,7 +276,9 @@ transformar lista fx =
 
 existe : List Int -> Int -> Bool
 existe lista nro =
-    False
+    if (isEmpty lista) then False
+    else if head lista == nro then True
+    else existe (tail lista) nro
 
 
 
@@ -241,8 +287,7 @@ existe lista nro =
 
 unirOfSet : List Int -> List Int -> List Int
 unirOfSet lista otraLista =
-    -- Vas a necesitar una función auxiliar para remover duplicados
-    []
+    removerDuplicados (concatenar lista otraLista)
 
 
 
@@ -251,7 +296,14 @@ unirOfSet lista otraLista =
 
 removerDuplicados : List Int -> List Int
 removerDuplicados lista =
-    []
+    case lista of
+        [] ->
+            []
+        x :: xs ->
+            if existe xs x then
+                removerDuplicados xs
+            else
+                x :: removerDuplicados xs
 
 
 
@@ -265,9 +317,11 @@ subSets lista =
     case lista of
         [] ->
             [ [] ]
-
         x :: xs ->
-            []
+            let
+                sub = subSets xs
+            in
+            sub ++ (List.map (\s -> x :: s) sub)
 
 
 
@@ -278,7 +332,9 @@ subSets lista =
 
 cortar : List Int -> Int -> List (List Int)
 cortar lista n =
-    []
+    if isEmpty lista then []
+    else 
+        (tomar n lista) :: cortar (saltar n lista) n
 
 
 
@@ -287,7 +343,8 @@ cortar lista n =
 
 tomar : Int -> List a -> List a
 tomar n lista =
-    []
+    if n <= 0 || isEmpty lista then []
+    else (head lista) :: tomar (n - 1) (tail lista)
 
 
 
@@ -296,7 +353,8 @@ tomar n lista =
 
 saltar : Int -> List a -> List a
 saltar n lista =
-    []
+    if n <= 0 || isEmpty lista then lista
+    else saltar (n - 1) (tail lista)
 
 
 
