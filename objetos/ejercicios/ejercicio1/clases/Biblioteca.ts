@@ -1,27 +1,27 @@
 import { Libro } from "./Libro";
 import { Socio } from "./Socio";
+import { Autor } from "./Autor";
+import { EventoBiblioteca } from "./EventoBiblioteca";
 
+//este es mi codigo
 class Biblioteca {
   private inventario: Libro[] = [];
   private socios: Socio[] = [];
   private DURACION = 14;
+  private eventos: EventoBiblioteca[] = [];
+  private notificaciones: string[] = [];
 
   // Funciones de libros
-  agregarLibro(titulo: string, autor: string, isbn: string): Libro {
-    const libroCreado = new Libro(titulo, autor, isbn);
+  agregarLibro(titulo: string, autor: string | Autor, isbn: string): Libro {
+    const autorObj = typeof autor === "string" ? new Autor(autor) : autor;
+    const libroCreado = new Libro(titulo, autorObj, isbn);
     this.inventario.push(libroCreado);
     return libroCreado;
   }
 
   buscarLibro(isbn: string): Libro | null {
-    // return this.inventario.find(libro => libro.isbn === isbn) ?? null;
-    const libroEncontrado = this.inventario.find(
-      (libro) => libro.isbn === isbn
-    );
-    if (libroEncontrado) {
-      return libroEncontrado;
-    }
-    return null;
+    const libroEncontrado = this.inventario.find((libro) => libro.isbn === isbn);
+    return libroEncontrado ?? null;
   }
 
   // Funciones de socios
@@ -42,13 +42,14 @@ class Biblioteca {
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
-    // fijarse si esta disponible
-    for (const socio of this.socios) {
-      if (socio.tienePrestadoLibro(libro)) {
-        throw new Error("Libro no esta disponible");
+    
+    for (const s of this.socios) {
+      if (s.tienePrestadoLibro(libro)) {
+        libro.reservar(socioId);
+        return; 
       }
     }
-
+    if (socio.deuda > 0) throw new Error("Este socio tiene multas pendientes");
     socio.retirar(libro, this.DURACION);
   }
 
@@ -59,8 +60,52 @@ class Biblioteca {
     if (!socio || !libro) {
       throw new Error("No se encontro");
     }
+    const prestamo = socio.devolver(libro);
+    const hoy = new Date();
+    if (prestamo && hoy > prestamo.vencimiento) {
+      const diasAtraso = Math.ceil((hoy.getTime() - prestamo.vencimiento.getTime()) / (1000 * 60 * 60 * 24));
+      const multa = diasAtraso * 50;
+      const msg = `${socio.nombreCompleto} devolvió "${libro.titulo}" con ${diasAtraso} días de atraso — multa: $${multa}.`;
+      this.notificaciones.push(msg);
+    }
+    const siguiente = libro.popReservante();
+    if (siguiente) {
+      const socioNot = this.buscarSocio(siguiente);
+      if (socioNot) {
+        const msg = `¡Buenas! ${socioNot.nombreCompleto}, "${libro.titulo}" ya está disponible para vos.`;
+        this.notificaciones.push(msg);
+      }
+    }
+  }
 
-    socio.devolver(libro);
+  forzarPrestamo(socioId: number, libroISBN: string, vencimiento: Date) {
+    const socio = this.buscarSocio(socioId);
+    const libro = this.buscarLibro(libroISBN);
+    if (!socio || !libro) throw new Error("No se encontro");
+    socio.retirarConVencimiento(libro, vencimiento);
+  }
+
+  registrarEvento(evento: EventoBiblioteca) {
+    this.eventos.push(evento);
+  }
+
+  listarEventos() {
+    return this.eventos.map((e) => ({ titulo: e.titulo, fecha: e.fecha }));
+  }
+
+  recomendarPara(socioId: number) {
+    const socio = this.buscarSocio(socioId);
+    if (!socio) return [];
+    return socio.recomendar(this.inventario);
+  }
+
+  librosDeAutor(autor: string | Autor) {
+    const nombre = typeof autor === "string" ? autor : autor.nombre;
+    return this.inventario.filter((l) => l.autor.nombre === nombre);
+  }
+
+  obtenerNotificaciones() {
+    return this.notificaciones.slice();
   }
 }
 
