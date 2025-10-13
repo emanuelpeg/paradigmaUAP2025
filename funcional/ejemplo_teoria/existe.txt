@@ -1,0 +1,18 @@
+import Html
+
+lista = [0,3,4,88,5,1,2]
+
+stringFromBool : Bool -> String
+stringFromBool value =
+  if value then
+    "True"
+  else
+    "False"
+
+existe: List Int -> Int -> Bool
+existe l e = List.foldl (\ele a -> a || (ele == e)) False l 
+
+main =
+  existe lista 88
+  |> stringFromBool
+  |> Html.text 
