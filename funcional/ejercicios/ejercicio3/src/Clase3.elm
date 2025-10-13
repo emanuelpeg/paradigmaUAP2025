@@ -1,4 +1,7 @@
 module Clase3 exposing (..)
+import Char exposing (toUpper)
+import Fuzz exposing (string)
+import Fuzz exposing (list)
 
 
 head : List a -> a
@@ -43,7 +46,10 @@ en lugar de usar Maybe. Trabajamos con List de Elm.
 
 miMap : (a -> b) -> List a -> List b
 miMap fx lista =
-    []
+
+    if isEmpty lista then []
+    else fx (head lista) :: (miMap fx (tail lista))
+    
 
 
 
@@ -53,7 +59,10 @@ miMap fx lista =
 
 miFiltro : (a -> Bool) -> List a -> List a
 miFiltro predicado lista =
-    []
+    if isEmpty lista then []
+    else let h = head lista in
+    if (predicado h) then h :: (miFiltro predicado(tail lista) )
+    else miFiltro predicado(tail lista)
 
 
 
@@ -63,10 +72,22 @@ miFiltro predicado lista =
 
 miFoldl : (a -> b -> b) -> b -> List a -> b
 miFoldl fx acumulador lista =
-    acumulador
+    if isEmpty lista then acumulador
+    else let nuevoAcumulador = (fx (head lista) acumulador)
+    in
+    miFoldl fx nuevoAcumulador (tail lista)
 
+{- reverse : List a -> List a 
+reverse lista =
+    miFoldl (\a b = a :: b) [] lista
 
+otherMap : (a -> b) -> List a -> List b
+otherMap t lista =
+    reverse (miFoldl (\numerohead  result = (t head) :: result) [] lista)
 
+otherFilter : (a -> Bool) -> List a -> List a
+otherFilter =
+ -}
 -- ============================================================================
 -- PARTE 1: ENTENDIENDO MAP
 -- ============================================================================
@@ -78,7 +99,7 @@ miFoldl fx acumulador lista =
 
 duplicar : List Int -> List Int
 duplicar lista =
-    []
+    List.map(\x -> x*2) lista
 
 
 
@@ -88,7 +109,7 @@ duplicar lista =
 
 longitudes : List String -> List Int
 longitudes lista =
-    []
+    List.map(\string -> String.length string) lista
 
 
 
@@ -98,7 +119,7 @@ longitudes lista =
 
 incrementarTodos : List Int -> List Int
 incrementarTodos lista =
-    []
+    List.map(\x -> x + 1) lista
 
 
 
@@ -108,7 +129,7 @@ incrementarTodos lista =
 
 todasMayusculas : List String -> List String
 todasMayusculas lista =
-    []
+     List.map (\x ->String.toUpper x) lista
 
 
 
@@ -118,7 +139,7 @@ todasMayusculas lista =
 
 negarTodos : List Bool -> List Bool
 negarTodos lista =
-    []
+    List.map(\x -> not x) lista
 
 
 
@@ -133,7 +154,7 @@ negarTodos lista =
 
 pares : List Int -> List Int
 pares lista =
-    []
+    List.filter(\x -> modBy 2 x == 0) lista --filtra la lista por los aquellos enteros de la lista que cumplan que su modulo dividido 2 es 0
 
 
 
@@ -143,7 +164,7 @@ pares lista =
 
 positivos : List Int -> List Int
 positivos lista =
-    []
+  List.filter(\x -> x > 0) lista --filtra todos los numeros negativos y devuelve nuevamente la lista sin ellos.
 
 
 
@@ -153,7 +174,7 @@ positivos lista =
 
 stringsLargos : List String -> List String
 stringsLargos lista =
-    []
+    List.filter(\str -> String.length str >= 5) lista
 
 
 
@@ -163,7 +184,7 @@ stringsLargos lista =
 
 soloVerdaderos : List Bool -> List Bool
 soloVerdaderos lista =
-    []
+    List.filter(\bool -> bool == True) lista
 
 
 
@@ -173,7 +194,7 @@ soloVerdaderos lista =
 
 mayoresQue : Int -> List Int -> List Int
 mayoresQue valor lista =
-    []
+    List.filter(\x -> x > valor) lista
 
 
 
@@ -188,7 +209,8 @@ mayoresQue valor lista =
 
 sumaFold : List Int -> Int
 sumaFold lista =
-    0
+    
+    List.foldl(\elemento acumulador -> acumulador + elemento) 0 lista
 
 
 
@@ -198,7 +220,7 @@ sumaFold lista =
 
 producto : List Int -> Int
 producto lista =
-    1
+    List.foldl(\elemento acumulador -> acumulador * elemento) 1 lista 
 
 
 
@@ -208,17 +230,16 @@ producto lista =
 
 contarFold : List a -> Int
 contarFold lista =
-    0
+    List.foldl(\_ acu -> acu + 1) 0  lista
 
-
-
+    
 -- 17. Concatenar Strings
 -- Uní todos los strings de una lista
 
 
 concatenar : List String -> String
 concatenar lista =
-    ""
+    List.foldl(\elem acu -> acu ++ elem) "" lista
 
 
 
@@ -228,7 +249,12 @@ concatenar lista =
 
 maximo : List Int -> Int
 maximo lista =
-    0
+     case lista of
+        [] ->
+            0
+
+        h :: t ->
+            List.foldl (\elemento mayorHastaAhora -> if elemento > mayorHastaAhora then elemento else mayorHastaAhora) h t
 
 
 
@@ -238,7 +264,7 @@ maximo lista =
 
 invertirFold : List a -> List a
 invertirFold lista =
-    []
+     List.foldl (\elemento acumulador -> elemento :: acumulador) [] lista
 
 
 
@@ -246,11 +272,13 @@ invertirFold lista =
 -- Verificá si todos los elementos de una lista satisfacen una condición
 
 
+
 todos : (a -> Bool) -> List a -> Bool
 todos predicado lista =
-    False
-
-
+    miFoldl 
+        (\elemento acumulador -> acumulador && predicado elemento) True lista
+    
+    
 
 -- 21. Alguno Verdadero
 -- Verificá si al menos un elemento satisface una condición
@@ -258,8 +286,15 @@ todos predicado lista =
 
 alguno : (a -> Bool) -> List a -> Bool
 alguno predicado lista =
-    False
+     case lista of
+        [] ->
+            False --si la lista es vacia devuelvo falso
 
+        h :: t ->  -- si tiene un elemento pasa esto
+            predicado h || alguno predicado t
+        --verifica si h cumple con la condicion, si lo hace, se produce un cortocircuito logico,
+        -- si no, empieza la recursion, llamando a la funcion alguno pero ahora pasandole
+        -- el predicado y la cola, hasta que devuelva falso
 
 
 -- ============================================================================
@@ -273,7 +308,7 @@ alguno predicado lista =
 
 sumaDeCuadrados : List Int -> Int
 sumaDeCuadrados lista =
-    0
+    List.foldl (\x acc -> acc + x * x) 0 lista
 
 
 
@@ -283,7 +318,9 @@ sumaDeCuadrados lista =
 
 contarPares : List Int -> Int
 contarPares lista =
-    0
+    lista
+        |> List.filter (\x -> modBy 2 x == 0)
+        |> List.length
 
 
 
@@ -293,7 +330,10 @@ contarPares lista =
 
 promedio : List Float -> Float
 promedio lista =
-    0
+    if List.isEmpty lista then
+        0
+    else
+        List.sum lista / toFloat (List.length lista)
 
 
 
@@ -303,7 +343,9 @@ promedio lista =
 
 longitudesPalabras : String -> List Int
 longitudesPalabras oracion =
-    []
+    oracion
+        |> String.words
+        |> List.map String.length
 
 
 
@@ -313,7 +355,9 @@ longitudesPalabras oracion =
 
 palabrasLargas : String -> List String
 palabrasLargas oracion =
-    []
+     oracion
+        |> String.words
+        |> List.filter (\palabra -> String.length palabra > 3)
 
 
 
@@ -323,7 +367,9 @@ palabrasLargas oracion =
 
 sumarPositivos : List Int -> Int
 sumarPositivos lista =
-    0
+    lista
+        |> List.filter (\x -> x > 0)
+        |> List.sum
 
 
 
@@ -333,7 +379,7 @@ sumarPositivos lista =
 
 duplicarPares : List Int -> List Int
 duplicarPares lista =
-    []
+        List.map (\x -> if modBy 2 x == 0 then x * 2 else x) lista
 
 
 
@@ -348,7 +394,7 @@ duplicarPares lista =
 
 aplanar : List (List a) -> List a
 aplanar lista =
-    []
+    List.concat lista -- xd
 
 
 
@@ -359,7 +405,28 @@ aplanar lista =
 
 agruparPor : (a -> a -> Bool) -> List a -> List (List a)
 agruparPor comparador lista =
-    []
+    case lista of
+        [] ->
+            []
+
+        h :: t ->
+            let
+                -- Empezamos con el primer elemento como grupo inicial
+                resultadoFinal =
+                    List.foldl
+                        (\elemento (todosLosGrupos, grupoActual) ->
+                            if comparador (List.head grupoActual |> Maybe.withDefault elemento) elemento then
+                                -- Si cumple, lo agregamos al grupo actual
+                                (todosLosGrupos, grupoActual ++ [elemento])
+                            else
+                                -- Si no cumple, cerramos el grupo y empezamos uno nuevo
+                                (todosLosGrupos ++ [grupoActual], [elemento])
+                        )
+                        ([], [h]) -- valor inicial: (grupos, grupo actual)
+                        t         -- procesamos el resto
+            in
+            -- Agregamos el último grupo que quedó abierto
+            Tuple.first resultadoFinal ++ [Tuple.second resultadoFinal]
 
 
 
@@ -369,7 +436,15 @@ agruparPor comparador lista =
 
 particionar : (a -> Bool) -> List a -> ( List a, List a )
 particionar predicado lista =
-    ( [], [] )
+     List.foldl
+        (\elemento (si, no) ->
+            if predicado elemento then
+                (si ++ [elemento], no)
+            else
+                (si, no ++ [elemento])
+        )
+        ([], [])
+        lista
 
 
 
@@ -379,7 +454,25 @@ particionar predicado lista =
 
 sumaAcumulada : List Int -> List Int
 sumaAcumulada lista =
-    []
+    case lista of
+        [] ->
+            []
+
+        h :: t ->
+            let
+                -- Función auxiliar recursiva con acumulador
+                generarAcumuladas elementos acumulador resultado =
+                    case elementos of
+                        [] ->
+                            resultado
+
+                        x :: xs ->
+                            let
+                                nuevoAcum = acumulador + x
+                            in
+                            generarAcumuladas xs nuevoAcum (resultado ++ [nuevoAcum])
+            in
+            generarAcumuladas t h [h] -- empezamos con el primer elemento ya en el resultado
 
 
 

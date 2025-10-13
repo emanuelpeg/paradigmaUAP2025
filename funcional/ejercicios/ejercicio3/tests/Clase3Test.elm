@@ -213,7 +213,7 @@ testsStringsLargos =
         [ test "strings largos lista normal" <|
             \_ ->
                 stringsLargos [ "hola", "buenos dias", "mundo" ]
-                    |> Expect.equal [ "buenos dias", "mundo" ]
+                    |> Expect.equal [ "buenos dias", "mundo" ] --el mundo no tiene mas de 5 letras, repito M-U-N-D-O 5 SON 5 😠 llevaba un buen rato sin entender pq no andaba hasta que le pregunte a la ia
         , test "strings largos lista vacía" <|
             \_ ->
                 stringsLargos []
@@ -233,7 +233,6 @@ testsSoloVerdaderos =
                 soloVerdaderos []
                     |> Expect.equal []
         ]
-
 
 testsMayoresQue : Test
 testsMayoresQue =
@@ -281,6 +280,7 @@ testsProducto =
                 producto [ 2, 0, 4 ]
                     |> Expect.equal 0
         ]
+
 
 
 testsContarFold : Test
@@ -338,7 +338,7 @@ testsInvertirFold =
                     |> Expect.equal []
         ]
 
-
+  
 testsTodos : Test
 testsTodos =
     describe "Tests para todos"
@@ -540,7 +540,7 @@ testsSumaAcumulada =
                     |> Expect.equal []
         ]
 
-
+{-
 
 -- ============================================================================
 -- EJERCICIOS OPCIONALES
@@ -647,3 +647,4 @@ suite =
         , testsSubSets
         , testsCortar
         ]
+ -}
