@@ -1,0 +1,33 @@
+class restaurante{
+
+}
+
+class Ingredientes{
+    String[] ingredientes;
+
+    public Ingredientes(String[] ingredientes){
+        this.ingredientes = ingredientes[];
+    }
+    double getPrecio(){
+        
+    }
+}
+class Plato extends Ingredientes{
+    String nombre;
+    ArrayList<Ingredientes> ingredientes;
+    ArrayList<Plato> platos;
+    double getPrecio(){
+        //agarra el precio de los ingredientos o el precie entre platos
+    }
+}
+class menu{
+    Plato[] platos;
+}
+
+
+
+//Ejercicio 3
+
+
+
+//ejercicio 4
