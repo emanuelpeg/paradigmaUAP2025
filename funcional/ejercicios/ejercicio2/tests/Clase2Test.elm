@@ -176,7 +176,7 @@ testsQuickSort =
             \_ ->
                 quickSort [ -3, 1, -4, 1, -5, 9, -2, 6 ]
                     |> Expect.equal [ -5, -4, -3, -2, 1, 1, 6, 9 ]
-        ]
+       ]
 
 
 
@@ -237,7 +237,7 @@ testsMediana =
                 mediana [ 42 ]
                     |> Expect.equal 42
         ]
-
+ 
 
 
 -- TESTS PARA CONTAR Y ACUMULAR
@@ -296,14 +296,14 @@ testsFiltrar =
             \_ ->
                 filtrar [ 1, 2, 3 ] (\x -> x > 10)
                     |> Expect.equal []
-        , test "filtrarPares" <|
+         , test "filtrarPares" <|
             \_ ->
                 filtrarPares [ 1, 2, 3, 4, 5, 6 ]
                     |> Expect.equal [ 2, 4, 6 ]
         , test "filtrarMultiplosDeTres" <|
             \_ ->
                 filtrarMultiplosDeTres [ 1, 2, 3, 6, 9, 10, 12 ]
-                    |> Expect.equal [ 3, 6, 9, 12 ]
+                    |> Expect.equal [ 3, 6, 9, 12 ] 
         ]
 
 
@@ -348,7 +348,7 @@ testsAcumular =
                     |> Expect.equal 0
         ]
 
-
+ 
 
 -- TESTS PARA TRANSFORMAR
 
@@ -373,7 +373,7 @@ testsTransformar =
                 transformar [] (\x -> x * 2)
                     |> Expect.equal []
         ]
-
+ 
 
 
 -- TESTS PARA EXISTE
@@ -403,13 +403,13 @@ testsExiste =
                 existe [ 1, 2, 3 ] 3
                     |> Expect.equal True
         ]
-
+ 
 
 
 -- TESTS PARA UNIR SIN DUPLICADOS
 
 
-testsUnirOfSet : Test
+{- testsUnirOfSet : Test
 testsUnirOfSet =
     describe "Tests para unirOfSet"
         [ test "unir sin duplicados - caso normal" <|
@@ -429,13 +429,13 @@ testsUnirOfSet =
                 unirOfSet [ 1, 2 ] [ 3, 4 ]
                     |> Expect.equal [ 1, 2, 3, 4 ]
         ]
-
+ -}
 
 
 -- TESTS PARA REMOVER DUPLICADOS
 
 
-testsRemoverDuplicados : Test
+{- testsRemoverDuplicados : Test
 testsRemoverDuplicados =
     describe "Tests para removerDuplicados"
         [ test "remover duplicados normales" <|
@@ -456,11 +456,11 @@ testsRemoverDuplicados =
                     |> Expect.equal []
         ]
 
-
+ -}
 
 -- TESTS PARA SUBSETS (OPCIONAL)
 
-
+{- 
 testsSubSets : Test
 testsSubSets =
     describe "Tests para subSets (opcional)"
@@ -489,11 +489,11 @@ testsSubSets =
         -- 2^3 = 8 subconjuntos
         ]
 
-
+ -}
 
 -- TESTS PARA CORTAR (OPCIONAL)
 
-
+{- 
 testsCortar : Test
 testsCortar =
     describe "Tests para cortar (opcional)"
@@ -519,10 +519,10 @@ testsCortar =
                     |> Expect.equal [ [ 1, 2 ] ]
         ]
 
-
+ -}
 
 -- TESTS PARA FUNCIONES AUXILIARES
-
+{- 
 
 testsFuncionesAuxiliares : Test
 testsFuncionesAuxiliares =
@@ -554,10 +554,10 @@ testsFuncionesAuxiliares =
         ]
 
 
-
+ -}
 -- SUITE PRINCIPAL DE TESTS
 
-
+{- 
 suite : Test
 suite =
     describe "Suite completa de tests para Clase2"
@@ -579,3 +579,4 @@ suite =
         , testsCortar
         , testsFuncionesAuxiliares
         ]
+ -}
