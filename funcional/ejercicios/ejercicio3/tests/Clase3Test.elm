@@ -589,7 +589,7 @@ testsCortar =
                     |> Expect.equal []
         ]
 
-
+-}
 
 -- ============================================================================
 -- SUITE PRINCIPAL DE TESTS
@@ -644,7 +644,7 @@ suite =
         , testsSumaAcumulada
 
         -- Ejercicios Opcionales
-        , testsSubSets
-        , testsCortar
+       -- , testsSubSets
+       -- , testsCortar
         ]
- -}
+ 

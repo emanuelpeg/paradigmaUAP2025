@@ -161,11 +161,21 @@ quickSort xs =
             []
 
         pivot :: resto ->
+            let
+                menoresOIguales= List.filter(\x -> x <= pivot) resto
+                mayores = List.filter(\x -> x > pivot) resto
+
+                menoresOrdenados = quickSort menoresOIguales
+                mayoresOrdenados = quickSort mayores
+            in
+
+                menoresOrdenados ++ [pivot] ++ mayoresOrdenados
+        
             -- TODO: Implementar quicksort recursivamente
             -- 1. Dividir resto en menores y mayores que pivot
             -- 2. Ordenar recursivamente ambas particiones
             -- 3. Concatenar: (menores ordenados) ++ [pivot] ++ (mayores ordenados)
-            []
+            
 
 
 
@@ -193,7 +203,24 @@ obtenerElemento lista posicion =
 
 mediana : List Int -> Int
 mediana lista =
-    0
+    let
+        ordenada =
+            quickSort lista --Ordenamos la lista antes de calcular la mediana. 
+
+        n =
+            List.length ordenada --obtemos la cantidad de elementos de la lista
+    in
+    if n == 0 then --Si la lista está vacia, devolvemos 0 segun la consigna. 
+        0
+
+    else if modBy 2 n == 1 then 
+        -- si es impar devuelve el del centro
+        obtenerElemento ordenada (n // 2)
+
+    else
+        -- si es par devolvemos el primer elemento del centro a la izquierda
+        
+        obtenerElemento ordenada ((n // 2) - 1)
 
 
 
@@ -202,16 +229,21 @@ mediana lista =
 
 contar : List Int -> Int
 contar lista =
-    0
+    case lista of
+        [] ->
+            0
 
-
-
--- Acumula los elementos
-
+        _ :: resto ->
+            1 + contar resto
 
 acc : List Int -> Int
 acc lista =
-    0
+    case lista of
+        [] ->
+            0
+
+        h :: t ->
+            h + acc t
 
 
 
@@ -221,18 +253,16 @@ acc lista =
 filtrar : List Int -> (Int -> Bool) -> List Int
 filtrar lista com =
 
-    if isEmpty lista then 
-        lista 
-    else 
-        let 
-            h =
-                head lista
-            
+     if isEmpty lista then
+        []
+    else
+        let
+            h = head lista
         in
-    if (com h)  then 
-         h :: filtrar (tail lista) com
-    else filtrar (tail lista) com
-    
+        if com h then
+            h :: filtrar (tail lista) com
+        else
+            filtrar (tail lista) com
 
 
 
@@ -242,7 +272,7 @@ filtrar lista com =
 filtrarPares : List Int -> List Int
 filtrarPares xs =
     -- Pista: Usar modBy 2 para verificar números pares
-    []
+    filtrar xs (\x -> modBy 2 x == 0) 
 
 
 
@@ -251,7 +281,7 @@ filtrarPares xs =
 
 filtrarMultiplosDeTres : List Int -> List Int
 filtrarMultiplosDeTres xs =
-    []
+     filtrar xs (\x -> modBy 3 x == 0) 
 
 
 
@@ -260,7 +290,12 @@ filtrarMultiplosDeTres xs =
 
 acumular : List Int -> (Int -> Int) -> Int
 acumular lista fx =
-    0
+     case lista of
+        [] ->
+            0
+
+        h :: t ->
+            fx h + acumular t fx
 
 
 
@@ -270,7 +305,7 @@ acumular lista fx =
 acumularUnidad : List Int -> Int
 acumularUnidad lista =
     -- Pista: (\x -> x)
-    0
+    acumular lista (\x -> x)
 
 
 
@@ -280,7 +315,7 @@ acumularUnidad lista =
 acumularDoble : List Int -> Int
 acumularDoble lista =
     -- Pista: (\x -> x * 2)
-    0
+     acumular lista (\x -> x * 2)
 
 
 
@@ -290,7 +325,7 @@ acumularDoble lista =
 acumularCuadrado : List Int -> Int
 acumularCuadrado lista =
     -- Pista: (\x -> x * x)
-    0
+    acumular lista (\x -> x * x)
 
 
 
@@ -300,7 +335,12 @@ acumularCuadrado lista =
 
 transformar : List Int -> (Int -> a) -> List a
 transformar lista fx =
-    []
+    case lista of
+        [] ->
+            []
+
+        h :: t ->
+            fx h :: transformar t fx
 
 
 
@@ -309,7 +349,15 @@ transformar lista fx =
 
 existe : List Int -> Int -> Bool
 existe lista nro =
-    False
+    case lista of
+        [] ->
+            False
+
+        h :: t ->
+            if h == nro then
+                True
+            else
+                existe t nro
 
 
 
@@ -319,7 +367,7 @@ existe lista nro =
 unirOfSet : List Int -> List Int -> List Int
 unirOfSet lista otraLista =
     -- Vas a necesitar una función auxiliar para remover duplicados
-    []
+    removerDuplicados (lista ++ otraLista)
 
 
 
@@ -328,7 +376,12 @@ unirOfSet lista otraLista =
 
 removerDuplicados : List Int -> List Int
 removerDuplicados lista =
-    []
+     case lista of
+        [] ->
+            []
+
+        h :: t ->
+            h :: removerDuplicados (filtrar t (\x -> x /= h) )
 
 
 

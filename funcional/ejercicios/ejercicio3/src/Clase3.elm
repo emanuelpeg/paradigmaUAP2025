@@ -479,7 +479,7 @@ sumaAcumulada lista =
 -- ============================================================================
 -- EJERCICIOS OPCIONALES
 -- ============================================================================
-
+--los voy a hacer durante la semana mientras estudio para el parcial
 
 -- Subconjuntos
 -- Generá todos los posibles subconjuntos de una lista

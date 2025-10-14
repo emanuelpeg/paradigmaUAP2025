@@ -56,7 +56,9 @@ arbolMediano =
 
 esVacio : Tree a -> Bool
 esVacio arbol =
-    False
+    case arbol of
+        Node _ _ _ -> False
+        Empty -> True
 
 
 -- 3. Es Hoja
@@ -77,7 +79,12 @@ esHoja arbol =
 
 tamaño : Tree a -> Int
 tamaño arbol =
-    0
+    case arbol of
+        Empty ->
+            0
+
+        Node _ left right ->
+            1 + (tamaño left) + (tamaño right)
 
 
 -- 5. Altura del Árbol
@@ -85,7 +92,12 @@ tamaño arbol =
 
 altura : Tree a -> Int
 altura arbol =
-    0
+    case arbol of
+        Empty ->
+            0
+
+        Node _ left right ->
+            1 + max (altura left) (altura right)
 
 
 -- 6. Suma de Valores
@@ -93,7 +105,12 @@ altura arbol =
 
 sumarArbol : Tree Int -> Int
 sumarArbol arbol =
-    0
+    case arbol of
+        Empty ->
+            0
+
+        Node valor left right ->
+            valor + (sumarArbol left) + (sumarArbol right)
 
 
 -- 7. Contiene Valor
@@ -101,15 +118,25 @@ sumarArbol arbol =
 
 contiene : a -> Tree a -> Bool
 contiene valor arbol =
-    False
+    case arbol of 
+        Empty ->
+            False
 
+        Node v left right ->
+            if v == valor || (contiene valor left) || (contiene valor right) then
+                True
+            else
+                False
 
 -- 8. Contar Hojas
 
 
 contarHojas : Tree a -> Int
 contarHojas arbol =
-    0
+    case arbol of 
+        empty -> 0
+        Node _ empty empty -> 1
+        Node _ izq der -> (contarHojas izq) + (contarHojas der)
 
 
 -- 9. Valor Mínimo (sin Maybe)
@@ -117,7 +144,13 @@ contarHojas arbol =
 
 minimo : Tree Int -> Int
 minimo arbol =
-    0
+    case arbol of
+        empty -> 0
+        Node v empty empty -> v
+        Node v empty der -> (min v (minimo der))
+        Node v izq empty -> (min v (minimo izq))
+        Node v izq der -> (min v (min (minimo izq) (minimo der)))
+
 
 
 -- 10. Valor Máximo (sin Maybe)
@@ -125,7 +158,12 @@ minimo arbol =
 
 maximo : Tree Int -> Int
 maximo arbol =
-    0
+    case arbol of
+        empty -> 0
+        Node v empty empty -> v
+        Node v empty der -> (max v (minimo der))
+        Node v izq empty -> (max v (minimo izq))
+        Node v izq der -> (max v (max (minimo izq) (minimo der)))
 
 
 -- ============================================================================
@@ -138,16 +176,29 @@ maximo arbol =
 
 buscar : a -> Tree a -> Maybe a
 buscar valor arbol =
-    Nothing
-
+    case arbol of
+        empty -> Nothing
+        Node v izq der -> 
+            if v == valor 
+                then Just v
+            else 
+                case buscar valor izq of 
+                    Just v -> Just v
+                    Nothing -> buscar valor der
 
 -- 12. Encontrar Mínimo (con Maybe)
 
 
-encontrarMinimo : Tree comparable -> Maybe comparable
+encontrarMinimo : Tree Int -> Maybe Int
 encontrarMinimo arbol =
-    Nothing
-
+    case arbol of
+        Empty -> Nothing
+        Node v Empty Empty -> Just v
+        Node v izq der -> case ((encontrarMinimo izq), (encontrarMinimo der)) of 
+            (Nothing, Nothing) -> Just v 
+            (min izq, Nothing) -> Just (min v minIzq)
+            (Nothing, minDer) -> Just (min v minDer)
+            (Just minIzq, Just minDer) -> Just(min v (min minIzq minDer))
 
 -- 13. Encontrar Máximo (con Maybe)
 
@@ -170,7 +221,9 @@ buscarPor predicado arbol =
 
 raiz : Tree a -> Maybe a
 raiz arbol =
-    Nothing
+    Empty -> Nothing
+    Node _ Empty _ -> Nothing
+    Node v _ _ -> Just v
 
 
 -- 16. Obtener Hijo Izquierdo
@@ -178,7 +231,10 @@ raiz arbol =
 
 hijoIzquierdo : Tree a -> Maybe (Tree a)
 hijoIzquierdo arbol =
-    Nothing
+    case arbol of 
+        Empty -> Nothing
+        Node _ Empty _ -> Nothing
+        Node _ izq _ 0 -> raiz izq
 
 
 hijoDerecho : Tree a -> Maybe (Tree a)
@@ -191,8 +247,18 @@ hijoDerecho arbol =
 
 nietoIzquierdoIzquierdo : Tree a -> Maybe (Tree a)
 nietoIzquierdoIzquierdo arbol =
-    Nothing
+   {-  case hijoIzquierdo arbol of
+        Nothing -> Nothing
+        Just Hijo -> hijoIzquierdo Hijo   -}
 
+    maybe.andThen hijoIzquierdo (hijoIzquierdo arbol)    -- eso para nieto
+   -- maybe.andThen hijoIzquierdo (maybe.andThen hijoIzquierdo (hijoIzquierdo arbol)) -- en caso de que haya bisnieto
+    {- case arbol of 
+        Empty -> Nothing
+        Node _ Empty _  -> Nothing
+        Node _ (Node _ Empty _) _ -> Nothing
+        Node _ (Node _ izq _) _ -> Just izq
+ -}
 
 -- 18. Buscar en Profundidad
 
