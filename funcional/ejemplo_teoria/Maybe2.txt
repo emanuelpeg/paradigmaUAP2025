@@ -1,0 +1,16 @@
+import Html
+
+listaMain = [[0,3],[4,8],[5,1,2]]
+
+aplanarLista: List (List a) -> List a
+aplanarLista lista= 
+  case lista of
+    [] -> []
+    h::t -> h ++ (aplanarLista t)
+
+main =
+  listaMain
+  |> List.concatMap (\x -> x) 
+  |> List.map (\ x -> String.fromInt x)
+  |> List.foldl (\a x -> x ++ " " ++ a) "" 
+  |> Html.text 
