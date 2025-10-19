@@ -1,0 +1,22 @@
+import Html
+
+fold: (b -> a -> b) -> List a -> b -> b
+fold fx l inicio = case l of
+  [] -> inicio
+  h::tail -> fold fx tail (fx inicio h)
+
+map: (a -> b) -> List a -> List b
+map fx l = fold (\acc x -> acc ++ (fx x)::[]) l []
+
+intToString : List Int -> List String
+intToString l = map (String.fromInt) l
+
+formatear : List String -> String
+formatear l = fold (++) l ""
+
+lista = [1,2,3,4,5,6,7,8]
+
+main =
+  intToString lista
+  |> formatear
+  |> Html.text
