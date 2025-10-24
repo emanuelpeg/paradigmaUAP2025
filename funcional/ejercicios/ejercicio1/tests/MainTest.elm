@@ -131,8 +131,102 @@ suite =
                         Main.fibonacciLinear 12
                             |> Expect.equal (Main.fibonacciExponential 12)
                 ]
-            , describe "Ejercicio 4: Triángulo de Pascal"
-                [ test "corner case (0,0)" <|
+            ]
+        , describe "Ejercicio 4: Triángulo de Pascal"
+            [ test "corner case (0,0)" <|
+                \_ ->
+                    Main.pascalTriangle 0 0
+                        |> Expect.equal 1
+            , test "edge cases" <|
+                \_ ->
+                    Main.pascalTriangle 5 0 -- cambie los valores pq dan error
+                        |> Expect.equal 1
+            , test "example from guide (4,2)" <|
+                \_ ->
+                    Main.pascalTriangle 4 2 -- cambie los valores pq dan error
+                        |> Expect.equal 6
+            , test "example from guide (3,1)" <|
+                \_ ->
+                    Main.pascalTriangle 3 1 -- y no puede ser mayor a x
+                        |> Expect.equal 3
+            , test "middle value" <|
+                \_ ->
+                    Main.pascalTriangle 5 3 -- y no puede ser mayor a x
+                        |> Expect.equal 10
+            ]
+        , describe "Ejercicio 5: Máximo Común Divisor"
+            [ test "gcd example from guide (48, 18)" <|
+                \_ ->
+                    Main.gcd 48 18
+                        |> Expect.equal 6
+            , test "gcd of coprime numbers (17, 13)" <|
+                \_ ->
+                    Main.gcd 17 13
+                        |> Expect.equal 1
+            , test "gcd example from guide (100, 25)" <|
+                \_ ->
+                    Main.gcd 100 25
+                        |> Expect.equal 25
+            , test "gcd with zero" <|
+                \_ ->
+                    Main.gcd 15 0
+                        |> Expect.equal 15
+            , test "gcd is commutative" <|
+                \_ ->
+                    Main.gcd 24 18
+                        |> Expect.equal (Main.gcd 18 24)
+            , test "gcd with negative numbers" <|
+                \_ ->
+                    Main.gcd (-48) 18
+                        |> Expect.equal 6
+            ]
+        , describe "Ejercicio 6: Contar Dígitos"
+            [ test "single digit" <|
+                \_ ->
+                    Main.countDigits 7
+                        |> Expect.equal 1
+            , test "example from guide" <|
+                \_ ->
+                    Main.countDigits 12345
+                        |> Expect.equal 5
+            , test "negative number" <|
+                \_ ->
+                    Main.countDigits (-456)
+                        |> Expect.equal 3
+            , test "zero" <|
+                \_ ->
+                    Main.countDigits 0
+                        |> Expect.equal 1
+            , test "large number" <|
+                \_ ->
+                    Main.countDigits 999999
+                        |> Expect.equal 6
+            ]
+        , describe "Ejercicio 7: Suma de Dígitos"
+            [ test "example from guide (123)" <|
+                \_ ->
+                    Main.sumDigits 123
+                        |> Expect.equal 6
+            , test "example from guide (999)" <|
+                \_ ->
+                    Main.sumDigits 999
+                        |> Expect.equal 27
+            , test "negative number" <|
+                \_ ->
+                    Main.sumDigits (-456)
+                        |> Expect.equal 15
+            , test "single digit" <|
+                \_ ->
+                    Main.sumDigits 9
+                        |> Expect.equal 9
+            , test "zero" <|
+                \_ ->
+                    Main.sumDigits 0
+                        |> Expect.equal 0
+            ]
+        , describe "Ejercicio 8: Verificar Palíndromo"
+            [ describe "reverseNumber function"
+                [ test "reverse single digit" <|
                     \_ ->
                         Main.pascalTriangle 0 0
                             |> Expect.equal 1
