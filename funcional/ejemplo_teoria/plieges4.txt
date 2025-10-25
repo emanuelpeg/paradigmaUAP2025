@@ -7,7 +7,7 @@ foldl l fx inicio =
     head :: tail -> foldl tail fx (fx inicio head)
 
 map: List a -> (a -> b) -> List b
-map l fx = foldl l (\acc a -> acc ++ (fx a)::[]) [] 
+map l fx = foldl l (acc a -> acc ++ (fx a)::[]) [] 
 
 lista = [1,2,3,4,5]
 listaStr = ["1","2000","3"]
