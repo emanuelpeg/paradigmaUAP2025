@@ -1,17 +1,10 @@
 
-module Clase2 exposing (main)
+module Clase2 exposing (..)
 
-import Html exposing (text)
 
---main= text (Debug.toString(quickSort [5,3,1,1,5]))
-
---head : List a -> a
---head list =
---Maybe.withDefault (Debug.todo "head called on empty list") (List.head list)
---head : List number -> number
---head list =
-  --  Maybe.withDefault 0 (List.head list)
-
+head : List a -> a
+head list =
+    Maybe.withDefault (Debug.todo "head called on empty list") (List.head list)
 
 
 tail : List a -> List a
@@ -21,7 +14,7 @@ tail list =
 
 isEmpty : List a -> Bool
 isEmpty list =
-    List.isEmpty list
+    List.isEmpty list2
 
 
 {-| Ejercicios de Programación Funcional - Clase 2
@@ -45,10 +38,6 @@ concatenar lista1 lista2 =
     if isEmpty lista2 then lista1
     else (head lista1) :: concatenar (lista1) lista2
     
---concatenar [1,2,3] [4,5,6] -> 1:: concatenar [2,3] [4,5,6]
---concatenar [2,3] [4,5,6] -> 2:: concatenar [3] [4,5,6]
---concatenar [3] [4,5,6] -> 3:: [4,5,6]
---concatenar [] [4,5,6]
 
 -- Buscar
 -- Dada una lista y una función de comparación, devuelve el valor que cumple la condición.
@@ -134,16 +123,7 @@ quickSort xs =
                 mn = minimos (resto) (pivot)
             in
             concatenar (quickSort(mn))(pivot :: quickSort (mx))
-            -- TODO: Implementar quicksort recursivamente
-            -- 1. Dividir resto en menores y mayores que pivot
-            -- 2. Ordenar recursivamente ambas particiones
-            -- 3. Concatenar: (menores ordenados) ++ [pivot] ++ (mayores ordenados)
---[5,3,1,1,5] -> min=(3,1,1,5) ->concatenar QuickSort(3,1,1,5) 5::[]
---(3,1,1,5) -> mx(5) mn (1,1) -> concatenar QuickSort(1,1) (3 :: 5) -> Quicksort[5]= concatenar([]) (5 :: [])
---() 
 
--- Obtiene un elemento en la posición n (empezando desde 0)
--- Devuelve 0 si la posición está fuera de rango
 
 
 obtenerElemento : List Int -> Int -> Int
@@ -202,9 +182,7 @@ filtrar xs p =
     if isEmpty xs then []
     else List.filter p xs
     
--- filtrar lista (\h -> h < e ) (para min y para max (invertir comparador)) (tambien sirve para maximos y para minimos creo)
 
--- clausura. Se puede acceder a variables de otra funcion (esto se ve bien en teoria)
 -- Filtra los elementos pares usando la función filtrar
 
 
@@ -292,9 +270,7 @@ transformar lista fx =
 existe : List Int -> Int -> Bool
 existe lista nro =
     List.member nro lista
---if isEmpty lista then false
---else if head lista == nro then true
---else existe (tail lista) nro
+
 
 
 -- Une 2 listas pasadas por parámetros pero ignora los repetidos
