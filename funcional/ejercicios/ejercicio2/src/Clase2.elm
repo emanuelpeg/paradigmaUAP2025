@@ -1,9 +1,17 @@
-module Clase2 exposing (..)
 
+module Clase2 exposing (main)
 
-head : List a -> a
-head list =
-    Maybe.withDefault (Debug.todo "head called on empty list") (List.head list)
+import Html exposing (text)
+
+--main= text (Debug.toString(quickSort [5,3,1,1,5]))
+
+--head : List a -> a
+--head list =
+--Maybe.withDefault (Debug.todo "head called on empty list") (List.head list)
+--head : List number -> number
+--head list =
+  --  Maybe.withDefault 0 (List.head list)
+
 
 
 tail : List a -> List a
@@ -34,9 +42,9 @@ en lugar de usar Maybe. Trabajamos con List en lugar del List de Scala.
 
 concatenar : List Int -> List Int -> List Int
 concatenar lista1 lista2 =
-    []
-
-
+    if isEmpty lista2 then lista1
+    else (head lista1) :: concatenar (lista1) lista2
+    
 
 -- Buscar
 -- Dada una lista y una función de comparación, devuelve el valor que cumple la condición.
@@ -45,7 +53,19 @@ concatenar lista1 lista2 =
 
 buscar : List Int -> (Int -> Int -> Bool) -> Int
 buscar lista com =
-    0
+    if isEmpty lista then
+        0
+    else if isEmpty (tail lista) then
+        head lista
+    else
+        let
+            h = head lista
+            m = buscar (tail lista) com
+        in
+        if com h m then
+            h
+        else
+            m
 
 
 
@@ -55,7 +75,9 @@ buscar lista com =
 
 max : List Int -> Int
 max lista =
-    0
+    if isEmpty lista then 0
+    else buscar lista (\x y -> x > y)
+    
 
 
 
@@ -65,7 +87,8 @@ max lista =
 
 min : List Int -> Int
 min lista =
-    0
+    if isEmpty lista then 0
+    else buscar lista (\x y -> x < y)
 
 
 
@@ -74,7 +97,9 @@ min lista =
 
 maximos : List Int -> Int -> List Int
 maximos lista e =
-    []
+    if isEmpty lista then [] 
+    else if head lista > e then head lista :: (maximos (tail lista) e)
+    else maximos (tail lista) e
 
 
 
@@ -83,7 +108,9 @@ maximos lista e =
 
 minimos : List Int -> Int -> List Int
 minimos lista e =
-    []
+    if isEmpty lista then []
+    else if head lista <= e then head lista :: (minimos (tail lista) e)
+    else minimos (tail lista) e
 
 
 
@@ -95,23 +122,23 @@ quickSort xs =
     case xs of
         [] ->
             []
+        pivot :: resto -> --resto equivaldria al tail y pivot seria el primer elemento
+            let
+                --t = tail xs
+                --h = head xs
+                mx = maximos (resto) (pivot)
+                mn = minimos (resto) (pivot)
+            in
+            concatenar (quickSort(mn))(pivot :: quickSort (mx))
 
-        pivot :: resto ->
-            -- TODO: Implementar quicksort recursivamente
-            -- 1. Dividir resto en menores y mayores que pivot
-            -- 2. Ordenar recursivamente ambas particiones
-            -- 3. Concatenar: (menores ordenados) ++ [pivot] ++ (mayores ordenados)
-            []
-
-
-
--- Obtiene un elemento en la posición n (empezando desde 0)
--- Devuelve 0 si la posición está fuera de rango
 
 
 obtenerElemento : List Int -> Int -> Int
 obtenerElemento lista posicion =
-    0
+    if isEmpty lista then 0
+    else if posicion > (List.length lista -1) then 0
+    else if posicion == 0 then head lista
+    else obtenerElemento (tail lista) (posicion - 1)
 
 
 
@@ -123,8 +150,17 @@ obtenerElemento lista posicion =
 
 mediana : List Int -> Int
 mediana lista =
-    0
+    if isEmpty lista then 0
+    else if modBy 2 (List.length lista) == 0 then 
+    obtenerElemento (QuickSort lista) (List.length lista//2)--logica para cuando es par
+    else    
+        let 
+            listaOrdenada = QuickSort (lista)
+            t = List.length lista - 1
+        in 
+        obtenerElemento listaOrdenada (t//2)  
 
+    
 
 
 -- Cuenta los elementos
@@ -132,8 +168,8 @@ mediana lista =
 
 contar : List Int -> Int
 contar lista =
-    0
-
+    if isEmpty lista then 0
+    else 1 + contar (tail lista)
 
 
 -- Acumula los elementos
@@ -141,8 +177,8 @@ contar lista =
 
 acc : List Int -> Int
 acc lista =
-    0
-
+    if isEmpty lista then 0
+    else List.sum lista
 
 
 -- Filtra los elementos de la lista xs según la función p
@@ -150,9 +186,9 @@ acc lista =
 
 filtrar : List Int -> (Int -> Bool) -> List Int
 filtrar xs p =
-    []
-
-
+    if isEmpty xs then []
+    else List.filter p xs
+    
 
 -- Filtra los elementos pares usando la función filtrar
 
@@ -160,7 +196,11 @@ filtrar xs p =
 filtrarPares : List Int -> List Int
 filtrarPares xs =
     -- Pista: Usar modBy 2 para verificar números pares
+    if isEmpty xs then 
     []
+    else if modBy 2 head xs == 0 then
+        head xs :: filtrarPares (tail xs)
+    else filtrarPares (tail xs)
 
 
 
@@ -169,7 +209,11 @@ filtrarPares xs =
 
 filtrarMultiplosDeTres : List Int -> List Int
 filtrarMultiplosDeTres xs =
+    if isEmpty xs then 
     []
+    else if modBy 3 head xs == 0 then
+        head xs :: filtrarPares (tail xs)
+    else filtrarPares (tail xs)
 
 
 
@@ -178,8 +222,8 @@ filtrarMultiplosDeTres xs =
 
 acumular : List Int -> (Int -> Int) -> Int
 acumular lista fx =
-    0
-
+    if isEmpty lista then 0
+    else fx head lista + acumular (tail lista) (fx)
 
 
 -- Acumula todos los elementos de una lista usando acumular (función identidad)
@@ -187,8 +231,9 @@ acumular lista fx =
 
 acumularUnidad : List Int -> Int
 acumularUnidad lista =
+    acumular lista (\x -> x)
     -- Pista: (\x -> x)
-    0
+    
 
 
 
@@ -197,8 +242,9 @@ acumularUnidad lista =
 
 acumularDoble : List Int -> Int
 acumularDoble lista =
+    acumular lista (\x -> x * 2)
     -- Pista: (\x -> x * 2)
-    0
+    
 
 
 
@@ -207,8 +253,9 @@ acumularDoble lista =
 
 acumularCuadrado : List Int -> Int
 acumularCuadrado lista =
+    acumular lista (\x -> x * x)
     -- Pista: (\x -> x * x)
-    0
+    
 
 
 
@@ -218,7 +265,9 @@ acumularCuadrado lista =
 
 transformar : List Int -> (Int -> a) -> List a
 transformar lista fx =
+    if isEmpty then 
     []
+    else List.map fx lista
 
 
 
@@ -227,7 +276,7 @@ transformar lista fx =
 
 existe : List Int -> Int -> Bool
 existe lista nro =
-    False
+    List.member nro lista
 
 
 
@@ -236,9 +285,11 @@ existe lista nro =
 
 unirOfSet : List Int -> List Int -> List Int
 unirOfSet lista otraLista =
+    let 
+        listUnidas = concatenar lista otraLista
+    in
+    removerDuplicados listUnidas
     -- Vas a necesitar una función auxiliar para remover duplicados
-    []
-
 
 
 -- Función auxiliar para remover duplicados de una lista
@@ -246,7 +297,11 @@ unirOfSet lista otraLista =
 
 removerDuplicados : List Int -> List Int
 removerDuplicados lista =
-    []
+    if List.member (head lista) (tail lista) then 
+        List.foldl (\x acc -> if x == head lista then acc else x :: acc) [] lista |> List.reverse
+    else 
+        removerDuplicados tail lista 
+    
 
 
 
