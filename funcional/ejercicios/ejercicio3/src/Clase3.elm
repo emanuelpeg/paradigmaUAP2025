@@ -1,10 +1,16 @@
 module Clase3 exposing (..)
-
+import Html exposing (li)
+import Html.Attributes exposing (list)
+import List exposing (sum)
+import List exposing (isEmpty)
+import List exposing (foldl)
+import Char exposing (isOctDigit)
+import Html exposing (pre)
 
 head : List a -> a
 head list =
     case List.head list of
-        Just h ->
+        Just h -> 
             h
 
         Nothing ->
@@ -43,7 +49,10 @@ en lugar de usar Maybe. Trabajamos con List de Elm.
 
 miMap : (a -> b) -> List a -> List b
 miMap fx lista =
-    []
+    if isEmpty lista then 
+        []
+    else 
+        fx (head lista) :: (miMap fx (tail lista))
 
 
 
@@ -53,7 +62,16 @@ miMap fx lista =
 
 miFiltro : (a -> Bool) -> List a -> List a
 miFiltro predicado lista =
-    []
+    if isEmpty lista then 
+        []
+    else 
+        let 
+            h = head lista 
+    in
+    if (predicado h) then 
+        h :: (miFiltro  predicado (tail lista))
+    else 
+        miFiltro predicado (tail lista)
 
 
 
@@ -63,9 +81,13 @@ miFiltro predicado lista =
 
 miFoldl : (a -> b -> b) -> b -> List a -> b
 miFoldl fx acumulador lista =
-    acumulador
+    if isEmpty lista then 
+        acumulador
+    else 
+        miFoldl fx (fx (head lista) acumulador) (tail lista)
 
 
+--miFoldl (\numero state -> ++ state (String.fromInt numero)) "" [1,2,3]
 
 -- ============================================================================
 -- PARTE 1: ENTENDIENDO MAP
@@ -78,7 +100,7 @@ miFoldl fx acumulador lista =
 
 duplicar : List Int -> List Int
 duplicar lista =
-    []
+    miMap (\x -> x * 2 ) lista
 
 
 
@@ -88,7 +110,7 @@ duplicar lista =
 
 longitudes : List String -> List Int
 longitudes lista =
-    []
+    miMap String.length lista --me muestra la longitud de cada string
 
 
 
@@ -98,7 +120,7 @@ longitudes lista =
 
 incrementarTodos : List Int -> List Int
 incrementarTodos lista =
-    []
+    miMap (\x -> x + 1) lista -- se lee como "para cada x en la lista, sumale 1 y devuelve una nueva lista con esos valores"
 
 
 
@@ -108,7 +130,7 @@ incrementarTodos lista =
 
 todasMayusculas : List String -> List String
 todasMayusculas lista =
-    []
+    miMap String.toUpper lista
 
 
 
@@ -118,7 +140,9 @@ todasMayusculas lista =
 
 negarTodos : List Bool -> List Bool
 negarTodos lista =
-    []
+    miMap (\x -> not x) lista
+    --miMap not lista  otra forma de hacerlo
+    --miMap not lista
 
 
 
@@ -133,7 +157,7 @@ negarTodos lista =
 
 pares : List Int -> List Int
 pares lista =
-    []
+    miFiltro (\x -> modBy 2 x == 0) lista
 
 
 
@@ -143,7 +167,7 @@ pares lista =
 
 positivos : List Int -> List Int
 positivos lista =
-    []
+    miFiltro (\x -> x > 0) lista
 
 
 
@@ -153,7 +177,7 @@ positivos lista =
 
 stringsLargos : List String -> List String
 stringsLargos lista =
-    []
+    miFiltro (\s -> String.length  s> 5) lista
 
 
 
@@ -163,7 +187,8 @@ stringsLargos lista =
 
 soloVerdaderos : List Bool -> List Bool
 soloVerdaderos lista =
-    []
+    miFiltro (\s -> s == True) lista -- se lee como "para cada elemento s en la lista, mantenelo si es True"
+    --miFiltro identity lista
 
 
 
@@ -173,7 +198,7 @@ soloVerdaderos lista =
 
 mayoresQue : Int -> List Int -> List Int
 mayoresQue valor lista =
-    []
+    miFiltro (\x -> x > valor) lista
 
 
 
@@ -188,7 +213,11 @@ mayoresQue valor lista =
 
 sumaFold : List Int -> Int
 sumaFold lista =
-    0
+    --miFoldl (suma) 
+    miFoldl (\el acum -> acum + el) 0 lista -- el es cada elemento de la lista y acum es el acumulador que empieza en 0
+    -- el es cada elemento de la lista y acum es el acumulador que empieza en 0
+    -- cada vez que se llama a la función, el valor de el se suma al valor de acum y se devuelve el nuevo valor de acum para la siguiente llamada
+
 
 
 
@@ -198,7 +227,7 @@ sumaFold lista =
 
 producto : List Int -> Int
 producto lista =
-    1
+    miFoldl (\el acum -> acum * el) 1 lista -- el es cada elemento de la lista y acum es el acumulador
 
 
 
@@ -208,7 +237,7 @@ producto lista =
 
 contarFold : List a -> Int
 contarFold lista =
-    0
+    miFoldl (\_ acum -> acum + 1) 0 lista
 
 
 
@@ -218,7 +247,7 @@ contarFold lista =
 
 concatenar : List String -> String
 concatenar lista =
-    ""
+    miFoldl (\el acum -> acum ++ el) "" lista -- (++) operador de concatenación de strings
 
 
 
@@ -228,8 +257,10 @@ concatenar lista =
 
 maximo : List Int -> Int
 maximo lista =
-    0
-
+    if isEmpty lista then
+        0
+    else
+        miFoldl (\el acum -> if el > acum then el else acum) (head lista) (tail lista)
 
 
 -- 19. Invertir con Fold
@@ -238,7 +269,7 @@ maximo lista =
 
 invertirFold : List a -> List a
 invertirFold lista =
-    []
+    miFoldl (\el acum -> el :: acum) [] lista -- ::
 
 
 
@@ -248,7 +279,7 @@ invertirFold lista =
 
 todos : (a -> Bool) -> List a -> Bool
 todos predicado lista =
-    False
+    miFoldl (\elem acum -> acum && (predicado elem)) True lista
 
 
 
@@ -258,7 +289,7 @@ todos predicado lista =
 
 alguno : (a -> Bool) -> List a -> Bool
 alguno predicado lista =
-    False
+    miFoldl (\elem acum -> acum || (predicado elem)) False lista
 
 
 
@@ -273,9 +304,7 @@ alguno predicado lista =
 
 sumaDeCuadrados : List Int -> Int
 sumaDeCuadrados lista =
-    0
-
-
+    sumaFold (miMap (\x -> x * x) lista)
 
 -- 23. Contar Números Pares
 -- Contá cuántos números pares hay en una lista
@@ -283,7 +312,7 @@ sumaDeCuadrados lista =
 
 contarPares : List Int -> Int
 contarPares lista =
-    0
+    contarFold (miFiltro (\x -> modBy 2 x == 0) lista)
 
 
 
@@ -293,7 +322,10 @@ contarPares lista =
 
 promedio : List Float -> Float
 promedio lista =
-    0
+    if isEmpty lista then
+        0
+    else
+        (miFoldl (\el acum -> acum + el) 0 lista) / toFloat (contarFold lista)
 
 
 
@@ -303,7 +335,12 @@ promedio lista =
 
 longitudesPalabras : String -> List Int
 longitudesPalabras oracion =
-    []
+    let
+        palabras = 
+            String.words oracion
+    in
+    miMap String.length palabras
+    
 
 
 
@@ -313,8 +350,11 @@ longitudesPalabras oracion =
 
 palabrasLargas : String -> List String
 palabrasLargas oracion =
-    []
-
+    let
+        palabras = 
+            String.words oracion
+    in
+    miFiltro (\palabra -> String.length palabra > 3) palabras
 
 
 -- 27. Sumar Números Positivos
@@ -323,7 +363,8 @@ palabrasLargas oracion =
 
 sumarPositivos : List Int -> Int
 sumarPositivos lista =
-    0
+    sumaFold (miFiltro (\x -> x > 0) lista)
+    -- Para cada x en la lista, mantenelo si es mayor que 0 y luego sumalos todos
 
 
 
@@ -333,7 +374,7 @@ sumarPositivos lista =
 
 duplicarPares : List Int -> List Int
 duplicarPares lista =
-    []
+    miMap (\n -> if modBy 2 n == 0 then n * 2 else n) lista
 
 
 
@@ -348,7 +389,8 @@ duplicarPares lista =
 
 aplanar : List (List a) -> List a
 aplanar lista =
-    []
+    miFoldl (\sublista acum -> acum ++ sublista) [] lista
+    -- miFoldl (++) [] lista otra forma de hacerlo
 
 
 
@@ -359,7 +401,23 @@ aplanar lista =
 
 agruparPor : (a -> a -> Bool) -> List a -> List (List a)
 agruparPor comparador lista =
-    []
+    let
+        listaInvertida = 
+            invertirFold lista
+        folder item acc =
+            case acc of
+                [] -> 
+                    [ [item] ]
+                (primerGrupo :: restoGrupos) ->
+                    case head primerGrupo of
+                        h ->
+                            if comparador item h then
+                                (item :: primerGrupo) :: restoGrupos
+                            else
+                                [item] :: acc
+    in
+    miFoldl folder [] listaInvertida
+
 
 
 
@@ -369,8 +427,15 @@ agruparPor comparador lista =
 
 particionar : (a -> Bool) -> List a -> ( List a, List a )
 particionar predicado lista =
-    ( [], [] )
+    miFoldl
+        (\el (listaVerdaderos, listaFalsos) -> -- Aquí separamos los elementos en dos listas según el predicado
+            if (predicado el) then -- si el elemento es verdadero según el predicado
+                (el::listaVerdaderos, listaFalsos) -- lo agregamos a la lista de verdaderos y dejamos la de falsos igual
+            else
+                (listaVerdaderos, el::listaFalsos)) -- si el elemento es falso según el predicado, lo agregamos a la lista de falsos y dejamos la de verdaderos igual
+            ([], []) -- comenzamos con dos listas vacías
 
+            lista -- la lista original que vamos a particionar
 
 
 -- 32. Suma Acumulada
@@ -379,8 +444,21 @@ particionar predicado lista =
 
 sumaAcumulada : List Int -> List Int
 sumaAcumulada lista =
-    []
+    let
+        folder = 
+            \el (sumaActual, listaResultado) ->
+                let
+                    nuevaSuma = el + sumaActual
+                in (nuevaSuma, nuevaSuma :: listaResultado)
 
+        resultadoEnTupla = 
+            miFoldl folder (0, []) lista
+
+        listaInvertida =
+            Tuple.second resultadoEnTupla
+
+    in
+    invertirFold listaInvertida
 
 
 -- ============================================================================
@@ -396,10 +474,14 @@ subSets : List Int -> List (List Int)
 subSets lista =
     case lista of
         [] ->
-            [ [] ]
+            [ [] ] -- caso base: el único subconjunto de la lista vacía es la lista vacía
 
         x :: xs ->
-            []
+            let
+                subsDeLaCola = subSets xs -- obtenemos los subconjuntos de la cola xs
+                subsConLaCabeza = miMap (\set-> x :: set) subsDeLaCola -- agregamos la cabeza x a cada subconjunto de la cola xs
+            in
+            subsDeLaCola ++ subsConLaCabeza -- combinamos los subconjuntos sin la cabeza y con la cabeza
 
 
 
