@@ -377,6 +377,7 @@ promedio lista =
 
 longitudesPalabras : String -> List Int
 longitudesPalabras oracion =
+    miFoldl (\x acc -> acc ++ [String.length x]) [] (String.words oracion)
    
 
 
@@ -387,7 +388,8 @@ longitudesPalabras oracion =
 
 palabrasLargas : String -> List String
 palabrasLargas oracion =
-    []
+    miFoldl (\x acc -> if (String.length x > 3) then acc ++ [x] else acc) [] (String.words oracion)
+    
 
 
 
@@ -397,7 +399,7 @@ palabrasLargas oracion =
 
 sumarPositivos : List Int -> Int
 sumarPositivos lista =
-    0
+    miFoldl (\x acc -> if (x > 0) then acc + x else acc) 0 lista
 
 
 
@@ -407,7 +409,7 @@ sumarPositivos lista =
 
 duplicarPares : List Int -> List Int
 duplicarPares lista =
-    []
+    miFoldl (\x acc -> if (modBy 2 x == 0) then acc ++ [x * 2] else acc ++ [x]) [] lista
 
 
 
@@ -422,7 +424,7 @@ duplicarPares lista =
 
 aplanar : List (List a) -> List a
 aplanar lista =
-    []
+    miFoldl (\x acc -> acc ++ x) [] lista
 
 
 
@@ -433,7 +435,24 @@ aplanar lista =
 
 agruparPor : (a -> a -> Bool) -> List a -> List (List a)
 agruparPor comparador lista =
-    []
+    case lista of
+        [] ->
+            []
+
+        hea :: tai ->
+            let
+                agruparAux currentGroup remaining =
+                    case remaining of
+                        [] ->
+                            [ List.reverse currentGroup ]
+
+                        x :: xs ->
+                            if comparador (head currentGroup) x then
+                                agruparAux (x :: currentGroup) xs
+                            else
+                                List.reverse currentGroup :: agruparAux [ x ] xs
+            in
+            agruparAux [ hea ] tai
 
 
 
@@ -443,7 +462,15 @@ agruparPor comparador lista =
 
 particionar : (a -> Bool) -> List a -> ( List a, List a )
 particionar predicado lista =
-    ( [], [] )
+    miFoldl
+        (\x (yes, no) ->
+            if predicado x then
+                (yes ++ [ x ], no)
+            else
+                (yes, no ++ [ x ])
+        )
+        ([], [])
+        lista
 
 
 
@@ -453,7 +480,16 @@ particionar predicado lista =
 
 sumaAcumulada : List Int -> List Int
 sumaAcumulada lista =
-    []
+    miFoldl
+        (\x (accList, currentSum) ->
+            let
+                newSum = currentSum + x
+            in
+            (accList ++ [ newSum ], newSum)
+        )
+        ([], 0)
+        lista
+        |> Tuple.first
 
 
 
