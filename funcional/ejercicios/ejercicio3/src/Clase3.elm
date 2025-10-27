@@ -1,4 +1,5 @@
 module Clase3 exposing (..)
+import List exposing (tail)
 
 
 head : List a -> a
@@ -40,11 +41,12 @@ en lugar de usar Maybe. Trabajamos con List de Elm.
 -- 1. Map Personalizado
 -- Implementá tu propia versión de map usando recursión y las funciones genéricas head, tail e isEmpty
 
-
 miMap : (a -> b) -> List a -> List b
 miMap fx lista =
-    []
-
+    if isEmpty lista then 
+        []
+    else 
+        ((fx (head lista)) :: (miMap fx (tail lista)))
 
 
 -- 2. Filter Personalizado
@@ -53,7 +55,12 @@ miMap fx lista =
 
 miFiltro : (a -> Bool) -> List a -> List a
 miFiltro predicado lista =
-    []
+    if isEmpty lista then
+        []
+    else if predicado (head lista) then
+        ((head lista) :: (miFiltro predicado (tail lista)))
+    else
+        miFiltro predicado (tail lista)
 
 
 
@@ -63,8 +70,16 @@ miFiltro predicado lista =
 
 miFoldl : (a -> b -> b) -> b -> List a -> b
 miFoldl fx acumulador lista =
-    acumulador
-
+    if isEmpty lista then 
+        acumulador
+    else
+        let -- sirve para crear variables temporales
+            acu = fx (head lista)(acumulador) -- Defino una variable temporales para no llamar dos veces a head
+        in -- sirve para escribir el resultado final de la función.
+            miFoldl fx acu (tail lista) -- Llamo recursivamente a miFoldl con la variable temporal
+    
+-- OTRA FORMA DE HACERLO ES SOLO PONIENDO EN EL ELSE 
+-- miFoldl fx (fx (head lista) acumulador) (tail lista) ACA NO ES NECESARIO DEFINIR UNA VARIABLE TEMPORAL
 
 
 -- ============================================================================
@@ -75,12 +90,10 @@ miFoldl fx acumulador lista =
 -- 4. Duplicar Números
 -- Escribí una función que duplique cada número en una lista
 
-
 duplicar : List Int -> List Int
 duplicar lista =
-    []
-
-
+    miMap (\x -> x * 2) lista
+    
 
 -- 5. Longitudes de Strings
 -- Convertí una lista de strings a una lista de sus longitudes
@@ -88,7 +101,13 @@ duplicar lista =
 
 longitudes : List String -> List Int
 longitudes lista =
-    []
+    miMap(String.length) lista
+    
+
+    --case lista of 
+        --[] -> 
+            --[]
+        --hea :: tai -> (String.length hea) :: (longitudes tai)
 
 
 
@@ -98,17 +117,27 @@ longitudes lista =
 
 incrementarTodos : List Int -> List Int
 incrementarTodos lista =
-    []
+    miMap (\x -> x + 1) lista
 
+    -- case lista of 
+    --     [] -> 
+    --         []
+    --     hea :: tai -> (hea + 1) :: (incrementarTodos tai)
 
 
 -- 7. A Mayúsculas
 -- Convertí todos los strings de una lista a mayúsculas
 
-
 todasMayusculas : List String -> List String
 todasMayusculas lista =
-    []
+    miMap (String.toUpper) lista
+
+
+    -- case lista of 
+    --     [] -> 
+    --         []
+    --     hea :: tai -> (String.toUpper hea) :: (todasMayusculas tai)
+      
 
 
 
@@ -118,7 +147,14 @@ todasMayusculas lista =
 
 negarTodos : List Bool -> List Bool
 negarTodos lista =
-    []
+    miMap (\x -> not x) lista
+    -- miMap (not) lista    -- Tambien se puede hacer de esta forma
+    
+    
+    -- case lista of 
+    --     [] -> 
+    --         []
+    --     hea :: tai -> (not hea) :: (negarTodos tai)
 
 
 
@@ -133,7 +169,14 @@ negarTodos lista =
 
 pares : List Int -> List Int
 pares lista =
-    []
+    miFiltro (\x -> modBy 2 x == 0) lista
+
+    -- case lista of 
+    --     [] -> 
+    --         []
+    --     hea :: tai ->
+    --     if (modBy 2 hea) == 0 then hea :: pares (tai)
+    --     else pares tai
 
 
 
@@ -143,7 +186,14 @@ pares lista =
 
 positivos : List Int -> List Int
 positivos lista =
-    []
+    miFiltro (\x -> x >= 0) lista
+
+    -- case lista of 
+    --     [] -> 
+    --         []
+    --     hea :: tai -> 
+    --     if hea >= 0 then hea :: (positivos tai)
+    --     else positivos tai
 
 
 
@@ -153,7 +203,14 @@ positivos lista =
 
 stringsLargos : List String -> List String
 stringsLargos lista =
-    []
+    miFiltro (\x -> String.length x > 5) lista
+
+    -- case lista of 
+    --     [] ->
+    --         []
+    --     hea :: tai -> 
+    --     if (String.length hea) >= 5 then hea :: stringsLargos tai
+    --     else stringsLargos tai
 
 
 
@@ -162,8 +219,15 @@ stringsLargos lista =
 
 
 soloVerdaderos : List Bool -> List Bool
-soloVerdaderos lista =
-    []
+soloVerdaderos lista =  
+    miFiltro (\x -> x == True) lista
+
+    -- case lista of 
+    --     [] -> 
+    --         []
+    --     hea :: tai -> 
+    --     if hea == True then hea :: soloVerdaderos tai
+    --     else soloVerdaderos tai
 
 
 
@@ -172,8 +236,17 @@ soloVerdaderos lista =
 
 
 mayoresQue : Int -> List Int -> List Int
-mayoresQue valor lista =
-    []
+mayoresQue valor lista = 
+    miFiltro (\x -> x > valor) lista
+
+
+
+    -- case lista of 
+    --     [] -> 
+    --         []
+    --     hea :: tai -> 
+    --     if (hea > valor) then hea :: mayoresQue valor tai -- Acordarse de poner valor
+    --     else mayoresQue valor tai -- Cuando la llamo a la funcion le tengo que pasar 3 parametros
 
 
 
@@ -188,7 +261,7 @@ mayoresQue valor lista =
 
 sumaFold : List Int -> Int
 sumaFold lista =
-    0
+    miFoldl (\x acc -> x + acc) 0 lista
 
 
 
@@ -198,7 +271,7 @@ sumaFold lista =
 
 producto : List Int -> Int
 producto lista =
-    1
+    miFoldl (\x acc -> x * acc) 1 lista
 
 
 
@@ -208,7 +281,7 @@ producto lista =
 
 contarFold : List a -> Int
 contarFold lista =
-    0
+    miFoldl (\x acc -> acc + 1) 0 lista
 
 
 
@@ -218,7 +291,8 @@ contarFold lista =
 
 concatenar : List String -> String
 concatenar lista =
-    ""
+    miFoldl (\x acc -> acc ++ x ) "" lista --Con esto se une en orden
+    -- miFoldl (\x acc -> x ++ acc ) "" lista --Así se unen al reves
 
 
 
@@ -228,7 +302,7 @@ concatenar lista =
 
 maximo : List Int -> Int
 maximo lista =
-    0
+    miFoldl (\x acc -> if (x > acc) then x else acc) 0 lista
 
 
 
@@ -238,7 +312,7 @@ maximo lista =
 
 invertirFold : List a -> List a
 invertirFold lista =
-    []
+    miFoldl (\x acc -> x :: acc) [] lista
 
 
 
@@ -248,7 +322,7 @@ invertirFold lista =
 
 todos : (a -> Bool) -> List a -> Bool
 todos predicado lista =
-    False
+    miFoldl (\x acc -> acc && (predicado x)) True lista
 
 
 
@@ -258,7 +332,7 @@ todos predicado lista =
 
 alguno : (a -> Bool) -> List a -> Bool
 alguno predicado lista =
-    False
+    miFoldl (\x acc -> acc || (predicado x)) False lista
 
 
 
@@ -273,7 +347,7 @@ alguno predicado lista =
 
 sumaDeCuadrados : List Int -> Int
 sumaDeCuadrados lista =
-    0
+    miFoldl (\x acc -> acc + (x * x)) 0 lista
 
 
 
@@ -283,7 +357,7 @@ sumaDeCuadrados lista =
 
 contarPares : List Int -> Int
 contarPares lista =
-    0
+    miFoldl (\x acc -> if (modBy 2 x == 0) then acc + 1 else acc) 0 lista
 
 
 
@@ -293,7 +367,7 @@ contarPares lista =
 
 promedio : List Float -> Float
 promedio lista =
-    0
+    miFoldl (\x acc -> acc + x) 0 lista / toFloat (miFoldl (\x acc -> acc + 1) 0 lista)
 
 
 
@@ -303,7 +377,8 @@ promedio lista =
 
 longitudesPalabras : String -> List Int
 longitudesPalabras oracion =
-    []
+    miFoldl (\x acc -> acc ++ [String.length x]) [] (String.words oracion)
+   
 
 
 
@@ -313,7 +388,8 @@ longitudesPalabras oracion =
 
 palabrasLargas : String -> List String
 palabrasLargas oracion =
-    []
+    miFoldl (\x acc -> if (String.length x > 3) then acc ++ [x] else acc) [] (String.words oracion)
+    
 
 
 
@@ -323,7 +399,7 @@ palabrasLargas oracion =
 
 sumarPositivos : List Int -> Int
 sumarPositivos lista =
-    0
+    miFoldl (\x acc -> if (x > 0) then acc + x else acc) 0 lista
 
 
 
@@ -333,7 +409,7 @@ sumarPositivos lista =
 
 duplicarPares : List Int -> List Int
 duplicarPares lista =
-    []
+    miFoldl (\x acc -> if (modBy 2 x == 0) then acc ++ [x * 2] else acc ++ [x]) [] lista
 
 
 
@@ -348,7 +424,7 @@ duplicarPares lista =
 
 aplanar : List (List a) -> List a
 aplanar lista =
-    []
+    miFoldl (\x acc -> acc ++ x) [] lista
 
 
 
@@ -359,7 +435,24 @@ aplanar lista =
 
 agruparPor : (a -> a -> Bool) -> List a -> List (List a)
 agruparPor comparador lista =
-    []
+    case lista of
+        [] ->
+            []
+
+        hea :: tai ->
+            let
+                agruparAux currentGroup remaining =
+                    case remaining of
+                        [] ->
+                            [ List.reverse currentGroup ]
+
+                        x :: xs ->
+                            if comparador (head currentGroup) x then
+                                agruparAux (x :: currentGroup) xs
+                            else
+                                List.reverse currentGroup :: agruparAux [ x ] xs
+            in
+            agruparAux [ hea ] tai
 
 
 
@@ -369,7 +462,15 @@ agruparPor comparador lista =
 
 particionar : (a -> Bool) -> List a -> ( List a, List a )
 particionar predicado lista =
-    ( [], [] )
+    miFoldl
+        (\x (yes, no) ->
+            if predicado x then
+                (yes ++ [ x ], no)
+            else
+                (yes, no ++ [ x ])
+        )
+        ([], [])
+        lista
 
 
 
@@ -379,7 +480,16 @@ particionar predicado lista =
 
 sumaAcumulada : List Int -> List Int
 sumaAcumulada lista =
-    []
+    miFoldl
+        (\x (accList, currentSum) ->
+            let
+                newSum = currentSum + x
+            in
+            (accList ++ [ newSum ], newSum)
+        )
+        ([], 0)
+        lista
+        |> Tuple.first
 
 
 
