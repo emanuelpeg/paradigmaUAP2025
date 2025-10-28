@@ -149,7 +149,7 @@ negarTodos lista =
 
 pares : List Int -> List Int
 pares lista =
-    []
+    miFiltro (\n -> modBy n 2 == 0) lista
 
 
 
@@ -159,7 +159,7 @@ pares lista =
 
 positivos : List Int -> List Int
 positivos lista =
-    []
+    miFiltro (\n -> n > 0) lista
 
 
 
@@ -169,7 +169,7 @@ positivos lista =
 
 stringsLargos : List String -> List String
 stringsLargos lista =
-    []
+    miFiltro (\s -> String.length s > 5) lista
 
 
 
@@ -179,7 +179,7 @@ stringsLargos lista =
 
 soloVerdaderos : List Bool -> List Bool
 soloVerdaderos lista =
-    []
+    miFiltro (\b -> b == True) lista
 
 
 
@@ -189,7 +189,7 @@ soloVerdaderos lista =
 
 mayoresQue : Int -> List Int -> List Int
 mayoresQue valor lista =
-    []
+    miFiltro (\n -> n > valor) lista
 
 
 
