@@ -43,7 +43,10 @@ en lugar de usar Maybe. Trabajamos con List de Elm.
 
 miMap : (a -> b) -> List a -> List b
 miMap fx lista =
-    []
+    if isEmpty lista then
+        []
+    else
+        fx (head lista) :: miMap fx (tail lista)
 
 
 
@@ -53,7 +56,17 @@ miMap fx lista =
 
 miFiltro : (a -> Bool) -> List a -> List a
 miFiltro predicado lista =
-    []
+    if isEmpty lista then
+        []
+    else
+        let
+            cabeza = head List.all
+            cola = tail List.all
+        in
+        if predicado cabeza then
+            cabeza :: miFiltro predicado cola
+        else
+            miFiltro predicado cola
 
 
 
@@ -63,7 +76,10 @@ miFiltro predicado lista =
 
 miFoldl : (a -> b -> b) -> b -> List a -> b
 miFoldl fx acumulador lista =
-    acumulador
+    if isEmpty lista then
+        acumulador
+    else 
+        miFoldl fx (fx (head lsta) acumulador) (tail lista)
 
 
 
