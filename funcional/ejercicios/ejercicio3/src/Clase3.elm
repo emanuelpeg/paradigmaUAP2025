@@ -60,8 +60,8 @@ miFiltro predicado lista =
         []
     else
         let
-            cabeza = head List.all
-            cola = tail List.all
+            cabeza = head lista
+            cola = tail lista
         in
         if predicado cabeza then
             cabeza :: miFiltro predicado cola
@@ -79,7 +79,7 @@ miFoldl fx acumulador lista =
     if isEmpty lista then
         acumulador
     else 
-        miFoldl fx (fx (head lsta) acumulador) (tail lista)
+        miFoldl fx (fx (head lista) acumulador) (tail lista)
 
 
 
@@ -94,7 +94,7 @@ miFoldl fx acumulador lista =
 
 duplicar : List Int -> List Int
 duplicar lista =
-    []
+    miMap (\x -> x * 2) lista
 
 
 
@@ -104,7 +104,7 @@ duplicar lista =
 
 longitudes : List String -> List Int
 longitudes lista =
-    []
+    miMap String.length lista
 
 
 
@@ -114,7 +114,7 @@ longitudes lista =
 
 incrementarTodos : List Int -> List Int
 incrementarTodos lista =
-    []
+    miMap (\x -> x + 1) lista
 
 
 
@@ -124,7 +124,7 @@ incrementarTodos lista =
 
 todasMayusculas : List String -> List String
 todasMayusculas lista =
-    []
+    miMap String.toUpper lista
 
 
 
@@ -134,7 +134,7 @@ todasMayusculas lista =
 
 negarTodos : List Bool -> List Bool
 negarTodos lista =
-    []
+    miMap not lista 
 
 
 
