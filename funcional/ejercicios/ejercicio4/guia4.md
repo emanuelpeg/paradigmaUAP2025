@@ -29,6 +29,7 @@ type Tree a
     | Node a (Tree a) (Tree a)
 ```
 
+
 Un árbol puede ser:
 - `Empty`: Un árbol vacío (caso base)
 - `Node valor izquierdo derecho`: Un nodo con un valor y dos subárboles
