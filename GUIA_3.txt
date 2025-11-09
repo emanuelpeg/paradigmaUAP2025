@@ -1,0 +1,352 @@
+
+{-|
+  Guia3.elm
+  Implementación de la guía de ejercicios de programación funcional en Elm.
+  Todas las funciones son puras y tienen anotaciones de tipo.
+- -}
+
+import String exposing (toUpper, words, length)
+import List exposing (foldl, foldr)
+
+
+-- =========================
+-- Parte 0: Implementaciones Personalizadas (recursivas)
+-- =========================
+
+miMap : (a -> b) -> List a -> List b
+miMap f list =
+    case list of
+        [] ->
+            []
+
+        x :: xs ->
+            f x :: miMap f xs
+
+
+miFiltro : (a -> Bool) -> List a -> List a
+miFiltro pred list =
+    case list of
+        [] ->
+            []
+
+        x :: xs ->
+            if pred x then
+                x :: miFiltro pred xs
+            else
+                miFiltro pred xs
+
+
+-- Nota: la firma solicitada fue (a -> b -> b) -> b -> List a -> b
+-- Implementamos una foldl recursiva que pasa (elemento -> acumulador -> acumulador)
+miFoldl : (a -> b -> b) -> b -> List a -> b
+miFoldl f acc list =
+    case list of
+        [] ->
+            acc
+
+        x :: xs ->
+            miFoldl f (f x acc) xs
+
+
+-- =========================
+-- Parte 1: Entendiendo Map
+-- =========================
+
+duplicar : List Int -> List Int
+duplicar =
+    List.map (\x -> x * 2)
+
+
+longitudes : List String -> List Int
+longitudes =
+    List.map String.length
+
+
+incrementarTodos : List Int -> List Int
+incrementarTodos =
+    List.map (\x -> x + 1)
+
+
+todasMayusculas : List String -> List String
+todasMayusculas =
+    List.map String.toUpper
+
+
+negarTodos : List Bool -> List Bool
+negarTodos =
+    List.map (\b -> not b)
+
+
+-- =========================
+-- Parte 2: Entendiendo Filter
+-- =========================
+
+pares : List Int -> List Int
+pares =
+    List.filter (\x -> (x % 2) == 0)
+
+
+positivos : List Int -> List Int
+positivos =
+    List.filter (\x -> x > 0)
+
+
+stringsLargos : List String -> List String
+stringsLargos =
+    List.filter (\s -> String.length s > 5)
+
+
+soloVerdaderos : List Bool -> List Bool
+soloVerdaderos =
+    List.filter (\b -> b == True)
+
+
+mayoresQue : Int -> List Int -> List Int
+mayoresQue n =
+    List.filter (\x -> x > n)
+
+
+-- =========================
+-- Parte 3: Entendiendo Fold (foldl / foldr)
+-- =========================
+
+sumaFold : List Int -> Int
+sumaFold =
+    List.foldl (\x acc -> x + acc) 0
+
+
+producto : List Int -> Int
+producto =
+    -- producto de lista vacía = 1 (convención matemática)
+    List.foldl (\x acc -> x * acc) 1
+
+
+contarFold : List a -> Int
+contarFold =
+    List.foldl (\_ acc -> acc + 1) 0
+
+
+concatenar : List String -> String
+concatenar =
+    List.foldl (\s acc -> s ++ acc) ""
+
+
+maximo : List Int -> Int
+maximo list =
+    case list of
+        [] ->
+            0
+
+        x :: xs ->
+            List.foldl (\n acc -> if n > acc then n else acc) x xs
+
+
+invertirFold : List a -> List a
+invertirFold =
+    List.foldl (\x acc -> x :: acc) []
+
+
+todos : (a -> Bool) -> List a -> Bool
+todos pred list =
+    List.foldl (\x acc -> acc && pred x) True list
+
+
+alguno : (a -> Bool) -> List a -> Bool
+alguno pred list =
+    List.foldl (\x acc -> acc || pred x) False list
+
+
+-- =========================
+-- Parte 4: Combinando Operaciones
+-- =========================
+
+sumaDeCuadrados : List Int -> Int
+sumaDeCuadrados =
+    List.map (\x -> x * x)
+        >> List.foldl (\x acc -> x + acc) 0
+
+
+contarPares : List Int -> Int
+contarPares =
+    List.filter (\x -> (x % 2) == 0)
+        >> List.length
+
+
+promedio : List Float -> Float
+promedio list =
+    case list of
+        [] ->
+            0
+
+        _ ->
+            let
+                suma =
+                    List.foldl (\x acc -> x + acc) 0 list
+
+                n =
+                    toFloat (List.length list)
+            in
+            suma / n
+
+
+longitudesPalabras : String -> List Int
+longitudesPalabras str =
+    str
+        |> String.words
+        |> List.map String.length
+
+
+palabrasLargas : String -> List String
+palabrasLargas str =
+    str
+        |> String.words
+        |> List.filter (\w -> String.length w > 3)
+
+
+sumarPositivos : List Int -> Int
+sumarPositivos =
+    List.filter (\x -> x > 0)
+        >> List.foldl (\x acc -> x + acc) 0
+
+
+duplicarPares : List Int -> List Int
+duplicarPares =
+    List.map (\x -> if (x % 2) == 0 then x * 2 else x)
+
+
+-- =========================
+-- Parte 5: Desafíos Avanzados
+-- =========================
+
+aplanar : List (List a) -> List a
+aplanar =
+    List.concat
+
+
+{-|
+  agruparPor toma una función de comparación binaria (a -> a -> Bool)
+  y agrupa elementos consecutivos que satisfacen la relación.
+  Ejemplo: agruparPor (==) [1,1,2,2,3,1] == [[1,1],[2,2],[3],[1]]
+-}
+agruparPor : (a -> a -> Bool) -> List a -> List (List a)
+agruparPor eq list =
+    let
+        step element groups =
+            case groups of
+                [] ->
+                    [ [ element ] ]
+
+                current :: rest ->
+                    case current of
+                        [] ->
+                            [ [ element ] ] ++ rest
+
+                        first :: _ ->
+                            if eq first element then
+                                (element :: current) :: rest
+                            else
+                                [ element ] :: groups
+    in
+    -- foldl construye grupos en orden inverso, por eso invertimos al final
+    List.foldl step [] list
+        |> List.map List.reverse
+        |> List.reverse
+
+
+particionar : (a -> Bool) -> List a -> ( List a, List a )
+particionar pred list =
+    List.foldl
+        (\x (yes, no) ->
+            if pred x then
+                ( x :: yes, no )
+            else
+                ( yes, x :: no )
+        )
+        ( [], [] )
+        list
+        |> (\(y, n) -> (List.reverse y, List.reverse n))
+
+
+sumaAcumulada : List Int -> List Int
+sumaAcumulada list =
+    let
+        step x (accList, accSum) =
+            let
+                newSum =
+                    accSum + x
+            in
+            ( newSum :: accList, newSum )
+        (revList, _) =
+            List.foldl step ([], 0) list
+    in
+    List.reverse revList
+
+
+-- =========================
+-- Subconjuntos (power set)
+-- =========================
+
+subSets : List Int -> List (List Int)
+subSets list =
+    -- partimos de [[]] y por cada elemento añadimos las combinaciones con/ sin el elemento
+    List.foldl
+        (\x acc ->
+            acc ++ (List.map (\subset -> x :: subset) acc)
+        )
+        [ [] ]
+        list
+
+
+-- =========================
+-- Cortar en grupos, tomar y saltar
+-- =========================
+
+tomar : Int -> List a -> List a
+tomar n list =
+    if n <= 0 then
+        []
+    else
+        case list of
+            [] ->
+                []
+
+            x :: xs ->
+                x :: tomar (n - 1) xs
+
+
+saltar : Int -> List a -> List a
+saltar n list =
+    if n <= 0 then
+        list
+    else
+        case list of
+            [] ->
+                []
+
+            _ :: xs ->
+                saltar (n - 1) xs
+
+
+cortar : List Int -> Int -> List (List Int)
+cortar list n =
+    if n <= 0 then
+        -- si n inválido devolvemos la lista original como un único grupo
+        [ list ]
+    else
+        let
+            step remaining accum =
+                case remaining of
+                    [] ->
+                        List.reverse accum
+
+                    _ ->
+                        let
+                            chunk =
+                                tomar n remaining
+
+                            rest =
+                                saltar n remaining
+                        in
+                        step rest (chunk :: accum)
+        in
+        step list []
