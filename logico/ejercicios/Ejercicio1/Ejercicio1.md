@@ -2,13 +2,49 @@
 
 **Enunciado:** Implementá dos predicados que permitan convertir temperaturas entre grados Celsius y Fahrenheit. El predicado `celsius_to_fahrenheit/2` debe recibir una temperatura en Celsius y devolver su equivalente en Fahrenheit. El predicado `fahrenheit_to_celsius/2` debe hacer la conversión inversa.
 
+% Convierte Celsius a Fahrenheit
+celsius_to_fahrenheit(C, F) :-
+    F is C*9/5 + 32.
+
+% Convierte Fahrenheit a Celsius
+fahrenheit_to_celsius(F, C) :-
+    C is (F-32)*5/9.
+
+
 % Queries de ejemplo:
 % ?- celsius_to_fahrenheit(0, F). % F = 32.0
 % ?- fahrenheit_to_celsius(212, C). % C = 100.0
 
+
+
+
 2. Recursión - vuelos
 
 **Enunciado:** Tenés una base de datos de vuelos directos entre ciudades, donde cada vuelo está representado como `flight(Ciudad1, Ciudad2, DuracionEnMinutos)`. Implementá dos predicados: `direct_flight/2` que verifique si existe un vuelo directo entre dos ciudades, y `reachable/2` que determine si es posible llegar de una ciudad a otra usando cualquier cantidad de conexiones (vuelos intermedios).
+%VIEOS DE EJEMPLO
+flight(london, paris, 120).
+flight(paris, rome, 150).
+flight(rome, athens, 180).
+flight(london, amsterdam, 90).
+flight(amsterdam, berlin, 80).
+flight(berlin, athens, 200).
+flight(madrid, lisbon, 60).
+
+direct_flight(C1, C2) :-
+    flight(C1, C2, _).
+
+
+reachable(X, Y) :-
+    reachable(X, Y, []).
+
+% Predicado auxiliar con lista de visitadas para evitar ciclos
+reachable(X, Y, _) :-
+    direct_flight(X, Y).
+reachable(X, Y, Visited) :-
+    direct_flight(X, Z),
+    \+ member(Z, Visited),
+    reachable(Z, Y, [X|Visited]).
+
 
 % Queries de ejemplo:
 % ?- direct_flight(london, paris). % true

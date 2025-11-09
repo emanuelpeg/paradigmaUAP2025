@@ -1,4 +1,4 @@
-module Main exposing (..)
+omodule Main exposing (..)
 
 import Html exposing (Html, a, text)
 
