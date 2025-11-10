@@ -1,0 +1,131 @@
+% ---
+% 1. Conversión de temperatura
+% ---
+% F = C * 9/5 + 32
+% C = (F - 32) * 5/9
+
+celsius_to_fahrenheit(C, F) :-
+    F is C * 9 / 5 + 32.
+
+fahrenheit_to_celsius(F, C) :-
+    C is (F - 32) * 5 / 9.
+
+% ---
+% 2. Recursión - vuelos
+% ---
+
+% Base de datos de hechos (inventada para el ejemplo)
+% flight(Origen, Destino, DuracionEnMinutos)
+flight(london, paris, 120).
+flight(paris, berlin, 100).
+flight(berlin, athens, 180).
+flight(london, new_york, 480).
+
+% Verifica si existe un vuelo directo (ignora la duración)
+direct_flight(Origen, Destino) :-
+    flight(Origen, Destino, _).
+
+% reachable/2: determina si se puede llegar de A a B
+
+% Caso base: Se puede llegar si hay un vuelo directo.
+reachable(Origen, Destino) :-
+    direct_flight(Origen, Destino).
+
+% Caso recursivo: Se puede llegar a 'Destino' desde 'Origen'
+% si se puede tomar un vuelo directo a una 'CiudadIntermedia'
+% y se puede llegar a 'Destino' desde esa 'CiudadIntermedia'.
+reachable(Origen, Destino) :-
+    direct_flight(Origen, CiudadIntermedia),
+    reachable(CiudadIntermedia, Destino).
+
+% ---
+% 3. Operador de corte - Piedra papel o tijera
+% ---
+
+% Hechos: qué le gana a qué
+beats(rock, scissors).
+beats(scissors, paper).
+beats(paper, rock).
+
+% winner/3: Determina el resultado (player1, player2, draw)
+% Usamos el corte (!) para evitar que Prolog busque más soluciones
+% una vez que se ha encontrado un resultado.
+
+% Caso 1: Empate. Si son iguales, es empate. Cortamos.
+winner(Eleccion, Eleccion, draw) :- !.
+
+% Caso 2: Gana P1. Si P1 le gana a P2, P1 gana. Cortamos.
+winner(EleccionP1, EleccionP2, player1) :-
+    beats(EleccionP1, EleccionP2), !.
+
+% Caso 3: Gana P2. Si no es empate (regla 1) y P1 no ganó (regla 2),
+% entonces P2 debe haber ganado. No necesitamos más chequeos.
+winner(_, _, player2).
+
+% play_game/5: Mapea el resultado (player1/player2) a los nombres
+play_game(NombreP1, EleccionP1, NombreP2, EleccionP2, Ganador) :-
+    winner(EleccionP1, EleccionP2, Resultado),
+    map_winner_name(Resultado, NombreP1, NombreP2, Ganador).
+
+% Predicado auxiliar para mapear el resultado al nombre
+map_winner_name(player1, NombreP1, _, NombreP1) :- !.
+map_winner_name(player2, _, NombreP2, NombreP2) :- !.
+map_winner_name(draw, _, _, draw).
+
+% ---
+% 4. Operador de corte - Descuentos
+% ---
+
+% Versión SIN corte.
+% Nota: Para que esta versión sea "correcta", tendríamos que
+% hacer las condiciones mutuamente excluyentes (ej: Monto >= 500, Monto < 1000).
+% Si la escribimos de la forma "obvia", es lógicamente incorrecta.
+discount_without_cut(Monto, 20) :- Monto >= 1000.
+discount_without_cut(Monto, 10) :- Monto >= 500.
+discount_without_cut(_, 5).
+% % ?- discount_without_cut(1200, D).
+% % D = 20 ;  <- Prolog encuentra una solución
+% % D = 10 ;  <- Prolog sigue buscando (backtracking) y encuentra OTRA
+% % D = 5.    <- E incluso encuentra una tercera. ¡Incorrecto!
+
+% Versión CON corte.
+% El corte (!) le dice a Prolog: "Si encontraste una solución
+% en esta regla, no intentes hacer backtracking para probar las reglas
+% siguientes de este predicado".
+
+% Si el monto es >= 1000, el descuento es 20. Corta.
+discount_with_cut(Monto, 20) :- Monto >= 1000, !.
+% Si no (gracias al !), si el monto es >= 500, el descuento es 10. Corta.
+discount_with_cut(Monto, 10) :- Monto >= 500, !.
+% Si no (gracias a los ! anteriores), el descuento es 5.
+discount_with_cut(_, 5).
+% % ?- discount_with_cut(1200, D).
+% % D = 20.
+% % <- La consulta termina. El corte evitó que Prolog
+% %    probara las otras reglas. ¡Correcto!
+
+% ---
+% 6. Temperaturas y viceversa
+% ---
+
+% temperature/2: predicado bidireccional
+
+% Caso 1: C (Celsius) está instanciada (no es una variable).
+% Usamos nonvar/1 para chequearlo.
+% Si es así, calculamos F y cortamos (!) para no probar el otro caso.
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(C), !,
+    F is C * 9 / 5 + 32.
+
+% Caso 2: F (Fahrenheit) está instanciada.
+% Si la regla 1 falló (porque C era var), probamos esta.
+% Si F no es var, calculamos C.
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(F), !,
+    C is (F - 32) * 5 / 9.
+
+% % ?- temperature(celsius(100), fahrenheit(F)).
+% % F = 212.0.
+% %
+% % ?- temperature(celsius(C), fahrenheit(68)).
+% % C = 20.0.
