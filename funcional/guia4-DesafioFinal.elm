@@ -248,9 +248,20 @@ filter pred tree =
             else
                 r'
 
+aLista : Tree a -> List a
+aLista tree =
+    case tree of
+        Empty ->
+            []
+
+        Node value left right ->
+            aLista left ++ [ value ] ++ aLista right
+
+
 fold : (a -> b -> b) -> b -> Tree a -> b
 fold f init tree =
-    List.foldl (\x acc -> f x acc) init (inorder tree)
+    List.foldl f init (aLista tree)
+
 
 construirBalanceado : List comparable -> Tree comparable
 construirBalanceado xs =
@@ -270,6 +281,7 @@ construirBalanceado xs =
 
                 ( y :: right ) ->
                     Node y (construirBalanceado left) (construirBalanceado right)
+
 
 desdeListaBalanceada : List comparable -> Tree comparable
 desdeListaBalanceada lista =
