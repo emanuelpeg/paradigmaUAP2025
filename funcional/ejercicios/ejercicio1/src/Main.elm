@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (Html, a, text)
+import Fuzz exposing (int)
 
 
 main : Html msg
@@ -44,11 +45,10 @@ multiply2 a b acc =
 
 power : Int -> Int -> Int
 power a b =
-    if b == 0 then
+    if b == 0 then 
         1
-
     else
-        a * power a (b - 1)
+        a*power a (b-1)
 
 
 
@@ -57,11 +57,10 @@ power a b =
 
 factorial : Int -> Int
 factorial n =
-    if n <= 1 then
+    if n == 0 then 
         1
-
     else
-        n * factorial (n - 1)
+        n*factorial (n-1)
 
 
 
@@ -69,29 +68,22 @@ factorial n =
 
 
 fibonacciExponential : Int -> Int
-fibonacciExponential n =
-    if n <= 1 then
-        n
-
+fibonacciExponential f =
+    if f <= 1 then
+        1
     else
-        fibonacciExponential (n - 1) + fibonacciExponential (n - 2)
+        fibonacciExponential(f-1)+fibonacciExponential(f-2)
 
 
 fibonacciLinear : Int -> Int
 fibonacciLinear n =
-    fibonacciHelper n 0 1
-
-
-fibonacciHelper : Int -> Int -> Int -> Int
-fibonacciHelper n acc1 acc2 =
-    if n == 0 then
-        acc1
-
-    else if n == 1 then
-        acc2
-
-    else
-        fibonacciHelper (n - 1) acc2 (acc1 + acc2)
+    let
+        aux n a b =
+            case n of
+                0 -> a
+                _ -> aux (n - 1) b (a + b)
+    in
+    aux n 0 1
 
 
 
@@ -102,10 +94,8 @@ pascalTriangle : Int -> Int -> Int
 pascalTriangle x y =
     if x == 0 || x == y then
         1
-
     else
         pascalTriangle (x - 1) (y - 1) + pascalTriangle x (y - 1)
-
 
 
 -- Ejercicio 5: Máximo Común Divisor (MCD)
@@ -126,54 +116,43 @@ gcd a b =
 
 countDigits : Int -> Int
 countDigits n =
-    if n < 0 then
-        countDigits (-1 * n)
-
-    else if n < 10 then
+    let
+        num = abs n
+    in
+    if num < 10 then
         1
-
     else
-        1 + countDigits (n // 10)
-
-
-
+        1 + countDigits (num // 10)
 -- Ejercicio 7: Suma de Dígitos
 
 
 sumDigits : Int -> Int
 sumDigits n =
-    if n < 0 then
-        sumDigits (-1 * n)
-
-    else if n < 10 then
-        n
-
+    let
+        num = abs n
+    in
+    if num < 10 then
+        num
     else
-        modBy 10 n + sumDigits (n // 10)
-
+        (modBy 10 num) + sumDigits (num // 10)
 
 
 -- Ejercicio 8: Verificar Palíndromo
 
-
 isPalindrome : Int -> Bool
 isPalindrome n =
-    n >= 0 && n == reverseNumber n
-
-
-reverseNumber : Int -> Int
-reverseNumber n =
+    n==reserverNumber n
+reverseNumber: Int -> Int
+reverseNumber n=
     reverseHelper n 0
-
-
 reverseHelper : Int -> Int -> Int
-reverseHelper n acc =
-    if n < 10 then
-        acc * 10 + n
-
+reverseHelper a acc=
+    if a <10 then
+        acc*10+a
     else
         let
-            digit =
-                modBy 10 n
+            accum=
+                modBy 10 a
         in
-        reverseHelper (n // 10) (acc * 10 + digit)
+        reverseHelper(a//10) (acc*10+accum) 
+
