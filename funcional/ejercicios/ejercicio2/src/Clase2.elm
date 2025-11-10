@@ -34,7 +34,10 @@ en lugar de usar Maybe. Trabajamos con List en lugar del List de Scala.
 
 concatenar : List Int -> List Int -> List Int
 concatenar lista1 lista2 =
-    []
+    case lista1 of
+        [] -> lista2
+        (x::xs) -> 
+                    x ::> concatenar(xs lista2) --resuelve la recursion de atras para adelante
 
 
 
@@ -45,7 +48,20 @@ concatenar lista1 lista2 =
 
 buscar : List Int -> (Int -> Int -> Bool) -> Int
 buscar lista com =
-    0
+    case lista of
+        [] -> 0
+        [x] -> x
+        (x : y : cola) ->
+             if com x y then
+                x
+            else
+                buscar(y : cola) com --sigue conteniendo y.
+
+
+com a b = 
+    if a > b then
+    True
+    else False
 
 
 
@@ -55,7 +71,10 @@ buscar lista com =
 
 max : List Int -> Int
 max lista =
-    0
+    case lista of
+        [] -> 0
+        [x] -> x
+        _ -> buscar lista com
 
 
 
