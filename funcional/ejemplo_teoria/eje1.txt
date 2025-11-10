@@ -1,0 +1,13 @@
+ Escriba una función llamada “Cantidad” que devuelva la cantidad de elementos de una lista.
+ Escriba una función llamada “Sumatoria” que devuelva la suma de elementos de una lista. 
+ Realice una función que devuelva el i-ésimo elemento de una lista.
+ Elimine el i-ésimo elemento de una lista.
+ Escriba una función llamada “Existe” que indique si un objeto se encuentra dentro de una lista determinada. 
+ Escriba una función que determine la Media de una lista de números. 
+ Agregue un elemento a una lista en una posición dada. 
+ Agregue un elemento a una lista ordenada, en el lugar que le corresponda. 
+ Realice un programa que calcule la sumatoria de las tres primeras potencias (es decir el número, el número al cuadrado y al cubo) de un número dado. 
+ Escriba una función que tome una lista y un elemento como argumentos, y devuelva la lista original con todas las ocurrencias de dicho elemento eliminadas. 
+ Escriba una función llamada "reemplazo", que tome una lista y dos elementos como argumentos, y devuelva la lista original con todas las instancias del primer elemento reemplazadas por el segundo.
+ Escriba una función que devuelva el mínimo elemento de una lista. 
+ Escriba una función que devuelva el máximo elemento de una lista.
