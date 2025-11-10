@@ -1,0 +1,21 @@
+import Html
+
+tail lista = Maybe.withDefault [] (List.tail lista)
+head lista = Maybe.withDefault 0 (List.head lista)
+
+contar: List Int -> Int
+contar lista = if (lista == []) then 0
+  else 1 + contar (tail lista)
+  
+max: List Int -> Int
+max lista = if (contar lista) == 1 then head lista
+  else if (head lista) > (max (tail lista)) then head lista
+    else max (tail lista)
+
+min: List Int -> Int
+min lista = if (contar lista) == 1 then head lista
+  else if (head lista) > (min (tail lista)) then head lista
+    else min (tail lista)
+
+main =
+  Html.text (String.fromInt (min [2, 3, 5]))
