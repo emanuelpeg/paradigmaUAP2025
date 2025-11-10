@@ -28,13 +28,13 @@ suite =
         , describe "Parte 1: Pattern Matching con Árboles"
             [ test "4. Tamaño - árbol vacío" <|
                 \_ ->
-                    Expect.equal 0 (tamaño Empty)
+                    Expect.equal 0 (tamano Empty)
             , test "4. Tamaño - hoja" <|
                 \_ ->
-                    Expect.equal 1 (tamaño (Node 5 Empty Empty))
+                    Expect.equal 1 (tamano (Node 5 Empty Empty))
             , test "4. Tamaño - árbol pequeño" <|
                 \_ ->
-                    Expect.equal 3 (tamaño arbolPequeno)
+                    Expect.equal 3 (tamano arbolPequeno)
             , test "5. Altura - árbol vacío" <|
                 \_ ->
                     Expect.equal 0 (altura Empty)
@@ -118,6 +118,37 @@ suite =
             , test "17. Nieto Izquierdo Izquierdo" <|
                 \_ ->
                     Expect.equal (Just (Node 3 Empty Empty)) (nietoIzquierdoIzquierdo arbolMediano)
+            , test "18. Obtener Subárbol - árbol vacío" <|
+                \_ ->
+                    Expect.equal Nothing (obtenerSubarbol 5 Empty)
+            , test "18. Obtener Subárbol - valor en raíz" <|
+                \_ ->
+                    Expect.equal (Just arbolPequeno) (obtenerSubarbol 3 arbolPequeno)
+            , test "18. Obtener Subárbol - valor en hijo izquierdo" <|
+                \_ ->
+                    Expect.equal (Just (Node 1 Empty Empty)) (obtenerSubarbol 1 arbolPequeno)
+            , test "18. Obtener Subárbol - valor en hijo derecho" <|
+                \_ ->
+                    Expect.equal (Just (Node 5 Empty Empty)) (obtenerSubarbol 5 arbolPequeno)
+            , test "18. Obtener Subárbol - valor no existe" <|
+                \_ ->
+                    Expect.equal Nothing (obtenerSubarbol 10 arbolPequeno)
+            , test "18. Obtener Subárbol - en árbol mediano" <|
+                \_ ->
+                    Expect.equal (Just (Node 5 (Node 3 Empty Empty) (Node 7 Empty Empty)))
+                        (obtenerSubarbol 5 arbolMediano)
+            , test "18. Buscar en Subárbol - encuentra valor en subárbol" <|
+                \_ ->
+                    Expect.equal (Just 3) (buscarEnSubarbol 5 3 arbolMediano)
+            , test "18. Buscar en Subárbol - primer valor no existe" <|
+                \_ ->
+                    Expect.equal Nothing (buscarEnSubarbol 100 3 arbolMediano)
+            , test "18. Buscar en Subárbol - segundo valor no existe en subárbol" <|
+                \_ ->
+                    Expect.equal Nothing (buscarEnSubarbol 5 100 arbolMediano)
+            , test "18. Buscar en Subárbol - árbol vacío" <|
+                \_ ->
+                    Expect.equal Nothing (buscarEnSubarbol 5 3 Empty)
             ]
         , describe "Parte 3: Result para Validaciones"
             [ test "19. Validar No Vacío - árbol vacío" <|

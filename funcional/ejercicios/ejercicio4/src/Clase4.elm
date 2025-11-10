@@ -5,6 +5,7 @@ Este módulo contiene ejercicios para practicar pattern matching y mónadas en E
 usando árboles binarios como estructura de datos principal.
 
 Temas:
+<<<<<<< HEAD
 - Pattern Matching con tipos algebraicos
 - Mónada Maybe para operaciones opcionales
 - Mónada Result para manejo de errores
@@ -16,22 +17,30 @@ import List exposing (tail)
 import Test.Runner.Failure exposing (InvalidReason(..))
 import Html exposing (video)
 import Html exposing (node)
+=======
+>>>>>>> origin/main
 
+  - Pattern Matching con tipos algebraicos
+  - Mónada Maybe para operaciones opcionales
+  - Mónada Result para manejo de errores
+  - Composición monádica con andThen
+
+-}
 
 -- ============================================================================
 -- DEFINICIÓN DEL ÁRBOL BINARIO
 -- ============================================================================
+
 
 type Tree a
     = Empty
     | Node a (Tree a) (Tree a) -- a es la raiz
 
 
+
 -- ============================================================================
 -- PARTE 0: CONSTRUCCIÓN DE ÁRBOLES
 -- ============================================================================
-
-
 -- 1. Crear Árboles de Ejemplo
 
 
@@ -57,7 +66,13 @@ arbolMediano =
         (Node 15 (Node 12 Empty Empty) (Node 20 Empty Empty))
 
 
+<<<<<<< HEAD
 -- 2. Es Vacío (aca recibe un parametro 'arbol' asi q ya es una función no variable)
+=======
+
+-- 2. Es Vacío
+
+>>>>>>> origin/main
 
 --es una función polimorfica xq a es generico
 esVacio : Tree a -> Bool
@@ -65,6 +80,7 @@ esVacio arbol =
     case arbol of
             Empty -> True -- esta vacio
             Node _ _ _ -> False --no esta vacio
+
 
 
 -- 3. Es Hoja
@@ -84,9 +100,11 @@ esHoja arbol =
 
 
 
+
 -- ============================================================================
 -- PARTE 1: PATTERN MATCHING CON ÁRBOLES
 -- ============================================================================
+<<<<<<< HEAD
 
 
 -- 4. tamano del Árbol
@@ -97,6 +115,15 @@ tamano arbol =
     case arbol of
         Empty -> 0
         Node _ der izq -> (tamano izq) + (tamano der) + 1
+=======
+-- 4. Tamaño del Árbol
+
+
+tamano : Tree a -> Int
+tamano arbol =
+    0
+>>>>>>> origin/main
+
 
 
 -- 5. Altura del Árbol
@@ -109,6 +136,7 @@ altura arbol =
         Node _ izq der -> (max (altura izq) (altura der)) + 1
 
 
+
 -- 6. Suma de Valores
 
 
@@ -117,6 +145,7 @@ sumarArbol arbol =
     case arbol of
         Empty -> 0
         Node valor izq der -> (sumarArbol izq) + (sumarArbol der) + valor
+
 
 
 -- 7. Contiene Valor
@@ -129,6 +158,7 @@ contiene valor arbol =
         Node v izq der -> if v == valor || (contiene valor izq) || (contiene valor der)
 
 
+
 -- 8. Contar Hojas
 
 
@@ -138,6 +168,7 @@ contarHojas arbol =
         Empty -> 0
         Node _ Empty Empty -> 1
         Node _ izq der  -> (contarHojas izq) + (contarHojas der)
+
 
 
 -- 9. Valor Mínimo (sin Maybe)
@@ -154,6 +185,7 @@ minimo arbol =
 
 
 
+
 -- 10. Valor Máximo (sin Maybe)
 
 
@@ -167,11 +199,10 @@ maximo arbol =
     Node v izq der -> (max v ((max (maximo izq) (maximo der))))
 
 
+
 -- ============================================================================
 -- PARTE 2: INTRODUCCIÓN A MAYBE
 -- ============================================================================
-
-
 -- 11. Buscar Valor
 
 buscarEnLista : a -> List a -> Maybe a
@@ -195,6 +226,7 @@ buscar valor arbol =
                 case buscar valor izq of
                     Just v -> Just v
                     Nothing -> buscar valor der
+
 
 
 
@@ -226,6 +258,7 @@ encontrarMinimo arbol =
                     Just (min v (min valIzq valDer))
 
 
+
 -- 13. Encontrar Máximo (con Maybe)
 
 
@@ -254,12 +287,14 @@ encontrarMaximo arbol =
                     Just (max v (max valIzq valDer))
 
 
+
 -- 14. Buscar Por Predicado
 
 
 buscarPor : (a -> Bool) -> Tree a -> Maybe a
 buscarPor predicado arbol =
     Nothing
+
 
 
 -- 15. Obtener Valor de Raíz
@@ -270,6 +305,7 @@ raiz arbol =
     case arbol of
         Empty -> Nothing
         Node v _ _ -> Just v
+
 
 
 -- 16. Obtener Hijo Izquierdo
@@ -309,6 +345,7 @@ nietoIzquierdoIzquierdo arbol =
 
 
 
+
 -- 18. Buscar en Profundidad
 
 
@@ -322,17 +359,17 @@ buscarEnSubarbol valor1 valor2 arbol =
     Nothing
 
 
+
 -- ============================================================================
 -- PARTE 3: RESULT PARA VALIDACIONES
 -- ============================================================================
-
-
 -- 19. Validar No Vacío
 
 
 validarNoVacio : Tree a -> Result String (Tree a)
 validarNoVacio arbol =
     Err "El árbol está vacío"
+
 
 
 -- 20. Obtener Raíz con Error
@@ -343,12 +380,14 @@ obtenerRaiz arbol =
     Err "No se puede obtener la raíz de un árbol vacío"
 
 
+
 -- 21. Dividir en Valor Raíz y Subárboles
 
 
 dividir : Tree a -> Result String ( a, Tree a, Tree a )
 dividir arbol =
     Err "No se puede dividir un árbol vacío"
+
 
 
 -- 22. Obtener Mínimo con Error
@@ -359,12 +398,14 @@ obtenerMinimo arbol =
     Err "No hay mínimo en un árbol vacío"
 
 
+
 -- 23. Verificar si es BST
 
 
 esBST : Tree comparable -> Bool
 esBST arbol =
     False
+
 
 
 -- 24. Insertar en BST
@@ -375,12 +416,14 @@ insertarBST valor arbol =
     Err "El valor ya existe en el árbol"
 
 
+
 -- 25. Buscar en BST
 
 
 buscarEnBST : comparable -> Tree comparable -> Result String comparable
 buscarEnBST valor arbol =
     Err "El valor no se encuentra en el árbol"
+
 
 
 -- 26. Validar BST con Result
@@ -391,17 +434,17 @@ validarBST arbol =
     Err "El árbol no es un BST válido"
 
 
+
 -- ============================================================================
 -- PARTE 4: COMBINANDO MAYBE Y RESULT
 -- ============================================================================
-
-
 -- 27. Maybe a Result
 
 
 maybeAResult : String -> Maybe a -> Result String a
 maybeAResult mensajeError maybe =
     Err mensajeError
+
 
 
 -- 28. Result a Maybe
@@ -412,12 +455,14 @@ resultAMaybe result =
     Nothing
 
 
+
 -- 29. Buscar y Validar
 
 
 buscarPositivo : Int -> Tree Int -> Result String Int
 buscarPositivo valor arbol =
     Err "El valor no se encuentra en el árbol"
+
 
 
 -- 30. Pipeline de Validaciones
@@ -428,6 +473,7 @@ validarArbol arbol =
     Err "Validación fallida"
 
 
+
 -- 31. Encadenar Búsquedas
 
 
@@ -436,17 +482,17 @@ buscarEnDosArboles valor arbol1 arbol2 =
     Err "Búsqueda fallida"
 
 
+
 -- ============================================================================
 -- PARTE 5: DESAFÍOS AVANZADOS
 -- ============================================================================
-
-
 -- 32. Recorrido Inorder
 
 
 inorder : Tree a -> List a
 inorder arbol =
     []
+
 
 
 -- 33. Recorrido Preorder
@@ -457,12 +503,14 @@ preorder arbol =
     []
 
 
+
 -- 34. Recorrido Postorder
 
 
 postorder : Tree a -> List a
 postorder arbol =
     []
+
 
 
 -- 35. Map sobre Árbol
@@ -473,12 +521,14 @@ mapArbol funcion arbol =
     Empty
 
 
+
 -- 36. Filter sobre Árbol
 
 
 filterArbol : (a -> Bool) -> Tree a -> Tree a
 filterArbol predicado arbol =
     Empty
+
 
 
 -- 37. Fold sobre Árbol
@@ -489,12 +539,14 @@ foldArbol funcion acumulador arbol =
     acumulador
 
 
+
 -- 38. Eliminar de BST
 
 
 eliminarBST : comparable -> Tree comparable -> Result String (Tree comparable)
 eliminarBST valor arbol =
     Err "El valor no existe en el árbol"
+
 
 
 -- 39. Construir BST desde Lista
@@ -505,6 +557,7 @@ desdeListaBST lista =
     Err "Valor duplicado"
 
 
+
 -- 40. Verificar Balance
 
 
@@ -513,12 +566,14 @@ estaBalanceado arbol =
     False
 
 
+
 -- 41. Balancear BST
 
 
 balancear : Tree comparable -> Tree comparable
 balancear arbol =
     Empty
+
 
 
 -- 42. Camino a un Valor
@@ -534,12 +589,14 @@ encontrarCamino valor arbol =
     Err "El valor no existe en el árbol"
 
 
+
 -- 43. Seguir Camino
 
 
 seguirCamino : List Direccion -> Tree a -> Result String a
 seguirCamino camino arbol =
     Err "Camino inválido"
+
 
 
 -- 44. Ancestro Común Más Cercano
@@ -550,16 +607,15 @@ ancestroComun valor1 valor2 arbol =
     Err "Uno o ambos valores no existen en el árbol"
 
 
+
 -- ============================================================================
 -- PARTE 6: DESAFÍO FINAL - SISTEMA COMPLETO
 -- ============================================================================
-
-
 -- 45. Sistema Completo de BST
 -- (Las funciones individuales ya están definidas arriba)
-
-
 -- Operaciones que retornan Bool
+
+
 esBSTValido : Tree comparable -> Bool
 esBSTValido arbol =
     esBST arbol
@@ -575,7 +631,10 @@ contieneValor valor arbol =
     contiene valor arbol
 
 
+
 -- Operaciones que retornan Maybe
+
+
 buscarMaybe : comparable -> Tree comparable -> Maybe comparable
 buscarMaybe valor arbol =
     buscar valor arbol
@@ -591,7 +650,10 @@ encontrarMaximoMaybe arbol =
     encontrarMaximo arbol
 
 
+
 -- Operaciones que retornan Result
+
+
 insertarResult : comparable -> Tree comparable -> Result String (Tree comparable)
 insertarResult valor arbol =
     insertarBST valor arbol
@@ -612,7 +674,10 @@ obtenerEnPosicion posicion arbol =
     Err "Posición inválida"
 
 
+
 -- Operaciones de transformación
+
+
 map : (a -> b) -> Tree a -> Tree b
 map funcion arbol =
     mapArbol funcion arbol
@@ -628,7 +693,10 @@ fold funcion acumulador arbol =
     foldArbol funcion acumulador arbol
 
 
+
 -- Conversiones
+
+
 aLista : Tree a -> List a
 aLista arbol =
     inorder arbol
