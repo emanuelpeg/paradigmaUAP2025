@@ -31,6 +31,10 @@ export abstract class Socio {
   get nombreCompleto() {
     return `${this.nombre} ${this.apellido}`;
   }
+  
+  getPrestamos(): Prestamo[] {
+    return this.prestamos;
+  }
 
   abstract getDuracionPrestamo(): Duracion;
   abstract getMaximoLibros(): number;
