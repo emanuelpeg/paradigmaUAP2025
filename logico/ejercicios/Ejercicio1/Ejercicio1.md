@@ -13,7 +13,6 @@
 % Queries de ejemplo:
 % ?- direct_flight(london, paris). % true
 % ?- reachable(london, athens). % true
-
 3. Operador de corte - Piedra papel o tijera
 
 **Enunciado:** Implementá el juego de piedra, papel o tijera usando el operador de corte (!). Primero definí el predicado `beats/2` que especifique qué elemento le gana a cuál. Luego creá `winner/3` que determine el resultado (player1, player2 o draw) comparando dos elecciones. Finalmente, implementá `play_game/5` que reciba los nombres de dos jugadores y sus elecciones, y devuelva el nombre del ganador (o "draw" en caso de empate).
