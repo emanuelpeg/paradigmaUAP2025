@@ -31,273 +31,298 @@ en lugar de usar Maybe. Trabajamos con List en lugar del List de Scala.
 -- Dadas 2 listas, devuelve una lista que es la concatenación de ambas.
 -- Usar recursión
 
-
 concatenar : List Int -> List Int -> List Int
 concatenar lista1 lista2 =
-    []
+    case lista1 of
+        [] -> lista2
+        x :: xs -> 
+            x :: concatenar xs lista2
 
+{-
+ejemplo:
+1 :: concatenar [2] [3,4]
+1 :: (2 :: concatenar [] [3,4])
+1 :: (2 :: [3,4])
+=> [1,2,3,4]
 
+-}
 
 -- Buscar
 -- Dada una lista y una función de comparación, devuelve el valor que cumple la condición.
 -- Devuelve 0 si la lista está vacía.
 
-
 buscar : List Int -> (Int -> Int -> Bool) -> Int
 buscar lista com =
-    0
+    case lista of
+        [] -> 0
+        x :: xs ->
+            if com x x then
+             x 
+            else buscar xs com
 
 
 
 -- Busca el Máximo
 -- Encuentra el valor máximo en una lista
 
-
 max : List Int -> Int
 max lista =
-    0
+    case lista of
+        [] -> 0
+        [x] -> x
+        x :: xs -> 
+            let m = max xs --m guarda el max de la cola
+            in if x > m then x else m -- si la cabeza actual es mayor 
+            --al max devolve esa cabeza actual, sino devolve ese max
 
 
 
 -- Busca el Mínimo
 -- Encuentra el valor mínimo en una lista
 
-
 min : List Int -> Int
 min lista =
-    0
+    case lista of
+        [] -> 0
+        [x] -> x
+        x :: xs ->
+            let m = min xs
+            in if x < m then x else m
 
 
 
 -- Filtra la lista de valores mayores que el valor e pasado por parámetro
 
-
 maximos : List Int -> Int -> List Int
 maximos lista e =
-    []
+    case lista of
+        [] -> []
+        x :: xs ->
+            if x > e then x :: maximos xs e --si es mayor lo meto en la cola 
+            else maximos xs e
 
 
 
 -- Filtra la lista de valores menores que el valor e pasado por parámetro
 
-
 minimos : List Int -> Int -> List Int
 minimos lista e =
-    []
+    case lista of
+        [] -> []
+        x :: xs ->
+            if x < e then x :: minimos xs e
+            else minimos xs e
 
 
 
 -- Ordena los valores de una lista utilizando quicksort
 
-
 quickSort : List Int -> List Int
 quickSort xs =
     case xs of
-        [] ->
-            []
-
+        [] -> []
         pivot :: resto ->
-            -- TODO: Implementar quicksort recursivamente
-            -- 1. Dividir resto en menores y mayores que pivot
-            -- 2. Ordenar recursivamente ambas particiones
-            -- 3. Concatenar: (menores ordenados) ++ [pivot] ++ (mayores ordenados)
-            []
+            let
+                menores = filtrar resto (\n -> n < pivot)
+                mayores = filtrar resto (\n -> n >= pivot)
+            in
+            concatenar (quickSort menores) (pivot :: quickSort mayores)
 
 
 
 -- Obtiene un elemento en la posición n (empezando desde 0)
 -- Devuelve 0 si la posición está fuera de rango
 
-
 obtenerElemento : List Int -> Int -> Int
 obtenerElemento lista posicion =
-    0
+    case (lista, posicion) of
+        ([], _) -> 0
+        (x :: _, 0) -> x
+        (_ :: xs, n) -> obtenerElemento xs (n - 1)
 
 
 
 -- Busca la mediana
--- En el ámbito de la estadística, la mediana representa el
--- valor de la variable de posición central en un conjunto de datos ordenados.
--- Devuelve 0 si la lista está vacía.
-
 
 mediana : List Int -> Int
 mediana lista =
-    0
+    let
+        ordenada = quickSort lista
+        len = contar ordenada
+    in
+    if len == 0 then 0
+    else obtenerElemento ordenada (len // 2)
 
 
 
 -- Cuenta los elementos
 
-
 contar : List Int -> Int
 contar lista =
-    0
+    case lista of
+        [] -> 0
+        _ :: xs -> 1 + contar xs
 
 
 
 -- Acumula los elementos
 
-
 acc : List Int -> Int
 acc lista =
-    0
+    case lista of
+        [] -> 0
+        x :: xs -> x + acc xs
 
 
 
 -- Filtra los elementos de la lista xs según la función p
 
-
 filtrar : List Int -> (Int -> Bool) -> List Int
 filtrar xs p =
-    []
+    case xs of
+        [] -> []
+        x :: xs2 ->
+            if p x then x :: filtrar xs2 p
+            else filtrar xs2 p
 
 
 
 -- Filtra los elementos pares usando la función filtrar
 
-
 filtrarPares : List Int -> List Int
 filtrarPares xs =
-    -- Pista: Usar modBy 2 para verificar números pares
-    []
+    filtrar xs (\x -> modBy 2 x == 0)
 
 
 
 -- Filtra los elementos múltiplos de 3 usando filtrar
 
-
 filtrarMultiplosDeTres : List Int -> List Int
 filtrarMultiplosDeTres xs =
-    []
+    filtrar xs (\x -> modBy 3 x == 0)
 
 
 
 -- Acumula los elementos aplicándoles fx
 
-
 acumular : List Int -> (Int -> Int) -> Int
 acumular lista fx =
-    0
+    case lista of
+        [] -> 0
+        x :: xs -> fx x + acumular xs fx
 
 
 
 -- Acumula todos los elementos de una lista usando acumular (función identidad)
 
-
 acumularUnidad : List Int -> Int
 acumularUnidad lista =
-    -- Pista: (\x -> x)
-    0
+    acumular lista (\x -> x)
 
 
 
 -- Acumula el doble de los elementos de una lista usando acumular
 
-
 acumularDoble : List Int -> Int
 acumularDoble lista =
-    -- Pista: (\x -> x * 2)
-    0
+    acumular lista (\x -> x * 2)
 
 
 
 -- Acumula el cuadrado de los elementos de una lista usando acumular
 
-
 acumularCuadrado : List Int -> Int
 acumularCuadrado lista =
-    -- Pista: (\x -> x * x)
-    0
+    acumular lista (\x -> x * x)
 
 
 
 -- Transforma la lista a una lista de otro tipo
--- Esto es equivalente a la función map de Scala
-
 
 transformar : List Int -> (Int -> a) -> List a
 transformar lista fx =
-    []
+    case lista of
+        [] -> []
+        x :: xs -> fx x :: transformar xs fx
 
 
 
 -- Retorna true si un elemento existe en la lista
 
-
 existe : List Int -> Int -> Bool
 existe lista nro =
-    False
+    case lista of
+        [] -> False
+        x :: xs -> if x == nro then True else existe xs nro
 
 
 
 -- Une 2 listas pasadas por parámetros pero ignora los repetidos
 
-
 unirOfSet : List Int -> List Int -> List Int
 unirOfSet lista otraLista =
-    -- Vas a necesitar una función auxiliar para remover duplicados
-    []
+    removerDuplicados (concatenar lista otraLista)
 
 
 
 -- Función auxiliar para remover duplicados de una lista
 
-
 removerDuplicados : List Int -> List Int
 removerDuplicados lista =
-    []
+    case lista of
+        [] -> []
+        x :: xs ->
+            if existe xs x
+            then removerDuplicados xs
+            else x :: removerDuplicados xs
 
 
 
 -- OPCIONAL: Subconjuntos
--- Dada una lista de enteros, retorna una lista con todos los posibles subconjuntos
--- Por ejemplo: [1,2,3] -> [[], [1], [2], [3], [1,2], [1,3], [2,3], [1,2,3]]
-
 
 subSets : List Int -> List (List Int)
 subSets lista =
     case lista of
-        [] ->
-            [ [] ]
-
+        [] -> [ [] ]
         x :: xs ->
-            []
+            let sinX = subSets xs
+                conX = transformar sinX (\sub -> x :: sub)
+            in concatenar sinX conX
 
 
 
 -- OPCIONAL: Cortar
--- Dada una lista de enteros y un número entero n, retorna subconjuntos con n elementos
--- Ejemplo: [1,2,3,4,5] y 2 -> [[1,2], [3,4], [5]]
-
 
 cortar : List Int -> Int -> List (List Int)
 cortar lista n =
-    []
+    if lista == [] then []
+    else tomar n lista :: cortar (saltar n lista) n
 
 
 
 -- Función auxiliar para tomar los primeros n elementos de una lista
 
-
 tomar : Int -> List a -> List a
 tomar n lista =
-    []
+    case (n, lista) of
+        (0, _) -> []
+        (_, []) -> []
+        (n2, x :: xs) -> x :: tomar (n2 - 1) xs
 
 
 
 -- Función auxiliar para saltar los primeros n elementos de una lista
 
-
 saltar : Int -> List a -> List a
 saltar n lista =
-    []
+    case (n, lista) of
+        (0, _) -> lista
+        (_, []) -> []
+        (n2, _ :: xs) -> saltar (n2 - 1) xs
 
 
 
 -- Ejemplos de uso y funciones de prueba
--- Podés usar estos para probar tus implementaciones
-
 
 ejemplos : List String
 ejemplos =

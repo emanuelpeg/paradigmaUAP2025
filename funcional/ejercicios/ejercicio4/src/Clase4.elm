@@ -24,12 +24,12 @@ type Tree a
 -- PARTE 0: CONSTRUCCIÓN DE ÁRBOLES
 -- ============================================================================
 
-arbolVacio : Tree Int
-arbolVacio =
+arbolVacio : Tree Int --definimos el tipo 
+arbolVacio = --empieza la funcion
     Empty
 
 
-arbolHoja : Tree Int
+arbolHoja : Tree Int --es del tipo tree int 
 arbolHoja =
     Node 5 Empty Empty
 
