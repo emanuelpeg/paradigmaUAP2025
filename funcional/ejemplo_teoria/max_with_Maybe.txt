@@ -1,0 +1,17 @@
+import Html
+
+listaMain = [0,3,4,88,5,1,2]
+
+max: List Int -> Maybe Int
+max lista = 
+  case lista of
+    [] -> Nothing
+    head::tail -> case Maybe.map (\ x -> x < head) (max tail) of
+      Nothing -> Just head
+      Just True -> Just head
+      _ -> max(tail)
+
+main =
+  Maybe.map (\ x -> String.fromInt x) (max listaMain)
+  |> Maybe.withDefault "Es vacia"
+  |> Html.text 
