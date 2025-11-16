@@ -1,0 +1,89 @@
+
+% 1) Conversión de temperatura
+celsius_a_fahrenheit(C, F) :-
+    F is C * 9 / 5 + 32.
+
+fahrenheit_a_celsius(F, C) :-
+    C is (F - 32) * 5 / 9.
+
+% 2) Vuelos: base de datos como hechos vuelo(origen, destino, duracion).
+vuelo(londres, paris, 60).
+vuelo(paris, atenas, 180).
+vuelo(londres, berlin, 120).
+vuelo(berlin, atenas, 150).
+
+% Vuelo directo
+vuelo_directo(A, B) :-
+    vuelo(A, B, _).
+
+% Alcanzable (búsqueda DFS evitando ciclos)
+alcanzable(A, B) :-
+    A == B, !.
+alcanzable(A, B) :-
+    alcanzable(A, B, [A]).
+
+alcanzable(A, B, _) :-
+    vuelo(A, B, _), !.
+alcanzable(A, B, Visitados) :-
+    vuelo(A, Z, _),
+    \+ member(Z, Visitados),
+    ( Z == B
+    ; alcanzable(Z, B, [Z|Visitados])
+    ).
+
+% 3) Piedra, papel o tijera
+gana(piedra, tijera).
+gana(tijera, papel).
+gana(papel, piedra).
+
+ganador_eleccion(C, C, empate) :- !.
+ganador_eleccion(C1, C2, jugador1) :-
+    gana(C1, C2), !.
+ganador_eleccion(C1, C2, jugador2) :-
+    gana(C2, C1), !.
+ganador_eleccion(_, _, invalido).
+
+jugar_partida(Jugador1, C1, Jugador2, C2, Resultado) :-
+    ganador_eleccion(C1, C2, Res),
+    ( Res == jugador1 -> Resultado = Jugador1
+    ; Res == jugador2 -> Resultado = Jugador2
+    ; Resultado = Res
+    ).
+
+% 4) Descuentos
+regla_descuento(Monto, 0.20) :- Monto >= 1000.
+regla_descuento(Monto, 0.10) :- Monto >= 500.
+regla_descuento(Monto, 0.05) :- Monto < 500.
+
+descuento_sin_corte(Monto, Descuentos) :-
+    findall(D, regla_descuento(Monto, D), Descuentos).
+
+descuento_con_corte(Monto, Descuento) :-
+    ( Monto >= 1000 -> Descuento = 0.20
+    ; Monto >= 500 -> Descuento = 0.10
+    ; Descuento = 0.05
+    ).
+
+% 6) Predicado bidireccional temperatura
+% Casos:
+% - Si se dan ambos valores se verifica consistencia
+% - Si se da uno se calcula el otro
+% - Si no se da ninguno se lanza error
+
+temperatura(C, F) :-
+    nonvar(C), nonvar(F), !,
+    F_esperado is C * 9 / 5 + 32,
+    Dif is abs(F_esperado - F),
+    Dif < 1e-9.
+
+temperatura(C, F) :-
+    nonvar(C), !,
+    F is C * 9 / 5 + 32.
+
+temperatura(C, F) :-
+    nonvar(F), !,
+    C is (F - 32) * 5 / 9.
+
+temperatura(_, _) :-
+    throw(error(instantiation_error, 'Se debe dar celsius o fahrenheit')).
+
