@@ -1,0 +1,75 @@
+% Enunciado 1: Conversion de temperatura
+
+celsius_to_fahrenheit(C, F) :-
+    F is C * (9 / 5) + 32.
+
+fahrenheit_to_celsius(F, C) :-
+    C is (F - 32) * (5 / 9).
+
+
+% Enunciado 2: Recursion - Vuelos
+
+vuelo(londres, paris, 120).
+vuelo(paris, roma, 90).
+vuelo(roma, atenas, 60).
+vuelo(londres, nueva_york, 480).
+
+vuelo_directo(Origen, Destino) :-
+    vuelo(Origen, Destino, _).
+
+reachable(Origen, Destino) :-
+    vuelo_directo(Origen, Destino).
+
+reachable(Origen, Destino) :-
+    vuelo_directo(Origen, Intermedia),
+    reachable(Intermedia, Destino).
+
+
+% Enunciado 3: Operador de corte - Piedra, papel o tijera
+
+beats(rock, scissors).
+beats(scissors, paper).
+beats(paper, rock).
+
+ganador(Desicion1, Desicion2, Jugador1) :-
+    beats(Desicion1, Desicion2), !.  % Si P1 gana, CORTAMOS.
+
+ganador(Desicion1, Desicion2, Empate) :-
+    Desicion1 == Desicion2, !. % Si son iguales, CORTAMOS.                    
+
+ganador(_, _, Jugador2). % Si no paso nada de lo anterior, P2 gana.
+
+juego(Nombre1, Desicion1, Nombre2, Desicion2, NombreDelGanadaor) :-
+    ganador(Desicion1, Desicion2, Resultado), 
+    encontrar_nombre(Resultado, Nombre1, Nombre2, NombreDelGanadaor). 
+
+encontrar_nombre(Jugador1, Nombre1, _, Nombre1). 
+encontrar_nombre(Jugador2, _, Nombre2, Nombre2). 
+encontrar_nombre(Empate, _, _, 'Empate').      
+
+
+
+% Enunciado 4: Operador de corte - Descuentos
+
+discount_without_cut(Monto, 0.20) :- Monto >= 1000.
+discount_without_cut(Monto, 0.10) :- Monto >= 500.
+discount_without_cut(Monto, 0.05) :- Monto < 500.
+
+discount_with_cut(Monto, 0.20) :-
+    Monto >= 1000, !.
+
+discount_with_cut(Monto, 0.10) :-
+    Monto >= 500, !.  
+discount_with_cut(_, 0.05).
+
+
+
+% Enunciado 6: Temperaturas y viceversa
+
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(C), !, 
+    F is C * (9 / 5) + 32. 
+
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(F), !, 
+    C is (F - 32) * (5 / 9).
