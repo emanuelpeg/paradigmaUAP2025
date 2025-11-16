@@ -1,0 +1,88 @@
+% 1) conversion de temperatura
+
+celsius_to_fahrenheit(C, F) :-
+    F is (C * 9/5) + 32.
+
+fahrenheit_to_celsius(F, C) :-
+    C is (F - 32) * 5/9.
+
+% 2) recursion - vuelos
+
+% bd de vuelos
+flight(london, paris, 90).
+flight(paris, roma, 120).
+flight(roma, athens, 150).
+flight(london, madrid, 130).
+flight(madrid, lisbon, 60).
+flight(paris, berlin, 110).
+
+% vuelo directo
+direct_flight(City1, City2) :-
+    flight(City1, City2, _).
+direct_flight(City1, City2) :-
+    flight(City2, City1, _).
+
+% con conexiones
+reachable(City1, City2) :-
+    direct_flight(City1, City2).
+
+reachable(City1, City2) :-
+    direct_flight(City1, Intermediate),
+    reachable(Intermediate, City2),
+    City1 \= City2.  % evita ciclos infinitos
+
+% 3) operador de corte - piedra papel o tijera
+
+beats(piedra, tijera).
+beats(tijera, papel).
+beats(papel, piedra).
+
+% determina el ganador
+winner(Choice1, Choice2, player1) :-
+    beats(Choice1, Choice2),
+    !.
+winner(Choice1, Choice2, player2) :-
+    beats(Choice2, Choice1),
+    !.
+winner(_, _, draw).
+
+% partida
+play_game(Player1, Choice1, Player2, Choice2, Winner) :-
+    winner(Choice1, Choice2, Result),
+    (   Result = player1 -> Winner = Player1
+    ;   Result = player2 -> Winner = Player2
+    ;   Winner = draw
+    ).
+
+% 4) operador de cortes - descuentos
+
+% version sin corte
+discount_without_cut(Amount, Discount) :-
+    Amount >= 1000,
+    Discount is 0.20.
+discount_without_cut(Amount, Discount) :-
+    Amount >= 500,
+    Discount is 0.10.
+discount_without_cut(_, Discount) :-
+    Discount is 0.05.
+
+% version con corte
+discount_with_cut(Amount, Discount) :-
+    Amount >= 1000,
+    !,
+    Discount is 0.20.
+discount_with_cut(Amount, Discount) :-
+    Amount >= 500,
+    !,
+    Discount is 0.10.
+discount_with_cut(_, Discount) :-
+    Discount is 0.05.
+
+% 6) temperaturas y viceversas
+
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(C), !,
+    F is (C * 9/5) + 32.
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(F), !,
+    C is (F - 32) * 5/9.
