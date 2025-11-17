@@ -14,4 +14,8 @@ export class Libro {
   get isbn() {
     return this._isbn;
   }
+
+  toString() {
+    return `${this._titulo} - ${this._autor} [${this._isbn}]`;
+  }
 }

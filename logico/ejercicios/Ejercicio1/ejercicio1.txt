@@ -1,0 +1,129 @@
+% Ejercicio 1: conversión de temperatura
+celsius_to_fahrenheit(C, F) :-
+    F is C * 9 / 5 + 32.
+
+fahrenheit_to_celsius(F, C) :-
+    C is (F - 32) * 5 / 9.
+
+% Ejemplos:
+% ?- celsius_to_fahrenheit(0, F).
+% F = 32.0.
+% ?- celsius_to_fahrenheit(100, F).
+% F = 212.0.
+% ?- fahrenheit_to_celsius(212, C).
+% C = 100.0.
+% ?- fahrenheit_to_celsius(32, C).
+% C = 0.0.
+
+
+% Ejercicio 2: vuelos
+flight(london, paris, 75).
+flight(paris, rome, 110).
+flight(rome, athens, 95).
+flight(london, madrid, 140).
+flight(madrid, rome, 130).
+
+direct_flight(A, B) :-
+    flight(A, B, _).
+
+direct_flight(A, B) :-
+    flight(B, A, _).
+
+reachable(A, B) :-
+    direct_flight(A, B).
+
+reachable(A, B) :-
+    direct_flight(A, C),
+    reachable(C, B).
+
+% Ejemplos:
+% ?- direct_flight(london, paris).
+% true.
+% ?- reachable(london, athens).
+% true.
+% ?- reachable(madrid, paris).
+% true.
+
+
+% Ejercicio 3: piedra, papel o tijera
+beats(rock, scissors).
+beats(paper, rock).
+beats(scissors, paper).
+
+winner(X, X, draw) :- !.
+
+winner(P1, P2, player1) :-
+    beats(P1, P2), !.
+
+winner(_, _, player2).
+
+play_game(Name1, Choice1, Name2, Choice2, draw) :-
+    winner(Choice1, Choice2, draw), !.
+
+play_game(Name1, Choice1, Name2, Choice2, WinnerName) :-
+    winner(Choice1, Choice2, player1), !,
+    WinnerName = Name1.
+
+play_game(Name1, Choice1, Name2, Choice2, WinnerName) :-
+    WinnerName = Name2.
+
+% Ejemplos:
+% ?- beats(rock, scissors).
+% true.
+% ?- winner(rock, scissors, W).
+% W = player1.
+% ?- winner(paper, paper, W).
+% W = draw.
+% ?- play_game(alice, rock, bob, scissors, W).
+% W = alice.
+% ?- play_game(alice, paper, bob, scissors, W).
+% W = bob.
+
+
+% Ejercicio 4: Operador de corte - Descuentos
+discount_without_cut(M, D) :-
+    M >= 1000,
+    D is M * 0.20.
+
+discount_without_cut(M, D) :-
+    M >= 500,
+    M < 1000,
+    D is M * 0.10.
+
+discount_without_cut(M, D) :-
+    M < 500,
+    D is M * 0.05.
+
+discount_with_cut(M, D) :-
+    M >= 1000, !,
+    D is M * 0.20.
+
+discount_with_cut(M, D) :-
+    M >= 500, !,
+    D is M * 0.10.
+
+discount_with_cut(M, D) :-
+    D is M * 0.05.
+
+% Ejemplos:
+% ?- discount_without_cut(1200, D).
+% D = 240 ; D = 120 ; D = 60.
+
+
+% Ejercicio 6: Temperaturas y viceversa
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(C), !,
+    F is C * 9 / 5 + 32.
+
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(F), !,
+    C is (F - 32) * 5 / 9.
+
+temperature(_, _) :-
+    write('no puedo convertir si no me das al menos una temperatura instanciada'), fail.
+
+% Ejemplos:
+% ?- temperature(celsius(100), fahrenheit(F)).
+% F = 212.0.
+% ?- temperature(celsius(C), fahrenheit(68)).
+% C = 20.0.
