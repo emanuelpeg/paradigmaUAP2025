@@ -1,42 +1,104 @@
-1. Conversión de temperatura
+% ================================================================
+% 1. CONVERSIÓN DE TEMPERATURA
+% ================================================================
 
-**Enunciado:** Implementá dos predicados que permitan convertir temperaturas entre grados Celsius y Fahrenheit. El predicado `celsius_to_fahrenheit/2` debe recibir una temperatura en Celsius y devolver su equivalente en Fahrenheit. El predicado `fahrenheit_to_celsius/2` debe hacer la conversión inversa.
+% Celsius a Fahrenheit
+celsius_to_fahrenheit(C, F) :-
+    F is C * 9 / 5 + 32.
 
-% Queries de ejemplo:
-% ?- celsius_to_fahrenheit(0, F). % F = 32.0
-% ?- fahrenheit_to_celsius(212, C). % C = 100.0
+% Fahrenheit a Celsius
+fahrenheit_to_celsius(F, C) :-
+    C is (F - 32) * 5 / 9.
 
-2. Recursión - vuelos
 
-**Enunciado:** Tenés una base de datos de vuelos directos entre ciudades, donde cada vuelo está representado como `flight(Ciudad1, Ciudad2, DuracionEnMinutos)`. Implementá dos predicados: `direct_flight/2` que verifique si existe un vuelo directo entre dos ciudades, y `reachable/2` que determine si es posible llegar de una ciudad a otra usando cualquier cantidad de conexiones (vuelos intermedios).
 
-% Queries de ejemplo:
-% ?- direct_flight(london, paris). % true
-% ?- reachable(london, athens). % true
+% ================================================================
+% 2. RECURSIÓN – VUELOS
+% ================================================================
 
-3. Operador de corte - Piedra papel o tijera
+% Ejemplos de vuelos (podés agregar más si el profe lo pide)
+flight(london, paris, 60).
+flight(paris, rome, 120).
+flight(rome, athens, 90).
+flight(london, madrid, 140).
+flight(madrid, rome, 150).
 
-**Enunciado:** Implementá el juego de piedra, papel o tijera usando el operador de corte (!). Primero definí el predicado `beats/2` que especifique qué elemento le gana a cuál. Luego creá `winner/3` que determine el resultado (player1, player2 o draw) comparando dos elecciones. Finalmente, implementá `play_game/5` que reciba los nombres de dos jugadores y sus elecciones, y devuelva el nombre del ganador (o "draw" en caso de empate).
+% Vuelo directo en cualquier sentido
+direct_flight(A, B) :-
+    flight(A, B, _).
+direct_flight(A, B) :-
+    flight(B, A, _).
 
-% Queries de ejemplo:
-% ?- beats(rock, scissors). % true
-% ?- beats(rock, paper). % false
-% ?- winner(rock, scissors, W). % W = player1
-% ?- winner(paper, paper, W). % W = draw
-% ?- play_game(alice, rock, bob, scissors, W). % W = alice
+% Una ciudad es alcanzable si:
+% - hay vuelo directo, o
+% - hay vuelo a una ciudad intermedia y desde ahí se puede llegar
+reachable(A, B) :-
+    direct_flight(A, B).
+reachable(A, B) :-
+    direct_flight(A, C),
+    reachable(C, B).
 
-4. Operador de corte - Descuentos
 
-**Enunciado:** Implementá un sistema de descuentos por escala que calcule el descuento según el monto de compra: 20% para montos mayores o iguales a $1000, 10% para montos mayores o iguales a $500, y 5% para el resto. Implementá dos versiones: `discount_without_cut/2` (sin usar el operador de corte) y `discount_with_cut/2` (usando el operador de corte). Compará el comportamiento de ambas versiones al hacer consultas y entendé por qué la versión con corte es la correcta.
 
-% Queries de ejemplo:
-% ?- discount_with_cut(1200, D).
-% ?- discount_without_cut(1200, D).
+% ================================================================
+% 3. PIEDRA – PAPEL – TIJERA (con corte)
 
-6. Temperaturas y viceversa
 
-**Enunciado:** Implementá un predicado bidireccional `temperature/2` que pueda convertir temperaturas entre Celsius y Fahrenheit en ambas direcciones. El predicado debe recibir dos argumentos con la forma `celsius(C)` y `fahrenheit(F)`, y debe funcionar correctamente sin importar cuál de las dos temperaturas esté instanciada. Usá `nonvar/1` y el operador de corte para determinar qué conversión realizar según qué variable esté definida.
+% Qué le gana a qué
+beats(rock, scissors).
+beats(scissors, paper).
+beats(paper, rock).
 
-% Queries de ejemplo:
-% ?- temperature(celsius(100), fahrenheit(F)). % F = 212.0
-% ?- temperature(celsius(C), fahrenheit(68)). % C = 20.0
+% Determinar ganador usando corte
+winner(X, X, draw) :- !.
+winner(P1, P2, player1) :-
+    beats(P1, P2), !.
+winner(_, _, player2).
+
+% Juego completo
+play_game(Name1, Move1, Name2, Move2, WinnerName) :-
+    winner(Move1, Move2, draw), !,
+    WinnerName = draw.
+
+play_game(Name1, Move1, Name2, Move2, WinnerName) :-
+    winner(Move1, Move2, player1), !,
+    WinnerName = Name1.
+
+play_game(Name1, _, Name2, _, WinnerName) :-
+    WinnerName = Name2.
+
+
+
+% ================================================================
+% 4. DESCUENTOS (con y sin corte)
+% ================================================================
+
+% Sin usar corte (backtracking incorrecto)
+discount_without_cut(Amount, 0.20) :-
+    Amount >= 1000.
+discount_without_cut(Amount, 0.10) :-
+    Amount >= 500.
+discount_without_cut(_, 0.05).
+
+% Usando corte (correcto)
+discount_with_cut(Amount, 0.20) :-
+    Amount >= 1000, !.
+discount_with_cut(Amount, 0.10) :-
+    Amount >= 500, !.
+discount_with_cut(_, 0.05).
+
+
+
+% ================================================================
+% 6. TEMPERATURAS BIDIRECCIONAL – CON CORTE Y NONVAR
+% ================================================================
+
+% Si la temperatura en Celsius está instanciada, convierto a Fahrenheit
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(C), !,
+    F is C * 9 / 5 + 32.
+
+% Si la de Fahrenheit está instanciada, convierto a Celsius
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(F), !,
+    C is (F - 32) * 5 / 9.
