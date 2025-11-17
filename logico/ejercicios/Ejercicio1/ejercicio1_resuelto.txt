@@ -1,0 +1,165 @@
+% Ejercicio 1: conversión de temperatura
+% convierto celsius a fahrenheit usando la formula
+celsius_to_fahrenheit(C, F) :-
+    F is C * 9 / 5 + 32.   % acá simplemente hago la cuenta: paso de c a f
+
+% convierto fahrenheit a celsius con la fórmula inversa
+fahrenheit_to_celsius(F, C) :-
+    C is (F - 32) * 5 / 9. % acá hago la resta y después el ajuste para llegar a c
+
+
+Y estos serian los ejermplos de consulta: 
+?- celsius_to_fahrenheit(0, F).
+F = 32.0.
+
+?- celsius_to_fahrenheit(100, F).
+F = 212.0.
+
+?- fahrenheit_to_celsius(212, C).
+C = 100.0.
+
+?- fahrenheit_to_celsius(32, C).
+C = 0.0.
+
+% Ejercicio 2: vuelos
+% algunos vuelos de ejemplo
+flight(london, paris, 75).
+flight(paris, rome, 110).
+flight(rome, athens, 95).
+flight(london, madrid, 140).
+flight(madrid, rome, 130).
+
+% aca solo pregunto si hay un vuelo directo en la base
+direct_flight(A, B) :-
+    flight(A, B, _).     % si existe flight con esas dos ciudades, ya está
+
+% tambien considero que los vuelos pueden estar en sentido inverso
+direct_flight(A, B) :-
+    flight(B, A, _).     % por si el vuelo está definido al revés
+
+% caso base: si hay un vuelo directo, ya puedo llegar
+reachable(A, B) :-
+    direct_flight(A, B).     % si hay vuelo directo, listo
+
+% caso recursivo: busco una ciudad intermedia C para seguir el viaje
+reachable(A, B) :-
+    direct_flight(A, C),     % veo una ciudad a la que pueda volar desde A
+    reachable(C, B).         % y chequeo si desde esa C puedo llegar a B
+
+% ejemplos de uso:
+?- direct_flight(london, paris).
+true.
+
+?- reachable(london, athens).
+true.   % london -> paris -> rome -> athens
+
+?- reachable(madrid, paris).
+true.   % madrid -> rome -> paris
+
+% Ejercicio 3: piedra, papel o tijera
+% aca defino quién le gana a quién
+beats(rock, scissors).
+beats(paper, rock).
+beats(scissors, paper).
+
+% si los dos eligen lo mismo, es empate
+winner(X, X, draw) :- !.   % pongo corte porque ya sé que este es el resultado
+
+% si la elección de player1 le gana a la de player2
+winner(P1, P2, player1) :-
+    beats(P1, P2), !.       % corto porque ya sé que ganó player1
+
+% si no empató y no ganó el 1, entonces gana el 2
+winner(_, _, player2).      % este queda sin corte porque es el último caso
+
+% caso en que empatan
+play_game(Name1, Choice1, Name2, Choice2, draw) :-
+    winner(Choice1, Choice2, draw), !.   % si da draw, ya está, corto
+
+% si el ganador es player1, devuelvo el nombre del primero
+play_game(Name1, Choice1, Name2, Choice2, WinnerName) :-
+    winner(Choice1, Choice2, player1), !,
+    WinnerName = Name1.                 % aca simplemente digo que ganó el primero
+
+% si no fue empate ni ganó player1, entonces gana player2
+play_game(Name1, Choice1, Name2, Choice2, WinnerName) :-
+    WinnerName = Name2.                 % devuelvo el nombre del segundo
+
+%ejemplos:
+?- beats(rock, scissors).
+true.
+
+?- winner(rock, scissors, W).
+W = player1.
+
+?- winner(paper, paper, W).
+W = draw.
+
+?- play_game(alice, rock, bob, scissors, W).
+W = alice.
+
+?- play_game(alice, paper, bob, scissors, W).
+W = bob.
+
+% Ejercico 4: Operador de corte - Descuentos
+% version sin corte: prolog sigue buscando aunque ya haya matcheado una regla
+
+% si el monto es >= 1000, deberia ser 20%
+discount_without_cut(M, D) :-
+    M >= 1000,
+    D is M * 0.20.   % aca calculo el 20%
+
+% si el monto es >= 500, le toca 10%
+discount_without_cut(M, D) :-
+    M >= 500,
+    M < 1000,
+    D is M * 0.10.   % aca el 10%
+
+% si no llego a 500, doy 5%
+discount_without_cut(M, D) :-
+    M < 500,
+    D is M * 0.05.   % aca el 5%
+
+% version con corte: aca corto cuando ya encontre el descuento correcto
+
+% si es >= 1000, es 20% y corto
+discount_with_cut(M, D) :-
+    M >= 1000, !,        % aca digo "ya está, no busques más"
+    D is M * 0.20.
+
+% si es >= 500, doy 10% y corto
+discount_with_cut(M, D) :-
+    M >= 500, !,
+    D is M * 0.10.
+
+% si no entro en ninguna de las de arriba, es el 5%
+discount_with_cut(M, D) :-
+    D is M * 0.05.       % este queda sin corte porque es el último caso
+
+% ejemplos:
+?- discount_without_cut(1200, D).
+D = 240 ;   % correcto (20%)
+D = 120 ;   % INCORRECTO (10%) prolog sigue buscando
+D = 60.     % INCORRECTO (5%)
+
+% Ejercicio 6: Temperaturas y viceversa
+% predicado que convierte c <-> f dependiendo de qué dato viene cargado
+
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(C), !,                % si ya tengo el valor en celsius, corto aca
+    F is C * 9 / 5 + 32.         % aca hago la cuenta c → f
+
+temperature(celsius(C), fahrenheit(F)) :-
+    nonvar(F), !,                % si lo que viene definido es fahrenheit
+    C is (F - 32) * 5 / 9.       % hago la cuenta f → c
+
+% si ninguna de las dos está instanciada, no tiene sentido la conversión
+temperature(_, _) :-
+    write('no puedo convertir si no me das al menos una temperatura instanciada'), fail.
+
+% ejemplos:
+?- temperature(celsius(100), fahrenheit(F)).
+F = 212.0.
+
+?- temperature(celsius(C), fahrenheit(68)).
+C = 20.0.
