@@ -1,0 +1,50 @@
+%Ejercisio 1
+celsius_to_fahrenheit(C,F):- F is C * 1,8 + 32.
+
+fahrenheit_to_celsius(F,C):- C is (F - 32) / 1.8.
+
+%Ejercisio 2
+
+flight(Ciudad1, Ciudad2, DuracionEnMinutos).
+
+direct_flight(C1,C2):- flight(C1,C2, _), flight(C2,C1,_).
+
+reachable(C1,C2):- direct_flight(C1,C2).
+
+reachable(C1,C2):- direct_flight(C1,I), reachable(I,C2) C1 \= C2. 
+
+%Ejercisio 3
+%Quien vence a quien
+beats(rock, scissors).
+beats(scissors, paper).
+beats(paper, rock).
+
+winner(X, Y, player1) :- beats(X, Y), !.
+winner(X, Y, player2) :- beats(Y, X), !.
+winner(_, _, draw).
+
+play_game(P1, Choice1, P2, Choice2, P1) :- winner(Choice1, Choice2, player1), !.
+play_game(P1, Choice1, P2, Choice2, P2) :- winner(Choice1, Choice2, player2), !.
+play_game(_, _, _, _, draw).
+
+%Ejercisio 4
+discount_with_cut(M,20):- M >= 1000, !.
+
+discount_with_cut(M,10):- M >= 500, !.
+
+discount_with_cut(M,5):- !.
+
+
+discount_without_cut(M,20) M >= 1000.
+
+discount_without_cut(M,10) M >= 500.
+
+discount_without_cut(M,5).
+
+
+%Ejercicio 5
+
+temperature(celsius(C), fahrenheit(F)) :-
+    F is C * 9/5 + 32.
+temperature(celsius(C), fahrenheit(F)) :-
+    C is (F - 32) * 5/9.

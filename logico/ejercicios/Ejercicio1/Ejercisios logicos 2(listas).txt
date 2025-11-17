@@ -1,0 +1,126 @@
+%Guia 2 prolog
+
+%1 Contar lista
+
+contar([],0).
+contar(_|T, N):- contar(T, N1), N is 1 + N1.
+
+contiene([H|_], H).
+contiene([_|T], V):- contiene(T,V). 
+%3
+unir([],L2, L2).
+
+unir([H|T], L2, R):-
+unir(L1,[],L2).
+unir([H|T],L2, [H|R1]):- 
+    unir([H|T],L2,R1).
+%4
+inversa([],[]).
+inversa([Head|Tail], Inversa):-
+    inversa(T, I1), union(I1,[Head], Inversa).
+
+inversa2([], R, R).
+inversa2([H|T], R, R1):- inversa2(T,[H|R],R1).
+
+inversa2(L, R):- inversa2(L,[],R).
+
+
+%5
+repetir(_,0,[]).
+
+repetir(L, N, R):- 
+    N1 is N-1, repetir(L,N1,R1), unir(L,R1,R). 
+
+
+%6 palindromo
+
+pal(L1):- inversa2(Lista, Lista).
+
+%7 sumar
+sum([],0).
+sum([H|T],R):-
+    sum(Tail,R1), R is R1+H.
+
+%8 Solo pares
+pospar([],[]).
+pospar([N],[N]).
+pospar([Par,_|T], [Par|R]):- soloPares(T,R). 
+
+even(N) :- integer(N), 0 is N mod 2.
+odd(N):- integer(N),1 is N mod 2.
+
+%9 Filtro par
+filtropar([],[]).
+filtropar([H|T], [H|R]):- filtropar(T,R), even(Head), !.
+
+filtropar([_|T], R):- filtropar(T,R).
+
+%Lista intercalada
+
+intercalar([], L, L):-!.
+intercalar(L,[],L):-!.
+intercalar(H1|T1],[H2|T2], [H1, H2 |R):- intercalar(T1, T2, R). 
+
+%Suma listas
+sumaListas([], L, L):-!.
+sumaListas(L, [], L):-!.
+sumaListas([H1|T1], [H2|T2], [Suma|R]):- Suma is H1+H2, sumalistas(T1,T2,R).
+
+sumaLista([], _, []):-!.
+sumaLista(L, 0, L):-!.
+sumaLista([H1|T1], N, [Suma|R]):- Suma is H1+N, sumalistas(T1,N,R).
+
+%Intersección
+inter([], _, []):-!.
+inter(_, [].[]):-!.
+inter([H|T],L, [H|R]):-
+    inter(T,L,R),
+    contiene(L,H), !.
+
+inter([_|T], L, R):- inter(T,L,R).
+
+%Agregar elemento
+
+AgregarF(L,X,R):- 
+    union(L,[X],R).
+
+AgregarP(L,X, [X|L]). 
+
+agregarEnOrden([],X,[X]).
+
+agregarEnOrden([H|T],X,[X,H|T]):- Head>X,!.
+
+agregarEnOrden([H|T],X,[H|R]]):- agregarEnOrden(T,X,R).
+
+%Eliminar
+
+eliminar([],_,[]).
+eliminar([H|T],H,R):- eliminar(T,H,R),!.
+
+eliminar([_|T], X, [H|R]):- eliminar(T,X,R). 
+
+
+%Remplazar
+
+Remp([],_,[]).
+Remp([H|T],H, Remplazo,[Remplazo|R]):- Remp(T,H,Remplazo,R),!.
+
+Remp([H|T], X,Remplazo ,[H|R]):- Remp(T,X,Remplazo,R). 
+
+
+%Remover
+
+xor([],_,[]).
+xor([H|T],L,R):- xor(T,L,R),contiene(L,H),!.
+
+xor([H|T],L,[H|R]):- xor(T,X,R). 
+
+
+%Slice
+
+slice([],_,[]).
+slice([],0,[]):-!.
+
+slice([H|T],N,[H|R]):-
+    N1 is N -1,
+    slice(T,N1,R). 
