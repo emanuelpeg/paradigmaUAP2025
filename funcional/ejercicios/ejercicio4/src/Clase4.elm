@@ -17,18 +17,15 @@ Temas:
 -- DEFINICIÓN DEL ÁRBOL BINARIO
 -- ============================================================================
 
-
 type Tree a
     = Empty
     | Node a (Tree a) (Tree a)
-
 
 
 -- ============================================================================
 -- PARTE 0: CONSTRUCCIÓN DE ÁRBOLES
 -- ============================================================================
 -- 1. Crear Árboles de Ejemplo
-
 
 arbolVacio : Tree Int
 arbolVacio =
@@ -52,393 +49,532 @@ arbolMediano =
         (Node 15 (Node 12 Empty Empty) (Node 20 Empty Empty))
 
 
-
 -- 2. Es Vacío
-
 
 esVacio : Tree a -> Bool
 esVacio arbol =
-    False
+    case arbol of
+        Empty ->
+            True
 
+        _ ->
+            False
 
 
 -- 3. Es Hoja
 
-
 esHoja : Tree a -> Bool
 esHoja arbol =
-    False
+    case arbol of
+        Node _ Empty Empty ->
+            True
 
+        _ ->
+            False
 
 
 -- ============================================================================
 -- PARTE 1: PATTERN MATCHING CON ÁRBOLES
 -- ============================================================================
--- 4. Tamaño del Árbol
-
 
 tamano : Tree a -> Int
 tamano arbol =
-    0
+    case arbol of
+        Empty ->
+            0
 
-
-
--- 5. Altura del Árbol
+        Node _ l r ->
+            1 + tamano l + tamano r
 
 
 altura : Tree a -> Int
 altura arbol =
-    0
+    case arbol of
+        Empty ->
+            0
 
-
-
--- 6. Suma de Valores
+        Node _ l r ->
+            1 + max (altura l) (altura r)
 
 
 sumarArbol : Tree Int -> Int
 sumarArbol arbol =
-    0
+    case arbol of
+        Empty ->
+            0
+
+        Node x l r ->
+            x + sumarArbol l + sumarArbol r
 
 
-
--- 7. Contiene Valor
-
-
-contiene : a -> Tree a -> Bool
+contiene : comparable -> Tree comparable -> Bool
 contiene valor arbol =
-    False
+    case arbol of
+        Empty ->
+            False
 
-
-
--- 8. Contar Hojas
+        Node v l r ->
+            if valor == v then
+                True
+            else
+                contiene valor l || contiene valor r
 
 
 contarHojas : Tree a -> Int
 contarHojas arbol =
-    0
+    case arbol of
+        Empty ->
+            0
 
+        Node _ Empty Empty ->
+            1
 
-
--- 9. Valor Mínimo (sin Maybe)
+        Node _ l r ->
+            contarHojas l + contarHojas r
 
 
 minimo : Tree Int -> Int
 minimo arbol =
-    0
+    case arbol of
+        Empty ->
+            0
 
+        Node v Empty _ ->
+            v
 
-
--- 10. Valor Máximo (sin Maybe)
+        Node _ l _ ->
+            minimo l
 
 
 maximo : Tree Int -> Int
 maximo arbol =
-    0
+    case arbol of
+        Empty ->
+            0
 
+        Node v _ Empty ->
+            v
+
+        Node _ _ r ->
+            maximo r
 
 
 -- ============================================================================
 -- PARTE 2: INTRODUCCIÓN A MAYBE
 -- ============================================================================
--- 11. Buscar Valor
 
-
-buscar : a -> Tree a -> Maybe a
+buscar : comparable -> Tree comparable -> Maybe comparable
 buscar valor arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
 
-
-
--- 12. Encontrar Mínimo (con Maybe)
+        Node v l r ->
+            if valor == v then
+                Just v
+            else
+                buscar valor l |> Maybe.orElse (buscar valor r)
 
 
 encontrarMinimo : Tree comparable -> Maybe comparable
 encontrarMinimo arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
 
+        Node v Empty _ ->
+            Just v
 
-
--- 13. Encontrar Máximo (con Maybe)
+        Node _ l _ ->
+            encontrarMinimo l
 
 
 encontrarMaximo : Tree comparable -> Maybe comparable
 encontrarMaximo arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
 
+        Node v _ Empty ->
+            Just v
 
-
--- 14. Buscar Por Predicado
+        Node _ _ r ->
+            encontrarMaximo r
 
 
 buscarPor : (a -> Bool) -> Tree a -> Maybe a
 buscarPor predicado arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
 
-
-
--- 15. Obtener Valor de Raíz
+        Node v l r ->
+            if predicado v then
+                Just v
+            else
+                buscarPor predicado l |> Maybe.orElse (buscarPor predicado r)
 
 
 raiz : Tree a -> Maybe a
 raiz arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
 
-
-
--- 16. Obtener Hijo Izquierdo
+        Node v _ _ ->
+            Just v
 
 
 hijoIzquierdo : Tree a -> Maybe (Tree a)
 hijoIzquierdo arbol =
-    Nothing
+    case arbol of
+        Node _ l _ ->
+            Just l
+
+        Empty ->
+            Nothing
 
 
 hijoDerecho : Tree a -> Maybe (Tree a)
 hijoDerecho arbol =
-    Nothing
+    case arbol of
+        Node _ _ r ->
+            Just r
 
-
-
--- 17. Obtener Nieto
+        Empty ->
+            Nothing
 
 
 nietoIzquierdoIzquierdo : Tree a -> Maybe (Tree a)
 nietoIzquierdoIzquierdo arbol =
-    Nothing
+    hijoIzquierdo arbol |> Maybe.andThen hijoIzquierdo
 
 
-
--- 18. Buscar en Profundidad
-
-
-obtenerSubarbol : a -> Tree a -> Maybe (Tree a)
+obtenerSubarbol : comparable -> Tree comparable -> Maybe (Tree comparable)
 obtenerSubarbol valor arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
+
+        Node v l r ->
+            if v == valor then
+                Just arbol
+            else
+                obtenerSubarbol valor l |> Maybe.orElse (obtenerSubarbol valor r)
 
 
-buscarEnSubarbol : a -> a -> Tree a -> Maybe a
-buscarEnSubarbol valor1 valor2 arbol =
-    Nothing
-
+buscarEnSubarbol : comparable -> comparable -> Tree comparable -> Maybe comparable
+buscarEnSubarbol v1 v2 arbol =
+    obtenerSubarbol v1 arbol |> Maybe.andThen (buscar v2)
 
 
 -- ============================================================================
 -- PARTE 3: RESULT PARA VALIDACIONES
 -- ============================================================================
--- 19. Validar No Vacío
-
 
 validarNoVacio : Tree a -> Result String (Tree a)
 validarNoVacio arbol =
-    Err "El árbol está vacío"
+    case arbol of
+        Empty ->
+            Err "El árbol está vacío"
 
-
-
--- 20. Obtener Raíz con Error
+        _ ->
+            Ok arbol
 
 
 obtenerRaiz : Tree a -> Result String a
 obtenerRaiz arbol =
-    Err "No se puede obtener la raíz de un árbol vacío"
+    case arbol of
+        Empty ->
+            Err "No se puede obtener la raíz de un árbol vacío"
 
-
-
--- 21. Dividir en Valor Raíz y Subárboles
+        Node v _ _ ->
+            Ok v
 
 
 dividir : Tree a -> Result String ( a, Tree a, Tree a )
 dividir arbol =
-    Err "No se puede dividir un árbol vacío"
+    case arbol of
+        Empty ->
+            Err "No se puede dividir un árbol vacío"
 
-
-
--- 22. Obtener Mínimo con Error
+        Node v l r ->
+            Ok ( v, l, r )
 
 
 obtenerMinimo : Tree comparable -> Result String comparable
 obtenerMinimo arbol =
-    Err "No hay mínimo en un árbol vacío"
+    case encontrarMinimo arbol of
+        Just v ->
+            Ok v
 
-
-
--- 23. Verificar si es BST
+        Nothing ->
+            Err "No hay mínimo en un árbol vacío"
 
 
 esBST : Tree comparable -> Bool
 esBST arbol =
-    False
+    let
+        helper node minVal maxVal =
+            case node of
+                Empty ->
+                    True
 
-
-
--- 24. Insertar en BST
+                Node v l r ->
+                    (Maybe.map ((>) v) minVal |> Maybe.withDefault True)
+                        && (Maybe.map ((<) v) maxVal |> Maybe.withDefault True)
+                        && helper l minVal (Just v)
+                        && helper r (Just v) maxVal
+    in
+    helper arbol Nothing Nothing
 
 
 insertarBST : comparable -> Tree comparable -> Result String (Tree comparable)
 insertarBST valor arbol =
-    Err "El valor ya existe en el árbol"
+    case arbol of
+        Empty ->
+            Ok (Node valor Empty Empty)
 
-
-
--- 25. Buscar en BST
+        Node v l r ->
+            if valor == v then
+                Err "El valor ya existe en el árbol"
+            else if valor < v then
+                insertarBST valor l |> Result.map (\nl -> Node v nl r)
+            else
+                insertarBST valor r |> Result.map (\nr -> Node v l nr)
 
 
 buscarEnBST : comparable -> Tree comparable -> Result String comparable
 buscarEnBST valor arbol =
-    Err "El valor no se encuentra en el árbol"
+    case arbol of
+        Empty ->
+            Err "El valor no se encuentra en el árbol"
 
-
-
--- 26. Validar BST con Result
+        Node v l r ->
+            if valor == v then
+                Ok v
+            else if valor < v then
+                buscarEnBST valor l
+            else
+                buscarEnBST valor r
 
 
 validarBST : Tree comparable -> Result String (Tree comparable)
 validarBST arbol =
-    Err "El árbol no es un BST válido"
-
+    if esBST arbol then
+        Ok arbol
+    else
+        Err "El árbol no es un BST válido"
 
 
 -- ============================================================================
 -- PARTE 4: COMBINANDO MAYBE Y RESULT
 -- ============================================================================
--- 27. Maybe a Result
-
 
 maybeAResult : String -> Maybe a -> Result String a
 maybeAResult mensajeError maybe =
-    Err mensajeError
+    case maybe of
+        Just v ->
+            Ok v
 
-
-
--- 28. Result a Maybe
+        Nothing ->
+            Err mensajeError
 
 
 resultAMaybe : Result error value -> Maybe value
 resultAMaybe result =
-    Nothing
+    case result of
+        Ok v ->
+            Just v
 
-
-
--- 29. Buscar y Validar
+        Err _ ->
+            Nothing
 
 
 buscarPositivo : Int -> Tree Int -> Result String Int
 buscarPositivo valor arbol =
-    Err "El valor no se encuentra en el árbol"
+    case buscar valor arbol of
+        Just v ->
+            if v > 0 then
+                Ok v
+            else
+                Err "El valor no es positivo"
 
-
-
--- 30. Pipeline de Validaciones
+        Nothing ->
+            Err "El valor no se encuentra en el árbol"
 
 
 validarArbol : Tree Int -> Result String (Tree Int)
 validarArbol arbol =
-    Err "Validación fallida"
-
-
-
--- 31. Encadenar Búsquedas
+    validarNoVacio arbol |> Result.andThen validarBST
 
 
 buscarEnDosArboles : Int -> Tree Int -> Tree Int -> Result String Int
 buscarEnDosArboles valor arbol1 arbol2 =
-    Err "Búsqueda fallida"
+    case buscar valor arbol1 of
+        Just v ->
+            Ok v
 
+        Nothing ->
+            case buscar valor arbol2 of
+                Just v2 ->
+                    Ok v2
+
+                Nothing ->
+                    Err "Búsqueda fallida"
 
 
 -- ============================================================================
 -- PARTE 5: DESAFÍOS AVANZADOS
 -- ============================================================================
--- 32. Recorrido Inorder
-
 
 inorder : Tree a -> List a
 inorder arbol =
-    []
+    case arbol of
+        Empty ->
+            []
 
-
-
--- 33. Recorrido Preorder
+        Node v l r ->
+            inorder l ++ [ v ] ++ inorder r
 
 
 preorder : Tree a -> List a
 preorder arbol =
-    []
+    case arbol of
+        Empty ->
+            []
 
-
-
--- 34. Recorrido Postorder
+        Node v l r ->
+            [ v ] ++ preorder l ++ preorder r
 
 
 postorder : Tree a -> List a
 postorder arbol =
-    []
+    case arbol of
+        Empty ->
+            []
 
-
-
--- 35. Map sobre Árbol
+        Node v l r ->
+            postorder l ++ postorder r ++ [ v ]
 
 
 mapArbol : (a -> b) -> Tree a -> Tree b
 mapArbol funcion arbol =
-    Empty
+    case arbol of
+        Empty ->
+            Empty
 
-
-
--- 36. Filter sobre Árbol
+        Node v l r ->
+            Node (funcion v) (mapArbol funcion l) (mapArbol funcion r)
 
 
 filterArbol : (a -> Bool) -> Tree a -> Tree a
 filterArbol predicado arbol =
-    Empty
+    case arbol of
+        Empty ->
+            Empty
 
-
-
--- 37. Fold sobre Árbol
+        Node v l r ->
+            let
+                nl = filterArbol predicado l
+                nr = filterArbol predicado r
+            in
+            if predicado v then
+                Node v nl nr
+            else
+                if esVacio nl && esVacio nr then
+                    Empty
+                else
+                    Node v nl nr
 
 
 foldArbol : (a -> b -> b) -> b -> Tree a -> b
 foldArbol funcion acumulador arbol =
-    acumulador
+    case arbol of
+        Empty ->
+            acumulador
 
-
-
--- 38. Eliminar de BST
+        Node v l r ->
+            foldArbol funcion (funcion v (foldArbol funcion acumulador r)) l
 
 
 eliminarBST : comparable -> Tree comparable -> Result String (Tree comparable)
 eliminarBST valor arbol =
-    Err "El valor no existe en el árbol"
+    case arbol of
+        Empty ->
+            Err "El valor no existe en el árbol"
 
+        Node v l r ->
+            if valor < v then
+                eliminarBST valor l |> Result.map (\nl -> Node v nl r)
+            else if valor > v then
+                eliminarBST valor r |> Result.map (\nr -> Node v l nr)
+            else
+                case ( l, r ) of
+                    ( Empty, Empty ) ->
+                        Ok Empty
 
+                    ( l, Empty ) ->
+                        Ok l
 
--- 39. Construir BST desde Lista
+                    ( Empty, r ) ->
+                        Ok r
+
+                    _ ->
+                        case encontrarMinimo r of
+                            Just minV ->
+                                eliminarBST minV r
+                                    |> Result.map (\nr -> Node minV l nr)
+
+                            Nothing ->
+                                Err "Error interno"
 
 
 desdeListaBST : List comparable -> Result String (Tree comparable)
 desdeListaBST lista =
-    Err "Valor duplicado"
-
-
-
--- 40. Verificar Balance
+    List.foldl
+        (\x acc ->
+            acc |> Result.andThen (insertarBST x)
+        )
+        (Ok Empty)
+        lista
 
 
 estaBalanceado : Tree a -> Bool
 estaBalanceado arbol =
-    False
+    case arbol of
+        Empty ->
+            True
 
-
-
--- 41. Balancear BST
+        Node _ l r ->
+            abs (altura l - altura r) <= 1
+                && estaBalanceado l
+                && estaBalanceado r
 
 
 balancear : Tree comparable -> Tree comparable
 balancear arbol =
-    Empty
+    let
+        lista = inorder arbol
 
+        construir l =
+            case l of
+                [] ->
+                    Empty
 
+                _ ->
+                    let
+                        mitad = List.length l // 2
+                        ( izquierda, derecha ) = List.splitAt mitad l
+                    in
+                    case derecha of
+                        [] ->
+                            Empty
 
--- 42. Camino a un Valor
+                        x :: xs ->
+                            Node x (construir izquierda) (construir xs)
+    in
+    construir lista
 
 
 type Direccion
@@ -446,37 +582,63 @@ type Direccion
     | Derecha
 
 
-encontrarCamino : a -> Tree a -> Result String (List Direccion)
+encontrarCamino : comparable -> Tree comparable -> Result String (List Direccion)
 encontrarCamino valor arbol =
-    Err "El valor no existe en el árbol"
+    case arbol of
+        Empty ->
+            Err "El valor no existe en el árbol"
 
+        Node v l r ->
+            if valor == v then
+                Ok []
+            else
+                case encontrarCamino valor l of
+                    Ok camino ->
+                        Ok (Izquierda :: camino)
 
+                    Err _ ->
+                        case encontrarCamino valor r of
+                            Ok camino ->
+                                Ok (Derecha :: camino)
 
--- 43. Seguir Camino
+                            Err _ ->
+                                Err "El valor no existe en el árbol"
 
 
 seguirCamino : List Direccion -> Tree a -> Result String a
 seguirCamino camino arbol =
-    Err "Camino inválido"
+    case ( camino, arbol ) of
+        ( [], Node v _ _ ) ->
+            Ok v
 
+        ( Izquierda :: resto, Node _ l _ ) ->
+            seguirCamino resto l
 
+        ( Derecha :: resto, Node _ _ r ) ->
+            seguirCamino resto r
 
--- 44. Ancestro Común Más Cercano
+        _ ->
+            Err "Camino inválido"
 
 
 ancestroComun : comparable -> comparable -> Tree comparable -> Result String comparable
-ancestroComun valor1 valor2 arbol =
-    Err "Uno o ambos valores no existen en el árbol"
+ancestroComun v1 v2 arbol =
+    case arbol of
+        Empty ->
+            Err "Uno o ambos valores no existen en el árbol"
 
+        Node v l r ->
+            if v1 < v && v2 < v then
+                ancestroComun v1 v2 l
+            else if v1 > v && v2 > v then
+                ancestroComun v1 v2 r
+            else
+                Ok v
 
 
 -- ============================================================================
 -- PARTE 6: DESAFÍO FINAL - SISTEMA COMPLETO
 -- ============================================================================
--- 45. Sistema Completo de BST
--- (Las funciones individuales ya están definidas arriba)
--- Operaciones que retornan Bool
-
 
 esBSTValido : Tree comparable -> Bool
 esBSTValido arbol =
@@ -493,10 +655,6 @@ contieneValor valor arbol =
     contiene valor arbol
 
 
-
--- Operaciones que retornan Maybe
-
-
 buscarMaybe : comparable -> Tree comparable -> Maybe comparable
 buscarMaybe valor arbol =
     buscar valor arbol
@@ -510,10 +668,6 @@ encontrarMinimoMaybe arbol =
 encontrarMaximoMaybe : Tree comparable -> Maybe comparable
 encontrarMaximoMaybe arbol =
     encontrarMaximo arbol
-
-
-
--- Operaciones que retornan Result
 
 
 insertarResult : comparable -> Tree comparable -> Result String (Tree comparable)
@@ -533,11 +687,15 @@ validarResult arbol =
 
 obtenerEnPosicion : Int -> Tree comparable -> Result String comparable
 obtenerEnPosicion posicion arbol =
-    Err "Posición inválida"
+    let
+        lista = inorder arbol
+    in
+    case List.drop posicion lista |> List.head of
+        Just v ->
+            Ok v
 
-
-
--- Operaciones de transformación
+        Nothing ->
+            Err "Posición inválida"
 
 
 map : (a -> b) -> Tree a -> Tree b
@@ -555,10 +713,6 @@ fold funcion acumulador arbol =
     foldArbol funcion acumulador arbol
 
 
-
--- Conversiones
-
-
 aLista : Tree a -> List a
 aLista arbol =
     inorder arbol
@@ -566,4 +720,13 @@ aLista arbol =
 
 desdeListaBalanceada : List comparable -> Tree comparable
 desdeListaBalanceada lista =
-    Empty
+    let
+        mitad = List.length lista // 2
+        ( izquierda, derecha ) = List.splitAt mitad lista
+    in
+    case derecha of
+        [] ->
+            Empty
+
+        x :: xs ->
+            Node x (desdeListaBalanceada izquierda) (desdeListaBalanceada xs)

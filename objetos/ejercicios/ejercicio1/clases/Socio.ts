@@ -1,58 +1,69 @@
+import { biblioteca } from "./Bibiblioteca";
 import { Libro } from "./Libro";
 
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
-
-/** Duracion en dias de un prestamo */
 type Duracion = number;
 
+class Prestamo{
+    constructor(
+        public libro: Libro,
+        private duracion: Duracion,
+        public fechaVencimiento: Date = new Date(new Date().setDate(new Date().getDate() + duracion))){}
+}
+
 export class Socio {
-  private prestamos: Prestamo[] = [];
+    
 
-  constructor(
-    private _id: number,
-    private _nombre: string,
-    private _apellido: string
-  ) {}
+    constructor(
+        private _id: number,
+        private _nombre: string,
+        private _apellido: string,
+        public librosRetirados: Prestamo[] = [],
+        public historial: Libro[] = [],
+        public multa: number = 0
+    ){}
 
-  get id() {
-    return this._id;
-  }
+    get id() {return this._id;}
+    get nombre() {return this._nombre;}
+    get apellido() {return this._apellido;}
+    get nombreCompleto() {return `${this._nombre} ${this._apellido}`;}
+    //get multa() {return this._multa;}
 
-  get nombre() {
-    return this._nombre;
-  }
+    retirar(libro: Libro, duracion: Duracion, usurio: Socio) {
+        //const vencimiento = new Date();
+        //vencimiento.setDate(vencimiento.getDate() + duracion);
+        usurio.librosRetirados.push(new Prestamo(libro, duracion)); 
+        
+        //eliminar el socio de la cola de espera del libro
+        const i = libro.colaEspera.indexOf(usurio);
+        libro.colaEspera.splice(i, 1); // Elimina 1 elemento en la posición 'index'
+        libro._disponible = false;
 
-  get apellido() {
-    return this._apellido;
-  }
+        //agregar libro al historial del socio
+        //validar que no este ya en el historial
+        if (!usurio.historial.find(l => l.isbn === libro.isbn)){
+            usurio.historial.push(libro);
+        }
+    }
+    devolver(libro: Libro, usurio: Socio): Prestamo {
+        const prestamo = this.librosRetirados.find(p => p.libro === libro);
+        if (!prestamo) {
+            throw new Error("El libro no fue retirado por este socio.");
+        } 
+        const index = this.librosRetirados.indexOf(prestamo);
+        usurio.librosRetirados.splice(index, 1);
 
-  get nombreCompleto() {
-    return `${this.nombre} ${this.apellido}`;
-  }
+        if (libro.colaEspera.length > 0){
+        biblioteca.notificar("El libro " + libro.titulo + " ya está disponible.", libro.colaEspera[0]);
+        libro._disponible = true;
+        }
 
-  retirar(libro: Libro, duracion: Duracion) {
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracion);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
-  }
-
-  devolver(libro: Libro) {
-    const prestamo = this.tienePrestadoLibro(libro);
-
-    if (!prestamo) {
-      throw new Error("No esta prestado");
+        biblioteca.recomendarLibros(usurio.id);
+        return prestamo;
+    }
+    tienePrestadoLibro(libro: Libro): Prestamo | null {
+        return this.librosRetirados.find(p => p.libro.isbn === libro.isbn) || null ;
     }
 
-    const indice = this.prestamos.indexOf(prestamo);
-    // Eliminar el elemento en el indice
-    this.prestamos.splice(indice, 1);
-
-    return prestamo;
-  }
-
-  tienePrestadoLibro(libro: Libro): Prestamo | null {
-    return this.prestamos.find((p) => p.libro === libro) ?? null;
-  }
+    
 }
+
