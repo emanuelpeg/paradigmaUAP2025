@@ -1,0 +1,127 @@
+progenitor(clara, jose).
+progenitor(tomas, jose).
+progenitor(tomas, isabel).
+progenitor(jose, ana).
+progenitor(jose, patricia).
+progenitor(patricia, jaime).
+progenitor(bob, patricio).
+progenitor(isabel, rocio).
+progenitor(javier, abril).
+progenitor(abril, maria).
+progenitor(maria, mateo).
+progenitor(mateo, segundo).
+progenitor(mario, lucas).
+progenitor(lucas, miguel).
+progenitor(carlos, ivan).
+progenitor(abril, luigi).
+progenitor(luigi, carlos).
+
+
+%Reglas
+
+% 1) Abuelo (Abuelo es abuelo de Nieto)
+abuelo(Abuelo, Nieto) :-
+    progenitor(Abuelo, Hijo),
+    progenitor(Hijo, Nieto).
+
+% 2) Nieto (Nieto es nieto de Abuelo)
+nieto(Nieto, Abuelo) :-
+    abuelo(Abuelo, Nieto).
+
+% 3) Tío (Tio de Sobrino)
+tio(Tio, Sobrino) :-
+    progenitor(Padre, Sobrino),
+    hermano(Tio, Padre).
+
+% 4) Ancestro (Ancestro de Descendiente - Definición recursiva)
+ancestro(Ancestro, Descendiente) :-
+    progenitor(Ancestro, Descendiente).
+ancestro(Ancestro, Descendiente) :-
+    progenitor(Ancestro, Padre),
+    ancestro(Padre, Descendiente).
+
+% 5) Hermano (H1 es hermano de H2)
+hermano(H1, H2) :-
+    progenitor(Padre, H1),
+    progenitor(Padre, H2),
+    H1 \= H2.
+
+% 6) Sobrino (Sobrino de Tio)
+sobrino(Sobrino, Tio) :-
+    tio(Tio, Sobrino).
+
+
+
+% 7) Pariente (P1 es pariente de P2)
+pariente(P1, P2) :- ancestro(P1, P2).
+pariente(P1, P2) :- ancestro(P2, P1).
+pariente(P1, P2) :-
+    ancestro(Anc, P1),
+    ancestro(Anc, P2),
+    P1 \= P2.
+
+% 8) Bisabuelo (Bisabuelo de Nieto)
+bisabuelo(Bisabuelo, Nieto) :-
+    progenitor(Bisabuelo, Abuelo),
+    progenitor(Abuelo, Padre),
+    progenitor(Padre, Nieto).
+
+% 9) Tío abuelo (TioAbuelo de SobrinoNieto)
+tio_abuelo(TioAbuelo, SobrinoNieto) :-
+    abuelo(Abuelo, SobrinoNieto),
+    hermano(TioAbuelo, Abuelo).
+
+% 10) Hijo (Hijo es hijo de Padre)
+hijo(Hijo, Padre) :-
+    progenitor(Padre, Hijo).
+
+
+% 11) Primo (P1 es primo de P2)
+primo(P1, P2) :-
+    progenitor(Padre1, P1),
+    progenitor(Padre2, P2),
+    hermano(Padre1, Padre2),
+    P1 \= P2.
+
+% 12) Primo segundo (P1 es primo segundo de P2)
+% P1 y P2 son primos segundos si sus padres son primos entre sí.
+primo_segundo(P1, P2) :-
+    progenitor(P1Padre, P1),
+    progenitor(P2Padre, P2),
+    primo(P1Padre, P2Padre),
+    P1 \= P2.
+
+
+% CONSULTAS 
+
+% 1) ¿Quien es el hermano de clara?
+hermano(clara, X).
+
+
+% 2) ¿Quienes son los tios de ana?
+consulta: tio(X, ana).
+
+
+% 3) ¿Quienes son los ansestros de Jaime?
+ancestro(X, jaime).
+
+% 4) ¿Quienes son los nietos jose?
+nieto(X, jose).
+
+
+% 5) ¿Quien es el bisabuelo de ana?
+bisabuelo(X, ana).
+
+
+% 6) ¿Quien es el primo de ana?
+primo(X, ana).
+
+% 7) ¿Quien son los ancestros de ivan?
+ancestro(X, ivan).
+
+% 8) ¿Quien son los nietos de abril?
+nieto(X, abril).
+
+
+% 9) ¿Quien son los primos segundo de carlos?
+primo_segundo(X, carlos).
