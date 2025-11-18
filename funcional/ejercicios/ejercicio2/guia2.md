@@ -20,6 +20,42 @@ Esta guía presenta ejercicios para practicar programación funcional en Elm, en
 **Firma:**
 ```elm
 buscar : List Int -> (Int -> Int -> Bool) -> Int
+buscar lista cmp =
+    case lista of
+        [] ->
+            0
+
+        x :: xs ->
+            List.foldl
+                (\elem acumulador ->
+                    if cmp elem acumulador then
+                        elem
+                    else
+                        acumulador
+                )
+                x
+                xs
+
+--buscarRec : List Int -> (Int -> Int -> Bool) -> Int
+--buscarRec lista cmp =
+    --case lista of
+        --[] ->
+            --0
+
+        --x :: xs ->
+            --buscarAux x xs
+  --where
+    --buscarAux : Int -> List Int -> Int
+    --buscarAux actual rest =
+        --case rest of
+            --[] ->
+                --actual
+
+            --y :: ys ->
+                --if cmp y actual then
+                    --buscarAux y ys
+                --else
+                    --buscarAux actual ys
 ```
 
 **Ejemplos:**

@@ -58,7 +58,12 @@ arbolMediano =
 
 esVacio : Tree a -> Bool
 esVacio arbol =
-    False
+    case arbol of
+        Empty ->
+            True
+
+        _ ->
+            False
 
 
 
@@ -67,7 +72,12 @@ esVacio arbol =
 
 esHoja : Tree a -> Bool
 esHoja arbol =
-    False
+    case arbol of
+        Node _ Empty Empty ->
+            True
+
+        _ ->
+            False
 
 
 
@@ -79,7 +89,12 @@ esHoja arbol =
 
 tamano : Tree a -> Int
 tamano arbol =
-    0
+    case arbol of
+        Empty ->
+            0
+
+        Node _ l r ->
+            1 + tamano l + tamano r
 
 
 
@@ -88,7 +103,12 @@ tamano arbol =
 
 altura : Tree a -> Int
 altura arbol =
-    0
+    case arbol of
+        Empty ->
+            0
+
+        Node _ l r ->
+            1 + max (altura l) (altura r)
 
 
 
@@ -97,16 +117,29 @@ altura arbol =
 
 sumarArbol : Tree Int -> Int
 sumarArbol arbol =
-    0
+    case arbol of
+        Empty ->
+            0
+
+        Node v l r ->
+            v + sumarArbol l + sumarArbol r
 
 
 
 -- 7. Contiene Valor
 
 
-contiene : a -> Tree a -> Bool
+contiene : comparable -> Tree comparable -> Bool
 contiene valor arbol =
-    False
+    case arbol of
+        Empty ->
+            False
+
+        Node v l r ->
+            if v == valor then
+                True
+            else
+                contiene valor l || contiene valor r
 
 
 
@@ -115,7 +148,15 @@ contiene valor arbol =
 
 contarHojas : Tree a -> Int
 contarHojas arbol =
-    0
+    case arbol of
+        Empty ->
+            0
+
+        Node _ Empty Empty ->
+            1
+
+        Node _ l r ->
+            contarHojas l + contarHojas r
 
 
 
@@ -124,7 +165,12 @@ contarHojas arbol =
 
 minimo : Tree Int -> Int
 minimo arbol =
-    0
+    case encontrarMinimo arbol of
+        Just v ->
+            v
+
+        Nothing ->
+            0
 
 
 
@@ -133,7 +179,12 @@ minimo arbol =
 
 maximo : Tree Int -> Int
 maximo arbol =
-    0
+    case encontrarMaximo arbol of
+        Just v ->
+            v
+
+        Nothing ->
+            0
 
 
 
@@ -143,9 +194,22 @@ maximo arbol =
 -- 11. Buscar Valor
 
 
-buscar : a -> Tree a -> Maybe a
+buscar : comparable -> Tree comparable -> Maybe comparable
 buscar valor arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
+
+        Node v l r ->
+            if v == valor then
+                Just v
+            else
+                case buscar valor l of
+                    Just x ->
+                        Just x
+
+                    Nothing ->
+                        buscar valor r
 
 
 
@@ -154,7 +218,35 @@ buscar valor arbol =
 
 encontrarMinimo : Tree comparable -> Maybe comparable
 encontrarMinimo arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
+
+        Node v l r ->
+            let
+                leftMin = encontrarMinimo l
+                rightMin = encontrarMinimo r
+                choose a b =
+                    case ( a, b ) of
+                        ( Nothing, Nothing ) ->
+                            Just v
+
+                        ( Just x, Nothing ) ->
+                            if x < v then
+                                Just x
+                            else
+                                Just v
+
+                        ( Nothing, Just y ) ->
+                            if y < v then
+                                Just y
+                            else
+                                Just v
+
+                        ( Just x, Just y ) ->
+                            Just (min x (min y v))
+            in
+            choose leftMin rightMin
 
 
 
@@ -163,7 +255,35 @@ encontrarMinimo arbol =
 
 encontrarMaximo : Tree comparable -> Maybe comparable
 encontrarMaximo arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
+
+        Node v l r ->
+            let
+                leftMax = encontrarMaximo l
+                rightMax = encontrarMaximo r
+                choose a b =
+                    case ( a, b ) of
+                        ( Nothing, Nothing ) ->
+                            Just v
+
+                        ( Just x, Nothing ) ->
+                            if x > v then
+                                Just x
+                            else
+                                Just v
+
+                        ( Nothing, Just y ) ->
+                            if y > v then
+                                Just y
+                            else
+                                Just v
+
+                        ( Just x, Just y ) ->
+                            Just (max x (max y v))
+            in
+            choose leftMax rightMax
 
 
 
@@ -172,7 +292,20 @@ encontrarMaximo arbol =
 
 buscarPor : (a -> Bool) -> Tree a -> Maybe a
 buscarPor predicado arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
+
+        Node v l r ->
+            if predicado v then
+                Just v
+            else
+                case buscarPor predicado l of
+                    Just x ->
+                        Just x
+
+                    Nothing ->
+                        buscarPor predicado r
 
 
 
@@ -181,21 +314,43 @@ buscarPor predicado arbol =
 
 raiz : Tree a -> Maybe a
 raiz arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
+
+        Node v _ _ ->
+            Just v
 
 
 
 -- 16. Obtener Hijo Izquierdo
 
 
+hijoDerecho : Tree a -> Maybe (Tree a)
 hijoIzquierdo : Tree a -> Maybe (Tree a)
 hijoIzquierdo arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
+
+        Node _ Empty _ ->
+            Nothing
+
+        Node _ l _ ->
+            Just l
 
 
 hijoDerecho : Tree a -> Maybe (Tree a)
 hijoDerecho arbol =
-    Nothing
+    case arbol of
+        Empty ->
+            Nothing
+
+        Node _ _ Empty ->
+            Nothing
+
+        Node _ _ r ->
+            Just r
 
 
 
@@ -204,21 +359,37 @@ hijoDerecho arbol =
 
 nietoIzquierdoIzquierdo : Tree a -> Maybe (Tree a)
 nietoIzquierdoIzquierdo arbol =
-    Nothing
+    hijoIzquierdo arbol
+        |> Maybe.andThen hijoIzquierdo
 
 
 
 -- 18. Buscar en Profundidad
 
 
-obtenerSubarbol : a -> Tree a -> Maybe (Tree a)
-obtenerSubarbol valor arbol =
-    Nothing
-
-
 buscarEnSubarbol : a -> a -> Tree a -> Maybe a
+obtenerSubarbol : comparable -> Tree comparable -> Maybe (Tree comparable)
+obtenerSubarbol valor arbol =
+    case arbol of
+        Empty ->
+            Nothing
+
+        Node v l r ->
+            if v == valor then
+                Just arbol
+            else
+                case obtenerSubarbol valor l of
+                    Just t ->
+                        Just t
+
+                    Nothing ->
+                        obtenerSubarbol valor r
+
+
+buscarEnSubarbol : comparable -> comparable -> Tree comparable -> Maybe comparable
 buscarEnSubarbol valor1 valor2 arbol =
-    Nothing
+    obtenerSubarbol valor1 arbol
+        |> Maybe.andThen (buscar valor2)
 
 
 
@@ -230,7 +401,12 @@ buscarEnSubarbol valor1 valor2 arbol =
 
 validarNoVacio : Tree a -> Result String (Tree a)
 validarNoVacio arbol =
-    Err "El árbol está vacío"
+    case arbol of
+        Empty ->
+            Err "El árbol está vacío"
+
+        _ ->
+            Ok arbol
 
 
 
@@ -239,7 +415,12 @@ validarNoVacio arbol =
 
 obtenerRaiz : Tree a -> Result String a
 obtenerRaiz arbol =
-    Err "No se puede obtener la raíz de un árbol vacío"
+    case arbol of
+        Empty ->
+            Err "No se puede obtener la raíz de un árbol vacío"
+
+        Node v _ _ ->
+            Ok v
 
 
 
@@ -248,7 +429,12 @@ obtenerRaiz arbol =
 
 dividir : Tree a -> Result String ( a, Tree a, Tree a )
 dividir arbol =
-    Err "No se puede dividir un árbol vacío"
+    case arbol of
+        Empty ->
+            Err "No se puede dividir un árbol vacío"
+
+        Node v l r ->
+            Ok ( v, l, r )
 
 
 
@@ -257,7 +443,12 @@ dividir arbol =
 
 obtenerMinimo : Tree comparable -> Result String comparable
 obtenerMinimo arbol =
-    Err "No hay mínimo en un árbol vacío"
+    case encontrarMinimo arbol of
+        Nothing ->
+            Err "No hay mínimo en un árbol vacío"
+
+        Just v ->
+            Ok v
 
 
 
@@ -266,7 +457,23 @@ obtenerMinimo arbol =
 
 esBST : Tree comparable -> Bool
 esBST arbol =
-    False
+    let
+        xs = inorder arbol
+        isStrictInc list =
+            case list of
+                [] ->
+                    True
+
+                _ :: [] ->
+                    True
+
+                a :: b :: rest ->
+                    if a < b then
+                        isStrictInc (b :: rest)
+                    else
+                        False
+    in
+    isStrictInc xs
 
 
 
@@ -305,7 +512,12 @@ validarBST arbol =
 
 maybeAResult : String -> Maybe a -> Result String a
 maybeAResult mensajeError maybe =
-    Err mensajeError
+    case maybe of
+        Nothing ->
+            Err mensajeError
+
+        Just v ->
+            Ok v
 
 
 
@@ -314,7 +526,12 @@ maybeAResult mensajeError maybe =
 
 resultAMaybe : Result error value -> Maybe value
 resultAMaybe result =
-    Nothing
+    case result of
+        Err _ ->
+            Nothing
+
+        Ok v ->
+            Just v
 
 
 
@@ -323,7 +540,15 @@ resultAMaybe result =
 
 buscarPositivo : Int -> Tree Int -> Result String Int
 buscarPositivo valor arbol =
-    Err "El valor no se encuentra en el árbol"
+    case buscar valor arbol of
+        Nothing ->
+            Err ("El valor " ++ String.fromInt valor ++ " no se encuentra en el árbol")
+
+        Just v ->
+            if v > 0 then
+                Ok v
+            else
+                Err ("El valor " ++ String.fromInt v ++ " no es positivo")
 
 
 
@@ -332,7 +557,22 @@ buscarPositivo valor arbol =
 
 validarArbol : Tree Int -> Result String (Tree Int)
 validarArbol arbol =
-    Err "Validación fallida"
+    validarNoVacio arbol
+        |> Result.andThen (	 ->
+            if esBST t then
+                Ok t
+            else
+                Err "El árbol no es un BST válido"
+           )
+        |> Result.andThen (	 ->
+            let
+                positives = List.all ((>) 0) (inorder t)
+            in
+            if positives then
+                Ok t
+            else
+                Err "No todos los valores son positivos"
+           )
 
 
 
@@ -341,7 +581,17 @@ validarArbol arbol =
 
 buscarEnDosArboles : Int -> Tree Int -> Tree Int -> Result String Int
 buscarEnDosArboles valor arbol1 arbol2 =
-    Err "Búsqueda fallida"
+    case buscar valor arbol1 of
+        Nothing ->
+            Err ("El valor " ++ String.fromInt valor ++ " no se encuentra en el árbol")
+
+        Just v ->
+            case buscarEnBST v arbol2 of
+                Ok x ->
+                    Ok x
+
+                Err _ ->
+                    Err ("El valor " ++ String.fromInt v ++ " no se encuentra en el segundo árbol")
 
 
 
@@ -353,7 +603,12 @@ buscarEnDosArboles valor arbol1 arbol2 =
 
 inorder : Tree a -> List a
 inorder arbol =
-    []
+    case arbol of
+        Empty ->
+            []
+
+        Node v l r ->
+            inorder l ++ [ v ] ++ inorder r
 
 
 
@@ -362,7 +617,12 @@ inorder arbol =
 
 preorder : Tree a -> List a
 preorder arbol =
-    []
+    case arbol of
+        Empty ->
+            []
+
+        Node v l r ->
+            [ v ] ++ preorder l ++ preorder r
 
 
 
@@ -371,7 +631,12 @@ preorder arbol =
 
 postorder : Tree a -> List a
 postorder arbol =
-    []
+    case arbol of
+        Empty ->
+            []
+
+        Node v l r ->
+            postorder l ++ postorder r ++ [ v ]
 
 
 
@@ -380,7 +645,12 @@ postorder arbol =
 
 mapArbol : (a -> b) -> Tree a -> Tree b
 mapArbol funcion arbol =
-    Empty
+    case arbol of
+        Empty ->
+            Empty
+
+        Node v l r ->
+            Node (funcion v) (mapArbol funcion l) (mapArbol funcion r)
 
 
 
@@ -389,7 +659,25 @@ mapArbol funcion arbol =
 
 filterArbol : (a -> Bool) -> Tree a -> Tree a
 filterArbol predicado arbol =
-    Empty
+    case arbol of
+        Empty ->
+            Empty
+
+        Node v l r ->
+            let
+                l' = filterArbol predicado l
+                r' = filterArbol predicado r
+            in
+            if predicado v then
+                Node v l' r'
+            else
+                -- If node removed, prefer left subtree, otherwise right
+                case l' of
+                    Empty ->
+                        r'
+
+                    _ ->
+                        l'
 
 
 
@@ -398,7 +686,16 @@ filterArbol predicado arbol =
 
 foldArbol : (a -> b -> b) -> b -> Tree a -> b
 foldArbol funcion acumulador arbol =
-    acumulador
+    case arbol of
+        Empty ->
+            acumulador
+
+        Node v l r ->
+            let
+                accL = foldArbol funcion acumulador l
+                accRoot = funcion v accL
+            in
+            foldArbol funcion accRoot r
 
 
 
@@ -425,7 +722,24 @@ desdeListaBST lista =
 
 estaBalanceado : Tree a -> Bool
 estaBalanceado arbol =
-    False
+    let
+        helper t =
+            case t of
+                Empty ->
+                    ( 0, True )
+
+                Node _ l r ->
+                    let
+                        ( hl, bl ) = helper l
+                        ( hr, br ) = helper r
+                        h = 1 + max hl hr
+                        b = bl && br && (abs (hl - hr) <= 1)
+                    in
+                    ( h, b )
+
+        ( _, balanced ) = helper arbol
+    in
+    balanced
 
 
 
@@ -446,9 +760,36 @@ type Direccion
     | Derecha
 
 
-encontrarCamino : a -> Tree a -> Result String (List Direccion)
+encontrarCamino : comparable -> Tree comparable -> Result String (List Direccion)
 encontrarCamino valor arbol =
-    Err "El valor no existe en el árbol"
+    let
+        helper t =
+            case t of
+                Empty ->
+                    Nothing
+
+                Node v l r ->
+                    if v == valor then
+                        Just []
+                    else
+                        case helper l of
+                            Just path ->
+                                Just (Izquierda :: path)
+
+                            Nothing ->
+                                case helper r of
+                                    Just path2 ->
+                                        Just (Derecha :: path2)
+
+                                    Nothing ->
+                                        Nothing
+    in
+    case helper arbol of
+        Just p ->
+            Ok p
+
+        Nothing ->
+            Err "El valor no existe en el árbol"
 
 
 
@@ -457,7 +798,35 @@ encontrarCamino valor arbol =
 
 seguirCamino : List Direccion -> Tree a -> Result String a
 seguirCamino camino arbol =
-    Err "Camino inválido"
+    let
+        helper dirs t =
+            case ( dirs, t ) of
+                ( [], Empty ) ->
+                    Err "Camino inválido"
+
+                ( [], Node v _ _ ) ->
+                    Ok v
+
+                ( Izquierda :: ds, Node _ l _ ) ->
+                    case l of
+                        Empty ->
+                            Err "Camino inválido"
+
+                        _ ->
+                            helper ds l
+
+                ( Derecha :: ds, Node _ _ r ) ->
+                    case r of
+                        Empty ->
+                            Err "Camino inválido"
+
+                        _ ->
+                            helper ds r
+
+                ( _, Empty ) ->
+                    Err "Camino inválido"
+    in
+    helper camino arbol
 
 
 
