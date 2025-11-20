@@ -1,0 +1,31 @@
+miembro(X,[X|_]).
+miembro(X,[_|R]):-miembro(X,R).
+
+longitud([],0).
+longitud([_|Resto],N):-
+longitud(Resto,N1), N is N1+1.
+
+unir(X, [], X).
+unir([], X, X).
+unir([E|R],X,[E|J]) :- unir(R,X,J).
+
+inversa([],[]).
+inversa([H|T],J) :- inversa(T,R), unir(R, [H], J).
+
+repetir([],_,[]).
+repetir(_,0,[]).
+repetir(X,1,X).
+repetir(X, N, Z) :- unir(X, R, Z), B is N - 1, repetir(X, B, R). 
+
+palindromo(X) :- inversa(X, X).
+
+acumular([],0).
+acumular([H|T],N) :- acumular(T,R), N is R + H.
+
+pospar([],[]).
+pospar([_],[]).
+pospar([_,H2|R], [H2|Z]) :- pospar(R, Z). 
+
+posimpar([],[]).
+posimpar([X],[X]).
+posimpar([H,_|R], [H|Z]) :- posimpar(R, Z). 

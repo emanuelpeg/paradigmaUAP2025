@@ -1,0 +1,17 @@
+import Html
+
+listaMain = [0,3,4,8,5,1,2]
+
+contar: List Int -> Int
+contar lista = List.foldl (\_ acumulador-> acumulador + 1) 0 lista
+
+acumular: List Int -> Int
+acumular lista = List.foldl (\elem acumulador-> acumulador + elem) 0 lista
+
+promedio: List Int -> Int
+promedio lista = (acumular lista) // (contar lista)
+
+main =
+  promedio listaMain 
+  |> String.fromInt
+  |> Html.text 
