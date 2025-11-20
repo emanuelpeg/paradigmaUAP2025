@@ -1,0 +1,115 @@
+%1.
+contar_elementos([], 0).
+contar_elementos([_|T], N) :-
+    contar_elementos(T, M),
+    N is M + 1.
+
+%2. 
+pertenece(X, [X|_]).
+pertenece(X, [_|T]) :-
+    pertenece(X, T).
+
+%3. 
+concatenar_listas(X, [], X).
+concatenar_listas([], X, X).
+concatenar_listas([E|R],X,[E|J]) :- 
+    concatenar_listas(R,X,J).
+
+%4.
+invertir([], []).
+invertir([H|T], R) :-
+    invertir(T, RT),
+    concatenar_listas(RT, [H], R).
+
+%5. 
+repetir_lista(_, 0, []).
+repetir_lista(L, N, R) :-
+    N > 0,
+    N1 is N - 1,
+    repetir_lista(L, N1, R1),
+    concatenar_listas(L, R1, R).
+
+
+%6.
+es_palindromo(L) :-
+    invertir(L, L).
+
+%7
+acumular_suma([],0).
+acumular_suma([H|T],N) :- 
+    acumular_suma(T,R), N is R + H.
+
+%8. 
+posiciones_pares([],[]).
+posiciones_pares([_],[]).
+posiciones_pares([_,H2|R], [H2|Z]) :- 
+    posiciones_pares(R, Z).
+
+%9.
+lista_pares([], []).
+lista_pares([H|T], [H|R]) :- 
+    H mod 2 =:= 0, 
+    lista_pares(T, R).
+
+lista_pares([_|T], R) :- 
+    lista_pares(T, R).
+
+%10.
+mezclar_intercalado([], L, L).
+mezclar_intercalado(L, [], L).
+mezclar_intercalado([A|TA], [B|TB], [A,B|R]) :-
+    mezclar_intercalado(TA, TB, R).
+
+%11. 
+sumar_listas([], [], []).
+sumar_listas([A|TA], [B|TB], [C|R]) :-
+    C is A + B,
+    sumar_listas(TA, TB, R).
+
+%12.
+anadir_por_parametros([], _, []).
+anadir_por_parametros([H|T], X, [R|RT]) :-
+    R is H + X,
+    anadir_por_parametros(T, X, RT).
+
+%13.
+interseccion_listas([], _, []).
+interseccion_listas([H|T], L2, [H|R]) :-
+    pertenece(H, L2),
+    interseccion_listas(T, L2, R).
+interseccion_listas([_|T], L2, R) :-
+    interseccion_listas(T, L2, R).
+
+%14.
+anadir_elemento(L, X, R) :-
+    concatenar_listas(L, [X], R).
+
+%15. 
+eliminar_elemento(X, [X|T], T).
+eliminar_elemento(X, [H|T], [H|R]) :-
+    eliminar_elemento(X, T, R).
+
+%16.
+sustituir(_, _, [], []).
+sustituir(A, B, [A|T], [B|R]) :-
+    sustituir(A, B, T, R).
+sustituir(A, B, [H|T], [H|R]) :-
+    H \= A,
+    sustituir(A, B, T, R).
+
+%17.
+eliminar_lista([], _, []).
+eliminar_lista([H|T], L2, R) :-
+    pertenece(H, L2),
+    eliminar_lista(T, L2, R).
+eliminar_lista([H|T], L2, [H|R]) :-
+    \+ pertenece(H, L2),
+    eliminar_lista(T, L2, R).
+
+%18.
+primeros_n(_, 0, []) :- !.
+primeros_n([], _, []) :- !.
+primeros_n([H|T], N, [H|R]) :-
+    N > 0,
+    N1 is N - 1,
+    primeros_n(T, N1, R).
