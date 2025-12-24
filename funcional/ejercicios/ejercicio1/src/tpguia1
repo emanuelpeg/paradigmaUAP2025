@@ -1,0 +1,93 @@
+-- Ejercicio 1: Potencia
+power : Int -> Int -> Int
+power a b =
+    if b == 0 then
+        1
+    else if b < 0 then
+        0 -- No se maneja potencias negativas en Int, podrías devolver un error o similar
+    else
+        a * power a (b - 1)
+
+-- Ejercicio 2: Factorial
+factorial : Int -> Int
+factorial n =
+    if n <= 1 then
+        1
+    else
+        n * factorial (n - 1)
+
+-- Ejercicio 3: Fibonacci (exponencial)
+fibonacciExponential : Int -> Int
+fibonacciExponential n =
+    if n == 0 then
+        0
+    else if n == 1 then
+        1
+    else
+        fibonacciExponential (n - 1) + fibonacciExponential (n - 2)
+
+-- Fibonacci (lineal con acumuladores)
+fibonacciLinear : Int -> Int
+fibonacciLinear n =
+    let
+        fibAux a b count =
+            if count == 0 then
+                a
+            else
+                fibAux b (a + b) (count - 1)
+    in
+    fibAux 0 1 n
+
+-- Ejercicio 4: Triángulo de Pascal
+pascalTriangle : Int -> Int -> Int
+pascalTriangle x y =
+    if x == 0 || x == y then
+        1
+    else
+        pascalTriangle (x - 1) (y - 1) + pascalTriangle x (y - 1)
+
+-- Ejercicio 5: Máximo Común Divisor (MCD)
+gcd : Int -> Int -> Int
+gcd a b =
+    if b == 0 then
+        abs a
+    else
+        gcd b (modBy b a)
+
+-- Ejercicio 6: Contar Dígitos
+countDigits : Int -> Int
+countDigits n =
+    let
+        absN = abs n
+    in
+    if absN < 10 then
+        1
+    else
+        1 + countDigits (absN // 10)
+
+-- Ejercicio 7: Suma de Dígitos
+sumDigits : Int -> Int
+sumDigits n =
+    let
+        absN = abs n
+    in
+    if absN < 10 then
+        absN
+    else
+        (absN % 10) + sumDigits (absN // 10)
+
+-- Ejercicio 8: Verificar Palíndromo
+reverseNumber : Int -> Int
+reverseNumber n =
+    let
+        revAux num acc =
+            if num == 0 then
+                acc
+            else
+                revAux (num // 10) (acc * 10 + (num % 10))
+    in
+    revAux (abs n) 0
+
+isPalindrome : Int -> Bool
+isPalindrome n =
+    abs n == reverseNumber n
