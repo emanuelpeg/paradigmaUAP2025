@@ -1,0 +1,86 @@
+type Socio = {
+	id: number;
+	nombre: string;
+
+}
+
+class Libro {
+	id: number;
+	titulo: string;
+	prestado: boolean;
+	reservas: Socio[];
+
+	constructor(id: number, titulo: string) {
+		this.id = id;
+		this.titulo = titulo;
+		this.prestado = false;
+		this.reservas = [];
+	}
+
+	reservar(socio: Socio): boolean {
+		if (!this.prestado) {
+		
+			return false;
+		}
+		if (!this.reservas.find(s => s.id === socio.id)) {
+			this.reservas.push(socio);
+			return true;
+		}
+		return false; 
+	}
+
+	devolver(): Socio | null {
+		this.prestado = false;
+		if (this.reservas.length > 0) {
+			const siguiente = this.reservas.shift();
+			
+			console.log(`Notificar a ${siguiente?.nombre}: el libro '${this.titulo}' está disponible.`);
+			return siguiente || null;
+		}
+		return null;
+	}
+
+	prestar(): boolean {
+		if (!this.prestado) {
+			this.prestado = true;
+			return true;
+		}
+		return false;
+	}
+}
+
+class Biblioteca {
+	libros: Libro[];
+
+	constructor() {
+		this.libros = [];
+	}
+
+	agregarLibro(libro: Libro) {
+		this.libros.push(libro);
+	}
+
+	reservarLibro(idLibro: number, socio: Socio): boolean {
+		const libro = this.libros.find(l => l.id === idLibro);
+		if (libro) {
+			return libro.reservar(socio);
+		}
+		return false;
+	}
+
+	devolverLibro(idLibro: number): Socio | null {
+		const libro = this.libros.find(l => l.id === idLibro);
+		if (libro) {
+			return libro.devolver();
+		}
+		return null;
+	}
+
+	prestarLibro(idLibro: number): boolean {
+		const libro = this.libros.find(l => l.id === idLibro);
+		if (libro) {
+			return libro.prestar();
+		}
+		return false;
+	}
+}
