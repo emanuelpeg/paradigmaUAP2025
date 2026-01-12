@@ -177,3 +177,33 @@ reverseHelper n acc =
                 modBy 10 n
         in
         reverseHelper (n // 10) (acc * 10 + digit)
+
+
+-- Ejercicio 9: Paréntesis Balanceados
+
+isBalanced : String -> Bool
+isBalanced str =
+    let
+        balanceHelper : String -> Int -> Bool
+        balanceHelper remaining count =
+            if count < 0 then
+                False
+
+            else if String.isEmpty remaining then
+                count == 0
+
+            else
+                let
+                    char = String.left 1 remaining
+                    rest = String.dropLeft 1 remaining
+                in
+                if char == "(" then
+                    balanceHelper rest (count + 1)
+
+                else if char == ")" then
+                    balanceHelper rest (count - 1)
+
+                else
+                    balanceHelper rest count
+    in
+    balanceHelper str 0
