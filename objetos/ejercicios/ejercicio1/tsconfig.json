@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "commonjs",
     "moduleResolution": "Node",
     "outDir": "dist",
     "rootDir": ".",
@@ -18,7 +18,7 @@
   },
   "include": [
     "*"
-  ],
+, "clases/EventosBiblioteca.ts"  ],
   "exclude": [
     "node_modules",
     "dist"
