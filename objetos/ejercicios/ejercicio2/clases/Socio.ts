@@ -1,14 +1,16 @@
 import { Libro } from "./Libro";
-
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
+import {Prestamo, TipoPrestamo, PrestamoFactory} from "./Prestamo";
+import { IPoliticaPrestamo } from "../Interface/IPoliticaPrestamo";
+import { IUsuario } from "../Interface/IUsuario";
 
 /** Duracion en dias de un prestamo */
 type Duracion = number;
 
-export abstract class Socio {
+export abstract class Socio  implements IUsuario {
   protected prestamos: Prestamo[] = [];
+  private duracionPrestamo: number = 14; // Valor por defecto: 14 días
+  private renovacionesPermitidas: number = 1; // Valor por defecto: 1 
+
 
   constructor(
     private _id: number,
@@ -31,20 +33,45 @@ export abstract class Socio {
   get nombreCompleto() {
     return `${this.nombre} ${this.apellido}`;
   }
+    // Implementación de los métodos de IUsuario
+
+  tienePrestamosVencidos(): boolean {
+    return this.prestamos.some(prestamo => prestamo.estaVencido());
+  }
+
+  setDuracionPrestamo(dias: number): void {
+    this.duracionPrestamo = dias;
+    console.log(`⏰ Duración de préstamo establecida a ${dias} días`);
+  }
+
+  setRenovacionesPermitidas(veces: number): void {
+    this.renovacionesPermitidas = veces;
+    console.log(` Renovaciones permitidas: ${veces}`);
+  }
+
+  getRenovacionesPermitidas(): number {
+    return this.renovacionesPermitidas;
+  }
+  // Métodos abstractos que deben ser implementados por las subclases
 
   abstract getDuracionPrestamo(): Duracion;
   abstract getMaximoLibros(): number;
 
-  retirar(libro: Libro, duracion?: Duracion) {
-    if (!this.puedeRetirar(libro)) {
-      throw new Error("No tiene permisos para retirar este libro");
+  // Métodos para retirar libros| lo ideal es crear un metodo general que permita seleccionar tipo de prestamo y a partir de el aplicar una unica funcino general-- no lo hice por cuestion de tiempo.
+
+  
+    retirarLibro(libro: Libro, tipoPrestamo: TipoPrestamo, politica: IPoliticaPrestamo): Prestamo {
+        if (this.tienePrestadoLibro(libro)) {
+            throw new Error("Ya tienes este libro prestado");
+        }
+
+        // Crear préstamo con factory y política
+        const prestamo = PrestamoFactory.crearPrestamo(tipoPrestamo, libro, politica);
+        this.prestamos.push(prestamo);
+        
+        return prestamo;
     }
 
-    const duracionFinal = duracion ?? this.getDuracionPrestamo();
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
-  }
 
   devolver(libro: Libro) {
     const prestamo = this.tienePrestadoLibro(libro);
@@ -60,7 +87,7 @@ export abstract class Socio {
   }
 
   tienePrestadoLibro(libro: Libro): Prestamo | null {
-    return this.prestamos.find((p) => p.libro === libro) ?? null;
+    return this.prestamos.find((p) => p.getLibro() === libro) ?? null;
   }
 
   get librosEnPrestamo() {
@@ -69,6 +96,9 @@ export abstract class Socio {
 
   puedeRetirar(libro: Libro): boolean {
     return this.prestamos.length < this.getMaximoLibros();
+  }
+  getPrestamosVigentes(): Prestamo[] {
+    return this.prestamos.filter(p => !p.estaVencido());
   }
 }
 
@@ -149,3 +179,4 @@ export class SocioFactory {
     }
   }
 }
+
