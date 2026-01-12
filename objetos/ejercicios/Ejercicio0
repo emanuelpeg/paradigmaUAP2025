@@ -1,0 +1,16 @@
+type Ejercicio ={
+    texto: string;
+};
+
+
+let numero = 1;
+const ejercicio: Ejercicio = {
+    texto: "Hola, Typescript",
+};
+
+
+console.log("Hola mundo");
+console.log(ejercicio.texto);
+console.log()
+console.log("Numero: " + numero);
+

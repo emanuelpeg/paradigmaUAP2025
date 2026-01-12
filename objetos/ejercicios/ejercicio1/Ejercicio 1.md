@@ -1,4 +1,3 @@
-# Sistema de Gestión de Biblioteca - Ejercicio de Programación Orientada a Objetos
 
 ## Descripción del Ejercicio
 
