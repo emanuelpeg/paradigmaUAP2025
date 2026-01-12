@@ -1,15 +1,13 @@
 import { Libro } from "./Libro";
+import { Prestamo, PrestamoRegular, PrestamoCorto, PrestamoReferencia, PrestamoDigital } from "./Pestamo";
 
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
 
 /** Duracion en dias de un prestamo */
 type Duracion = number;
 
 export abstract class Socio {
   protected prestamos: Prestamo[] = [];
-
+  
   constructor(
     private _id: number,
     private _nombre: string,
@@ -31,41 +29,53 @@ export abstract class Socio {
   get nombreCompleto() {
     return `${this.nombre} ${this.apellido}`;
   }
+  get librosEnPrestamos() {
+    return this.prestamos.map(prestamo => prestamo.libro);
+  }
+  get getPrestamos(): Prestamo[] {
+    return this.prestamos;
+  }
+
+  
 
   abstract getDuracionPrestamo(): Duracion;
   abstract getMaximoLibros(): number;
 
-  retirar(libro: Libro, duracion?: Duracion) {
-    if (!this.puedeRetirar(libro)) {
-      throw new Error("No tiene permisos para retirar este libro");
+  retirar(libro: Libro, tipo: "regular" | "corto" | "referencia" | "digital") {
+    let prestamo: Prestamo;
+    const fechaInicio = new Date();
+    switch (tipo) {
+      case "regular":
+        prestamo = new PrestamoRegular(libro, fechaInicio);
+        break;
+      case "corto":
+        prestamo = new PrestamoCorto(libro, fechaInicio);
+        break;
+      case "referencia":
+        prestamo = new PrestamoReferencia(libro, fechaInicio);
+        break;
+      case "digital":
+        prestamo = new PrestamoDigital(libro, fechaInicio);
+        break;
+      default:
+        throw new Error("Tipo de préstamo no válido");
     }
-
-    const duracionFinal = duracion ?? this.getDuracionPrestamo();
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+    this.prestamos.push(prestamo);
   }
 
-  devolver(libro: Libro) {
+  devolver(libro: Libro, fechaDevolucion: Date = new Date()): number {
     const prestamo = this.tienePrestadoLibro(libro);
-
-    if (!prestamo) {
-      throw new Error("No esta prestado");
-    }
-
-    const indice = this.prestamos.indexOf(prestamo);
-    this.prestamos.splice(indice, 1);
-
-    return prestamo;
+    if (!prestamo) throw new Error("No está prestado");
+    const multa = prestamo.calcularMulta(fechaDevolucion);
+    this.prestamos = this.prestamos.filter(p => p !== prestamo);
+    return multa;
   }
 
   tienePrestadoLibro(libro: Libro): Prestamo | null {
     return this.prestamos.find((p) => p.libro === libro) ?? null;
   }
 
-  get librosEnPrestamo() {
-    return this.prestamos.length;
-  }
+  
 
   puedeRetirar(libro: Libro): boolean {
     return this.prestamos.length < this.getMaximoLibros();
@@ -81,10 +91,9 @@ export class SocioRegular extends Socio {
     return 3;
   }
 
-  devolver(libro: Libro): Prestamo {
-    // Manejar potenciales multas
-    return super.devolver(libro);
-  }
+  devolver(libro: Libro, fechaDevolucion: Date = new Date()): number {
+  return super.devolver(libro, fechaDevolucion);
+}
 }
 
 export class SocioVIP extends Socio {
@@ -119,6 +128,9 @@ export class Visitante extends Socio {
   getMaximoLibros(): number {
     return 0;
   }
+  get librosEnPrestamos() {
+  return this.prestamos.map(prestamo => prestamo.libro);
+}
 }
 
 export enum TipoSocio {
