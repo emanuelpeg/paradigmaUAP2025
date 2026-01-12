@@ -1,0 +1,25 @@
+{
+  "name": "paradigmasuap2025",
+  "version": "1.0.0",
+  "description": "",
+  "main": "/objetos/ejercicios/ejercicio1/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node objetos/ejercicios/ejercicio1/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Narcisssa/paradigmasUAP2025.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Narcisssa/paradigmasUAP2025/issues"
+  },
+  "homepage": "https://github.com/Narcisssa/paradigmasUAP2025#readme",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
