@@ -34,7 +34,12 @@ en lugar de usar Maybe. Trabajamos con List en lugar del List de Scala.
 
 concatenar : List Int -> List Int -> List Int
 concatenar lista1 lista2 =
-    []
+    case lista1 of
+        [] ->
+            lista2
+
+        x :: xs ->
+            x :: concatenar xs lista2
 
 
 
@@ -45,7 +50,21 @@ concatenar lista1 lista2 =
 
 buscar : List Int -> (Int -> Int -> Bool) -> Int
 buscar lista com =
-    0
+    case lista of
+        [] ->
+            0
+
+        x :: xs ->
+            List.foldl
+                (\actual acumulado ->
+                    if com actual acumulado then
+                        actual
+
+                    else
+                        acumulado
+                )
+                x
+                xs
 
 
 
@@ -55,7 +74,7 @@ buscar lista com =
 
 max : List Int -> Int
 max lista =
-    0
+    buscar lista (\a b -> a > b)
 
 
 
@@ -65,7 +84,7 @@ max lista =
 
 min : List Int -> Int
 min lista =
-    0
+    buscar lista (\a b -> a < b)
 
 
 
@@ -74,7 +93,7 @@ min lista =
 
 maximos : List Int -> Int -> List Int
 maximos lista e =
-    []
+    List.filter (\x -> x > e) lista
 
 
 
@@ -83,7 +102,7 @@ maximos lista e =
 
 minimos : List Int -> Int -> List Int
 minimos lista e =
-    []
+    List.filter (\x -> x < e) lista
 
 
 
@@ -97,11 +116,14 @@ quickSort xs =
             []
 
         pivot :: resto ->
-            -- TODO: Implementar quicksort recursivamente
-            -- 1. Dividir resto en menores y mayores que pivot
-            -- 2. Ordenar recursivamente ambas particiones
-            -- 3. Concatenar: (menores ordenados) ++ [pivot] ++ (mayores ordenados)
-            []
+            let
+                menores =
+                    List.filter (\x -> x <= pivot) resto
+
+                mayores =
+                    List.filter (\x -> x > pivot) resto
+            in
+            concatenar (concatenar (quickSort menores) [ pivot ]) (quickSort mayores)
 
 
 
@@ -111,7 +133,19 @@ quickSort xs =
 
 obtenerElemento : List Int -> Int -> Int
 obtenerElemento lista posicion =
-    0
+    case ( lista, posicion ) of
+        ( [], _ ) ->
+            0
+
+        ( x :: _, 0 ) ->
+            x
+
+        ( _ :: xs, n ) ->
+            if n < 0 then
+                0
+
+            else
+                obtenerElemento xs (n - 1)
 
 
 
@@ -123,7 +157,25 @@ obtenerElemento lista posicion =
 
 mediana : List Int -> Int
 mediana lista =
-    0
+    if isEmpty lista then
+        0
+
+    else
+        let
+            listaOrdenada =
+                quickSort lista
+
+            longitud =
+                contar listaOrdenada
+
+            indiceMedia =
+                longitud // 2
+        in
+        if modBy 2 longitud == 1 then
+            obtenerElemento listaOrdenada indiceMedia
+
+        else
+            obtenerElemento listaOrdenada (indiceMedia - 1)
 
 
 
@@ -132,7 +184,7 @@ mediana lista =
 
 contar : List Int -> Int
 contar lista =
-    0
+    List.length lista
 
 
 
@@ -141,7 +193,7 @@ contar lista =
 
 acc : List Int -> Int
 acc lista =
-    0
+    List.sum lista
 
 
 
@@ -150,7 +202,7 @@ acc lista =
 
 filtrar : List Int -> (Int -> Bool) -> List Int
 filtrar xs p =
-    []
+    List.filter p xs
 
 
 
@@ -159,8 +211,7 @@ filtrar xs p =
 
 filtrarPares : List Int -> List Int
 filtrarPares xs =
-    -- Pista: Usar modBy 2 para verificar números pares
-    []
+    filtrar xs (\x -> modBy 2 x == 0)
 
 
 
@@ -169,7 +220,7 @@ filtrarPares xs =
 
 filtrarMultiplosDeTres : List Int -> List Int
 filtrarMultiplosDeTres xs =
-    []
+    filtrar xs (\x -> modBy 3 x == 0)
 
 
 
@@ -178,7 +229,7 @@ filtrarMultiplosDeTres xs =
 
 acumular : List Int -> (Int -> Int) -> Int
 acumular lista fx =
-    0
+    List.sum (List.map fx lista)
 
 
 
@@ -187,8 +238,7 @@ acumular lista fx =
 
 acumularUnidad : List Int -> Int
 acumularUnidad lista =
-    -- Pista: (\x -> x)
-    0
+    acumular lista (\x -> x)
 
 
 
@@ -197,8 +247,7 @@ acumularUnidad lista =
 
 acumularDoble : List Int -> Int
 acumularDoble lista =
-    -- Pista: (\x -> x * 2)
-    0
+    acumular lista (\x -> x * 2)
 
 
 
@@ -207,8 +256,7 @@ acumularDoble lista =
 
 acumularCuadrado : List Int -> Int
 acumularCuadrado lista =
-    -- Pista: (\x -> x * x)
-    0
+    acumular lista (\x -> x * x)
 
 
 
@@ -218,16 +266,15 @@ acumularCuadrado lista =
 
 transformar : List Int -> (Int -> a) -> List a
 transformar lista fx =
-    []
+    List.map fx lista
 
 
 
--- Retorna true si un elemento existe en la lista
 
 
 existe : List Int -> Int -> Bool
 existe lista nro =
-    False
+    List.member nro lista
 
 
 
@@ -236,8 +283,7 @@ existe lista nro =
 
 unirOfSet : List Int -> List Int -> List Int
 unirOfSet lista otraLista =
-    -- Vas a necesitar una función auxiliar para remover duplicados
-    []
+    removerDuplicados (concatenar lista otraLista)
 
 
 
@@ -246,13 +292,18 @@ unirOfSet lista otraLista =
 
 removerDuplicados : List Int -> List Int
 removerDuplicados lista =
-    []
+    List.foldl
+        (\elemento acumulador ->
+            if existe acumulador elemento then
+                acumulador
+
+            else
+                concatenar acumulador [ elemento ]
+        )
+        []
+        lista
 
 
-
--- OPCIONAL: Subconjuntos
--- Dada una lista de enteros, retorna una lista con todos los posibles subconjuntos
--- Por ejemplo: [1,2,3] -> [[], [1], [2], [3], [1,2], [1,3], [2,3], [1,2,3]]
 
 
 subSets : List Int -> List (List Int)
@@ -262,18 +313,27 @@ subSets lista =
             [ [] ]
 
         x :: xs ->
-            []
-
-
-
--- OPCIONAL: Cortar
--- Dada una lista de enteros y un número entero n, retorna subconjuntos con n elementos
--- Ejemplo: [1,2,3,4,5] y 2 -> [[1,2], [3,4], [5]]
+            let
+                subConjuntosSinX =
+                    subSets xs
+            in
+            subConjuntosSinX ++ List.map (\subConjunto -> x :: subConjunto) subConjuntosSinX
 
 
 cortar : List Int -> Int -> List (List Int)
 cortar lista n =
-    []
+    if n <= 0 || isEmpty lista then
+        []
+
+    else
+        let
+            grupo =
+                tomar n lista
+
+            resto =
+                saltar n lista
+        in
+        grupo :: cortar resto n
 
 
 
@@ -282,7 +342,16 @@ cortar lista n =
 
 tomar : Int -> List a -> List a
 tomar n lista =
-    []
+    if n <= 0 then
+        []
+
+    else
+        case lista of
+            [] ->
+                []
+
+            x :: xs ->
+                x :: tomar (n - 1) xs
 
 
 
@@ -291,7 +360,16 @@ tomar n lista =
 
 saltar : Int -> List a -> List a
 saltar n lista =
-    []
+    if n <= 0 then
+        lista
+
+    else
+        case lista of
+            [] ->
+                []
+
+            _ :: xs ->
+                saltar (n - 1) xs
 
 
 
@@ -316,3 +394,61 @@ ejemplos =
     , "existe [1,2,3] 2 debería devolver True"
     , "existe [1,2,3] 4 debería devolver False"
     ]
+
+
+-- Función para ejecutar todas las pruebas
+pruebasEjemplos : List String
+pruebasEjemplos =
+    [ "Resultado de max [1,2,3,4,5]: " ++ String.fromInt (max [1,2,3,4,5])
+    , "Resultado de min [1,2,3,4,5]: " ++ String.fromInt (min [1,2,3,4,5])
+    , "Resultado de maximos [1,2,3,4,5] 3: " ++ Debug.toString (maximos [1,2,3,4,5] 3)
+    , "Resultado de minimos [1,2,3,4,5] 3: " ++ Debug.toString (minimos [1,2,3,4,5] 3)
+    , "Resultado de quickSort [3,1,4,1,5,9,2,6]: " ++ Debug.toString (quickSort [3,1,4,1,5,9,2,6])
+    , "Resultado de contar [1,2,3,4,5]: " ++ String.fromInt (contar [1,2,3,4,5])
+    , "Resultado de acc [1,2,3,4,5]: " ++ String.fromInt (acc [1,2,3,4,5])
+    , "Resultado de filtrarPares [1,2,3,4,5,6]: " ++ Debug.toString (filtrarPares [1,2,3,4,5,6])
+    , "Resultado de filtrarMultiplosDeTres [1,2,3,6,9,10]: " ++ Debug.toString (filtrarMultiplosDeTres [1,2,3,6,9,10])
+    , "Resultado de acumularDoble [1,2,3]: " ++ String.fromInt (acumularDoble [1,2,3])
+    , "Resultado de acumularCuadrado [1,2,3]: " ++ String.fromInt (acumularCuadrado [1,2,3])
+    , "Resultado de concatenar [1,2] [3,4]: " ++ Debug.toString (concatenar [1,2] [3,4])
+    , "Resultado de existe [1,2,3] 2: " ++ Debug.toString (existe [1,2,3] 2)
+    , "Resultado de existe [1,2,3] 4: " ++ Debug.toString (existe [1,2,3] 4)
+    ]
+
+
+-- Pruebas adicionales
+pruebasExtendidas : List String
+pruebasExtendidas =
+    [ "Resultado de obtenerElemento [1,2,3,4,5] 2: " ++ String.fromInt (obtenerElemento [1,2,3,4,5] 2)
+    , "Resultado de obtenerElemento [1,2,3] 5: " ++ String.fromInt (obtenerElemento [1,2,3] 5)
+    , "Resultado de mediana [1,3,5]: " ++ String.fromInt (mediana [1,3,5])
+    , "Resultado de mediana [1,2,3,4]: " ++ String.fromInt (mediana [1,2,3,4])
+    , "Resultado de mediana []: " ++ String.fromInt (mediana [])
+    , "Resultado de acumularUnidad [1,2,3,4,5]: " ++ String.fromInt (acumularUnidad [1,2,3,4,5])
+    , "Resultado de transformar [1,2,3] (\\x -> x * 2): " ++ Debug.toString (transformar [1,2,3] (\x -> x * 2))
+    , "Resultado de unirOfSet [1,2,3] [2,3,4]: " ++ Debug.toString (unirOfSet [1,2,3] [2,3,4])
+    , "Resultado de removerDuplicados [1,2,2,3,3,4]: " ++ Debug.toString (removerDuplicados [1,2,2,3,3,4])
+    ]
+
+
+-- Pruebas opcionales
+pruebasOpcionales : List String
+pruebasOpcionales =
+    [ "Resultado de subSets [1,2]: " ++ Debug.toString (subSets [1,2])
+    , "Resultado de subSets [1,2,3]: " ++ Debug.toString (subSets [1,2,3])
+    , "Resultado de cortar [1,2,3,4,5] 2: " ++ Debug.toString (cortar [1,2,3,4,5] 2)
+    , "Resultado de cortar [1,2,3,4,5,6,7] 3: " ++ Debug.toString (cortar [1,2,3,4,5,6,7] 3)
+    , "Resultado de tomar 3 [1,2,3,4,5]: " ++ Debug.toString (tomar 3 [1,2,3,4,5])
+    , "Resultado de saltar 2 [1,2,3,4,5]: " ++ Debug.toString (saltar 2 [1,2,3,4,5])
+    ]
+
+
+-- Mostrar todas las pruebas
+todasLasPruebas : List String
+todasLasPruebas =
+    [ "=== PRUEBAS EJEMPLOS BÁSICOS ===" ]
+        ++ pruebasEjemplos
+        ++ [ "", "=== + PRUEBAS ===" ]
+        ++ pruebasExtendidas
+        ++ [ "", "=== PRUEBAS OPCIONALES ===" ]
+        ++ pruebasOpcionales
