@@ -1,4 +1,6 @@
 module Clase3 exposing (..)
+import Html exposing (a)
+import Html.Attributes exposing (accept)
 
 
 head : List a -> a
@@ -43,7 +45,8 @@ en lugar de usar Maybe. Trabajamos con List de Elm.
 
 miMap : (a -> b) -> List a -> List b
 miMap fx lista =
-    []
+    if isEmpty lista then []
+    else fx (head lista) :: (miMap fx (tail lista))
 
 
 
@@ -53,7 +56,10 @@ miMap fx lista =
 
 miFiltro : (a -> Bool) -> List a -> List a
 miFiltro predicado lista =
-    []
+    if isEmpty lista then []
+    else let h = head lista in
+    if (predicado h) then h :: (miFiltro predicado (tail lista))
+    else miFiltro predicado (tail lista)
 
 
 
@@ -63,9 +69,22 @@ miFiltro predicado lista =
 
 miFoldl : (a -> b -> b) -> b -> List a -> b
 miFoldl fx acumulador lista =
-    acumulador
+    if isEmpty lista then acumulador
+    else let nuevoAcu = (fx(head lista) acumulador)
+    in
+    miFoldl fx nuevoAcu (tail lista)
 
+reverse : List a -> List a
+reverse lista =
+    miFoldl (\ a b -> a :: b) [] lista
 
+otherMap : (a -> b) -> List a -> List b
+otherMap t lista =
+    reverse (miFoldl (\h acc -> (t h) :: acc) [] lista)
+
+otherFilter : (a -> Bool) -> List a -> List a
+otherFilter predicado lista =
+    miFoldl (\h acc -> if predicado h then h :: acc else acc) [] lista
 
 -- ============================================================================
 -- PARTE 1: ENTENDIENDO MAP
@@ -78,7 +97,7 @@ miFoldl fx acumulador lista =
 
 duplicar : List Int -> List Int
 duplicar lista =
-    []
+    miMap (\a -> a * 2) lista
 
 
 
@@ -88,7 +107,7 @@ duplicar lista =
 
 longitudes : List String -> List Int
 longitudes lista =
-    []
+    miMap (\a -> String.length a) lista
 
 
 
@@ -98,7 +117,7 @@ longitudes lista =
 
 incrementarTodos : List Int -> List Int
 incrementarTodos lista =
-    []
+    miMap(\a -> a + 1) lista
 
 
 
@@ -108,7 +127,7 @@ incrementarTodos lista =
 
 todasMayusculas : List String -> List String
 todasMayusculas lista =
-    []
+    miMap(\a -> String.toUpper a) lista
 
 
 
@@ -118,7 +137,7 @@ todasMayusculas lista =
 
 negarTodos : List Bool -> List Bool
 negarTodos lista =
-    []
+    miMap(\a -> not a) lista
 
 
 
@@ -133,7 +152,7 @@ negarTodos lista =
 
 pares : List Int -> List Int
 pares lista =
-    []
+    miFiltro (\a -> Basics.modBy 2 a == 0) lista
 
 
 
@@ -143,7 +162,7 @@ pares lista =
 
 positivos : List Int -> List Int
 positivos lista =
-    []
+    miFiltro(\a -> a > 0) lista
 
 
 
@@ -153,7 +172,7 @@ positivos lista =
 
 stringsLargos : List String -> List String
 stringsLargos lista =
-    []
+    miFiltro(\a -> String.length a >= 5) lista
 
 
 
@@ -163,7 +182,7 @@ stringsLargos lista =
 
 soloVerdaderos : List Bool -> List Bool
 soloVerdaderos lista =
-    []
+    miFiltro(\a -> a == True) lista
 
 
 
@@ -173,7 +192,7 @@ soloVerdaderos lista =
 
 mayoresQue : Int -> List Int -> List Int
 mayoresQue valor lista =
-    []
+    miFiltro(\a -> a > valor) lista
 
 
 
@@ -188,7 +207,7 @@ mayoresQue valor lista =
 
 sumaFold : List Int -> Int
 sumaFold lista =
-    0
+    miFoldl (\h acc -> h + acc) 0 lista
 
 
 
@@ -198,7 +217,7 @@ sumaFold lista =
 
 producto : List Int -> Int
 producto lista =
-    1
+    miFoldl(\h acc -> h * acc) 1 lista
 
 
 
@@ -208,7 +227,7 @@ producto lista =
 
 contarFold : List a -> Int
 contarFold lista =
-    0
+    miFoldl(\ _ acc -> acc + 1) 0 lista
 
 
 
@@ -218,7 +237,7 @@ contarFold lista =
 
 concatenar : List String -> String
 concatenar lista =
-    ""
+    miFoldl (\h acc -> acc ++ h) "" lista
 
 
 
@@ -228,7 +247,7 @@ concatenar lista =
 
 maximo : List Int -> Int
 maximo lista =
-    0
+    miFoldl (\h acc -> if h > acc then h else acc) 0 lista
 
 
 
@@ -238,7 +257,7 @@ maximo lista =
 
 invertirFold : List a -> List a
 invertirFold lista =
-    []
+    miFoldl(\h acc -> h :: acc ) [] lista
 
 
 
@@ -248,7 +267,7 @@ invertirFold lista =
 
 todos : (a -> Bool) -> List a -> Bool
 todos predicado lista =
-    False
+    miFoldl(\h acc -> acc && predicado h) True lista
 
 
 
@@ -258,7 +277,7 @@ todos predicado lista =
 
 alguno : (a -> Bool) -> List a -> Bool
 alguno predicado lista =
-    False
+    miFoldl (\h acc -> acc || predicado h) False lista
 
 
 
@@ -273,7 +292,7 @@ alguno predicado lista =
 
 sumaDeCuadrados : List Int -> Int
 sumaDeCuadrados lista =
-    0
+    miFoldl(\h acc -> (h * h) + acc) 0 lista
 
 
 
@@ -283,7 +302,7 @@ sumaDeCuadrados lista =
 
 contarPares : List Int -> Int
 contarPares lista =
-    0
+    miFoldl (\h acc -> if Basics.modBy 2 h == 0 then acc + 1 else acc) 0 lista
 
 
 
@@ -293,7 +312,13 @@ contarPares lista =
 
 promedio : List Float -> Float
 promedio lista =
-    0
+    if isEmpty lista then 0
+    else
+        let
+            suma = miFoldl(\h acc -> h + acc) 0 lista
+            cantidad = miFoldl(\_ acc -> acc + 1) 0 lista
+        in
+        suma/ toFloat cantidad
 
 
 
@@ -303,7 +328,10 @@ promedio lista =
 
 longitudesPalabras : String -> List Int
 longitudesPalabras oracion =
-    []
+    let
+        listaOracion = String.split " " oracion
+    in
+    miMap String.length listaOracion
 
 
 
@@ -313,7 +341,10 @@ longitudesPalabras oracion =
 
 palabrasLargas : String -> List String
 palabrasLargas oracion =
-    []
+    let
+        lista = String.split " " oracion
+    in
+    miFiltro (\a -> String.length a > 3) lista
 
 
 
@@ -323,7 +354,7 @@ palabrasLargas oracion =
 
 sumarPositivos : List Int -> Int
 sumarPositivos lista =
-    0
+    miFoldl(\h acc -> if (h > 0) then h + acc else acc) 0 lista
 
 
 
@@ -333,7 +364,7 @@ sumarPositivos lista =
 
 duplicarPares : List Int -> List Int
 duplicarPares lista =
-    []
+    miMap(\a -> if Basics.modBy 2 a == 0 then a * 2 else a) lista
 
 
 
@@ -345,31 +376,50 @@ duplicarPares lista =
 -- 29. Aplanar
 -- Aplaná una lista de listas en una única lista
 
-
 aplanar : List (List a) -> List a
 aplanar lista =
-    []
-
+    miFoldl(\ h acc -> acc ++ h ) [] lista
 
 
 -- 30. Agrupar Por
--- Agrupá elementos por una función clave (devolvé lista de listas)
--- ¡Esto es desafiante! Agrupá elementos iguales consecutivos juntos
+-- Agrupá elementos por una función clave [elementos iguales consecutivos juntos] -> (devolvé lista de listas)
+-- ¡Esto es desafiante! Agrupá elementos iguales consecutivos juntos.
 
 
 agruparPor : (a -> a -> Bool) -> List a -> List (List a)
 agruparPor comparador lista =
-    []
+    miFoldl
+        (\h acc ->
+            case acc of
+                [] ->
+                    [[h]]
+
+                grupoActual :: resto ->
+                    if comparador h (head grupoActual) then
+                        (h :: grupoActual) :: resto
+                    else
+                        [h] :: acc
+        )
+        []
+        (invertirFold lista)
+
 
 
 
 -- 31. Particionar
 -- Separá una lista en dos listas basándote en un predicado
 
-
-particionar : (a -> Bool) -> List a -> ( List a, List a )
+particionar : (a -> Bool) -> List a -> (List a, List a)
 particionar predicado lista =
-    ( [], [] )
+    miFoldl
+        (\h (cumplen, noCumplen) ->
+            if predicado h then
+                (h :: cumplen, noCumplen)
+            else
+                (cumplen, h :: noCumplen)
+        )
+        ([], [])
+        (invertirFold lista)
 
 
 
@@ -379,8 +429,16 @@ particionar predicado lista =
 
 sumaAcumulada : List Int -> List Int
 sumaAcumulada lista =
-    []
-
+    miFoldl
+        (\h (acumulador, resultado) ->
+            let
+                nuevaSuma = h + acumulador
+            in
+            (nuevaSuma, resultado ++ [nuevaSuma])
+        )
+        (0, [])
+        lista
+        |> Tuple.second
 
 
 -- ============================================================================
@@ -399,7 +457,10 @@ subSets lista =
             [ [] ]
 
         x :: xs ->
-            []
+            let
+                rest = subSets xs
+            in
+            rest ++ miMap (\subset -> x :: subset) rest
 
 
 
