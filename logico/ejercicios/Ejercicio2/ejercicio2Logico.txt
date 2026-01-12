@@ -1,0 +1,173 @@
+contar([],0).
+contar([_|Tail], N):-
+    contar(Tail, N1),
+    N is 1 + N1.
+
+contiene([Head|_], Head).
+contiene([_|Tail], Valor):-
+    contiene(Tail,Valor).
+
+
+equal([], []).
+equal([H|T1], [H|T2]):-
+    equal(T1, T2).
+
+union([],Lista2, Lista2).
+%union(Lista1, [], Lista1).
+union([Head|Tail], Lista2, [Head|R1]):-
+    union(Tail, Lista2, R1).
+
+%Retornar una lista inversa
+inversa([], []).
+inversa([Head|Tail], Inversa):-
+    inversa(Tail, Inv1),
+    union(Inv1, [Head], Inversa).
+
+inversa2([], R, R).
+inversa2([Head|Tail], R, R1):-
+    inversa2(Tail, [Head|R], R1).
+
+%inversa2([1] [2,3]], R = [], R1)
+%	== inversa2([2] [3]], X0 = [1[R], R1)
+%	== inversa2([3|[]], X1 = [2]X0], R1)
+%	== inversa2([], X2 = [3|X1], R1)
+
+inversa2(Lista, Resultado):-
+    inversa2(Lista, [], Resultado).
+
+
+ %	6- 	Palíndromo
+palindromo(Lista):-
+    inversa2(Lista, Lista).
+
+
+%	5-	Repetir
+%repetir(_, 0, []):-!.
+%repetir(Lista, N, Resultado):-
+%    N1 is N - 1,
+%    repetir(Lista, N1, Resultado1),
+%union(Lista, Resultado1, Resultado).
+
+repetir(_, 0, []):-!.
+repetir(Lista, N, Resultado):-
+    N > 0,                        % Buena práctica: asegurar que N es positivo
+    N1 is N - 1,                  
+    repetir(Lista, N1, ResultadoParcial), % Llama recursiva
+    append(Lista, ResultadoParcial, Resultado). % ¡Usar append!
+
+sumar([], 0).
+sumar([Head|Tail], Resultado):-
+    sumar(Tail, ResultadoParcial),
+    Resultado is ResultadoParcial + Head.
+
+soloPares([], []).
+soloPares([Head | Tail], [Head | Resultado]) :-
+    Head mod 2 =:= 0,  
+    !,                  
+    soloPares(Tail, Resultado).
+soloPares([_ | Tail], Resultado) :-
+    soloPares(Tail, Resultado).
+    
+
+even(N) :- integer (N), 0 is N mod 2.
+odd(N) :- integer(N), 1 is N mod 2.
+
+filtroPares([], []).
+filtroPares([Head | Tail], [Head | Resultado]):-
+    even(Head),
+    !,
+    filtroPares(Tail, Resultado). 
+filtroPares([_ | Tail], Resultado):-
+    filtroPares(Tail, Resultado).
+            
+
+intercalar([], Lista, Lista):-!.
+intercalar(Lista, [], Lista):-!.
+intercalar([H1|T1], [H2|T2], [H1, H2 | Resultado]):-
+	intercalar(T1, T2, Resultado).
+            
+     
+sumaListas([], Lista, Lista) :- !.
+sumaListas(Lista, [], Lista) :- !.
+sumaListas([H1|T1], [H2|T2], [Suma|Resultado]):-
+    Suma is H1 + H2,                
+    sumaListas(T1, T2, Resultado).      
+    
+%12 
+sumaListasN([], _, []) :- !.
+sumaListasN([H1|T1], N, [Suma|Resultado]):-
+    Suma is H1 + N,
+    sumaListasN(T1, N, Resultado).    
+    
+
+            
+interseccion([], _, []).
+interseccion([Head|Tail], Lista, [Head|Resultado]):-
+    member(Head, Lista), !,        
+    interseccion(Tail, Lista, Resultado). 
+interseccion([_|Tail], Lista, Resultado):-
+    interseccion(Tail, Lista, Resultado).    
+    
+
+
+union([],Lista2, Lista2).
+%union(Lista1, [], Lista1).
+union([Head|Tail], Lista2, [Head|R1]):-
+    union(Tail, Lista2, R1).
+
+agregarAlFinal(Lista, Elem, Resultado):-
+    union(Lista, [Elem], Resultado).
+
+agregarAlPrincipio(Lista, Elem, [Elem | Lista]).
+
+agregarEnOrden([], Elem, [Elem]).
+agregarEnOrden([Head|Tail], Elem, [Elem, Head | Tail]):-
+    Head > Elem,
+    !.
+agregarEnOrden([Head|Tail], Elem, [Head|Resultado]):-
+    agregarEnOrden(Tail, Elem, Resultado).
+
+
+eliminar([],_, []).
+eliminar([Head|Tail], Head, Resultado):-
+    eliminar(Tail, Head, Resultado),
+    !.
+eliminar([Head|Tail], Elem, [Head|Resultado]):-
+    eliminar(Tail, Elem, Resultado).
+
+
+reemplazar([], _, _, []).
+reemplazar([Head|Tail], Head, Reemplazo, [Reemplazo|Resultado]):-
+    reemplazar(Tail, Head, Reemplazo, Resultado),
+    !.
+reemplazar([Head|Tail], Elem, Reemplazo, [Head|Resultado]):-
+    reemplazar(Tail, Elem, Reemplazo, Resultado).
+
+
+contiene([Head|_], Head) :- !.
+contiene([_|Tail], Elem) :-
+    contiene(Tail, Elem).
+    
+ xor([], _, []).
+xor([Head | Tail], Lista, Resultado) :-
+    contiene(Lista, Head),        
+    !,                            
+    xor(Tail, Lista, Resultado).  
+xor([Head | Tail], Lista, [Head | Resultado]) :-
+    xor(Tail, Lista, Resultado).  
+
+
+slice([], _, []).  
+slice(_, 0, []). %Podemos usarlo con N>0 o con slice(, 0, [])##:-!.## (:-!.)
+slice([Head|Tail], N, [Head|Resultado]):-
+    N > 0,
+    N1 is N - 1,
+    slice(Tail, N1, Resultado).
+    
+    
+slice([], _, []).  
+slice(_, 0, []). 
+slice([Head|Tail], N, [Head|Resultado]):-
+    N > 0,
+    N1 is N - 1,
+    slice(Tail, N1, Resultado).
