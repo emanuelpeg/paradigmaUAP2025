@@ -1,11 +1,22 @@
 module Main exposing (..)
 
-import Html exposing (Html, a, text)
+import Html exposing (Html, div, h1, p, text)
 
 
 main : Html msg
 main =
-    text "Hello, Elm!"
+    Html.div []
+        [ Html.h1 [] [ text "Guía 1 - Ejercicios Elm" ]
+        , Html.p [] [ text ("Ejercicio 1 - power 2 3 = " ++ String.fromInt (power 2 3)) ]
+        , Html.p [] [ text ("Ejercicio 2 - factorial 5 = " ++ String.fromInt (factorial 5)) ]
+        , Html.p [] [ text ("Ejercicio 3 - fibonacci 10 = " ++ String.fromInt (fibonacciLinear 10)) ]
+        , Html.p [] [ text ("Ejercicio 4 - pascal 2 4 = " ++ String.fromInt (pascalTriangle 2 4)) ]
+        , Html.p [] [ text ("Ejercicio 5 - gcd 48 18 = " ++ String.fromInt (gcd 48 18)) ]
+        , Html.p [] [ text ("Ejercicio 6 - countDigits 12345 = " ++ String.fromInt (countDigits 12345)) ]
+        , Html.p [] [ text ("Ejercicio 7 - sumDigits 123 = " ++ String.fromInt (sumDigits 123)) ]
+        , Html.p [] [ text ("Ejercicio 8 - isPalindrome 121 = " ++ (if isPalindrome 121 then "True" else "False")) ]
+        , Html.p [] [ text ("Ejercicio 9 - isBalanced \"(())\" = " ++ (if isBalanced "(())" then "True" else "False")) ]
+        ]
 
 
 add : Int -> Int -> Int
@@ -177,3 +188,27 @@ reverseHelper n acc =
                 modBy 10 n
         in
         reverseHelper (n // 10) (acc * 10 + digit)
+
+
+-- Ejercicio 9: Paréntesis Balanceados
+
+isBalanced : String -> Bool
+isBalanced str =
+    let
+        go : List Char -> Int -> Bool
+        go chars count =
+            case chars of
+                [] ->
+                    count == 0
+                c :: rest ->
+                    if c == '(' then
+                        go rest (count + 1)
+                    else if c == ')' then
+                        if count == 0 then
+                            False
+                        else
+                            go rest (count - 1)
+                    else
+                        go rest count
+    in
+    go (String.toList str) 0
