@@ -1,4 +1,4 @@
-export class Libro {
+class Libro {
   constructor(
     private _titulo: string,
     private _autor: string,
@@ -15,3 +15,4 @@ export class Libro {
     return this._isbn;
   }
 }
+export { Libro };
