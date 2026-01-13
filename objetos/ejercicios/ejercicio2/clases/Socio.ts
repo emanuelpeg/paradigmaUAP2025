@@ -1,14 +1,17 @@
 import { Libro } from "./Libro";
 
-class Prestamo {
-  constructor(public libro: Libro, public vencimiento: Date) {}
-}
-
 /** Duracion en dias de un prestamo */
 type Duracion = number;
 
 export abstract class Socio {
   protected prestamos: Prestamo[] = [];
+  protected multasPendientes: number = 0;
+  protected historialLectura: Libro[] = [];
+  protected reservas: Libro[] = [];
+  /** Devuelve la lista de préstamos activos */
+  public getPrestamos(): Prestamo[] {
+    return [...this.prestamos];
+  }
 
   constructor(
     private _id: number,
@@ -32,30 +35,46 @@ export abstract class Socio {
     return `${this.nombre} ${this.apellido}`;
   }
 
+  get deuda(): number {
+    return this.multasPendientes;
+  }
+
   abstract getDuracionPrestamo(): Duracion;
   abstract getMaximoLibros(): number;
 
-  retirar(libro: Libro, duracion?: Duracion) {
+  retirar(libro: Libro, tipo: "regular"|"corto"|"referencia"|"digital" = "regular") {
     if (!this.puedeRetirar(libro)) {
       throw new Error("No tiene permisos para retirar este libro");
     }
-
-    const duracionFinal = duracion ?? this.getDuracionPrestamo();
-    const vencimiento = new Date();
-    vencimiento.setDate(vencimiento.getDate() + duracionFinal);
-    this.prestamos.push(new Prestamo(libro, vencimiento));
+    if (this.deuda > 0) {
+      throw new Error("No puede retirar libros con multas pendientes");
+    }
+    let prestamo: Prestamo;
+    switch (tipo) {
+      case "regular": prestamo = new PrestamoRegular(libro, this); break;
+      case "corto": prestamo = new PrestamoCorto(libro, this); break;
+      case "referencia": prestamo = new PrestamoReferencia(libro, this); break;
+      case "digital": prestamo = new PrestamoDigital(libro, this); break;
+      default: prestamo = new PrestamoRegular(libro, this);
+    }
+    this.prestamos.push(prestamo);
   }
 
   devolver(libro: Libro) {
     const prestamo = this.tienePrestadoLibro(libro);
-
     if (!prestamo) {
       throw new Error("No esta prestado");
     }
-
+    const hoy = new Date();
+    if (prestamo.vencimiento && hoy > prestamo.vencimiento) {
+      const msPorDia = 1000 * 60 * 60 * 24;
+      const diasAtraso = Math.ceil((hoy.getTime() - prestamo.vencimiento.getTime()) / msPorDia);
+      const multa = prestamo.calcularMulta(diasAtraso);
+      this.registrarMulta(multa);
+    }
     const indice = this.prestamos.indexOf(prestamo);
     this.prestamos.splice(indice, 1);
-
+    this.historialLectura.push(libro);
     return prestamo;
   }
 
@@ -69,6 +88,27 @@ export abstract class Socio {
 
   puedeRetirar(libro: Libro): boolean {
     return this.prestamos.length < this.getMaximoLibros();
+  }
+
+  registrarMulta(monto: number) {
+    this.multasPendientes += monto;
+  }
+
+  pagarMulta(monto: number) {
+    this.multasPendientes = Math.max(0, this.multasPendientes - monto);
+  }
+
+  agregarReserva(libro: Libro) {
+    this.reservas.push(libro);
+  }
+
+  obtenerHistorialLectura(): Libro[] {
+    return [...this.historialLectura];
+  }
+
+  recomendacionesSimples(): string[] {
+    const autores = new Set(this.historialLectura.map((l) => l.autor.nombre ?? l.autor));
+    return Array.from(autores).map((a) => `Buscar más libros del autor: ${a}`);
   }
 }
 
@@ -126,6 +166,53 @@ export enum TipoSocio {
   VIP = "vip",
   EMPLEADO = "empleado",
   VISITANTE = "visitante",
+}
+
+// Polimorfismo: Tipos de Préstamo
+export abstract class Prestamo {
+  constructor(public libro: Libro, public socio: Socio) {}
+  abstract get vencimiento(): Date | null;
+  abstract calcularMulta(diasAtraso: number): number;
+}
+
+export class PrestamoRegular extends Prestamo {
+  get vencimiento(): Date {
+    const vencimiento = new Date();
+    vencimiento.setDate(vencimiento.getDate() + 14);
+    return vencimiento;
+  }
+  calcularMulta(diasAtraso: number): number {
+    return diasAtraso * 50;
+  }
+}
+
+export class PrestamoCorto extends Prestamo {
+  get vencimiento(): Date {
+    const vencimiento = new Date();
+    vencimiento.setDate(vencimiento.getDate() + 7);
+    return vencimiento;
+  }
+  calcularMulta(diasAtraso: number): number {
+    return diasAtraso * 100;
+  }
+}
+
+export class PrestamoReferencia extends Prestamo {
+  get vencimiento(): null {
+    return null; // Solo consulta en sala
+  }
+  calcularMulta(): number {
+    return 0;
+  }
+}
+
+export class PrestamoDigital extends Prestamo {
+  get vencimiento(): null {
+    return null; // Sin límite
+  }
+  calcularMulta(): number {
+    return 0;
+  }
 }
 
 export class SocioFactory {

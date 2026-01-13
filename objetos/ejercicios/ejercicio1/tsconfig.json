@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "outDir": "dist",
-    "rootDir": ".",
+  "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -17,7 +17,7 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "*"
+    "./**/*"
   ],
   "exclude": [
     "node_modules",
