@@ -1,0 +1,52 @@
+import { Socio } from "./Socio";
+import { Libro } from "./Libro";
+import { Autor } from "./Ejercicio3";
+import { Biblioteca } from "./Biblioteca";
+
+// Socio con historial de lectura
+export class SocioConHistorial extends Socio {
+    historialLectura: Libro[] = [];
+
+    registrarLectura(libro: Libro) {
+        if (!this.historialLectura.some(l => l.isbn === libro.isbn)) {
+            this.historialLectura.push(libro);
+        }
+    }
+
+    obtenerAutoresLeidos(): Autor[] {
+        const autores: Autor[] = [];
+        for (const libro of this.historialLectura) {
+            if (!autores.includes(libro.autor)) {
+                autores.push(libro.autor);
+            }
+        }
+        return autores;
+    }
+
+    obtenerTitulosLeidos(): string[] {
+        return this.historialLectura.map(libro => libro.titulo);
+    }
+}
+
+// Sistema de recomendaciones
+export class Recomendador {
+    biblioteca: Biblioteca;
+
+    constructor(biblioteca: Biblioteca) {
+        this.biblioteca = biblioteca;
+    }
+
+    recomendarLibros(socio: SocioConHistorial): Libro[] {
+        const autoresLeidos = socio.obtenerAutoresLeidos();
+        const titulosLeidos = socio.obtenerTitulosLeidos();
+
+        // Recomienda libros por autor o título similar, que el socio no haya leído
+        return this.biblioteca.libros.filter(libro =>
+            !socio.historialLectura.some(l => l.isbn === libro.isbn) &&
+            (
+                autoresLeidos.includes(libro.autor) ||
+                titulosLeidos.some(titulo => libro.titulo.toLowerCase().includes(titulo.toLowerCase()))
+            )
+        );
+    }
+}

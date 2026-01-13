@@ -1,0 +1,53 @@
+import { Biblioteca } from "./Biblioteca";
+import { Socio } from "./Socio";
+import { Libro } from "./Libro";
+
+// Extiende Socio para agregar multas
+class SocioConMulta extends Socio {
+    multaPendiente: number = 0;
+
+    calcularMulta(libro: Libro, fechaDevolucion: Date): void {
+        if (!libro.fechaVencimiento) return;
+        const diasRetraso = Math.max(
+            Math.ceil((fechaDevolucion.getTime() - libro.fechaVencimiento.getTime()) / (1000 * 60 * 60 * 24)),
+            0
+        );
+        if (diasRetraso > 0) {
+            this.multaPendiente += diasRetraso * 50;
+        }
+    }
+
+    puedeRetirar(): boolean {
+        return this.multaPendiente === 0;
+    }
+
+    saldarMulta(): void {
+        this.multaPendiente = 0;
+    }
+}
+
+// Biblioteca con control de multas
+class BibliotecaConMultas extends Biblioteca {
+    buscarSocioConMulta(id: number): SocioConMulta | undefined {
+        const socio = this.buscarSocio(id);
+        if (socio instanceof SocioConMulta) return socio;
+        return undefined;
+    }
+
+    retirarLibro(socioId: number, libroISBN: string): void {
+        const socio = this.buscarSocioConMulta(socioId);
+        const libro = this.buscarLibro(libroISBN);
+        if (!socio || !libro) throw new Error("No se encontró el socio o el libro");
+        if (!socio.puedeRetirar()) throw new Error("El socio tiene multas pendientes y no puede retirar libros.");
+        if (libro.estaPrestado()) throw new Error("El libro ya está prestado.");
+        socio.retirar(libro, this.DURACION);
+    }
+
+    devolverLibro(socioId: number, libroISBN: string, fechaDevolucion: Date): void {
+        const socio = this.buscarSocioConMulta(socioId);
+        const libro = this.buscarLibro(libroISBN);
+        if (!socio || !libro) throw new Error("No se encontró el socio o el libro");
+        socio.devolver(libro);
+        socio.calcularMulta(libro, fechaDevolucion);
+    }
+}
