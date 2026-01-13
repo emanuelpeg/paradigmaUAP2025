@@ -1,1 +1,11 @@
-lista.txt
+# Ignorar archivos generados por Elm
+elm-stuff/
+*.dat
+
+# Archivos temporales de sistema
+*.log
+*.tmp
+
+# Archivos de compilación de VS
+bin/
+obj/

@@ -1,0 +1,15 @@
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\diseños.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\diseños.AssemblyInfoInputs.cache
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\diseños.AssemblyInfo.cs
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\diseños.csproj.CoreCompileInputs.cache
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\diseños.sourcelink.json
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\bin\Debug\net9.0\diseños.exe
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\bin\Debug\net9.0\diseños.deps.json
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\bin\Debug\net9.0\diseños.runtimeconfig.json
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\bin\Debug\net9.0\diseños.dll
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\bin\Debug\net9.0\diseños.pdb
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\diseños.dll
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\refint\diseños.dll
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\diseños.pdb
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\diseños.genruntimeconfig.cache
+C:\Users\klein\Proyectos ELM\paradigmaUAP2025\objetos\practicas_teoria\diseños\obj\Debug\net9.0\ref\diseños.dll
