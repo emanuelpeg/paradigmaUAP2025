@@ -1,0 +1,10 @@
+import { IBuscable } from "./IBuscable";
+export class ArchivoHistorico implements IBuscable<string> {
+  documentos: string[] = [];
+  buscarPor(criterio: (item: string) => boolean): string[] {
+    return this.documentos.filter(criterio);
+  }
+  filtrar(condicion: (item: string) => boolean): string[] {
+    return this.documentos.filter(condicion);
+  }
+}

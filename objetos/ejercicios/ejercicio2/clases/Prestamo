@@ -1,0 +1,61 @@
+import { Libro } from "./Libro";
+import { Socio } from "./Socio";
+
+export abstract class Prestamo {
+  libro: Libro;
+  socio: Socio;
+  fechaInicio: Date;
+
+  constructor(libro: Libro, socio: Socio) {
+    this.libro = libro;
+    this.socio = socio;
+    this.fechaInicio = new Date();
+  }
+
+  abstract calcularVencimiento(): Date;
+  abstract calcularMulta(fechaDevolucion: Date): number;
+}
+
+export class PrestamoRegular extends Prestamo {
+  calcularVencimiento(): Date {
+    const venc = new Date(this.fechaInicio);
+    venc.setDate(venc.getDate() + 14);
+    return venc;
+  }
+  calcularMulta(fechaDevolucion: Date): number {
+    const venc = this.calcularVencimiento();
+    const dias = Math.max(0, Math.ceil((fechaDevolucion.getTime() - venc.getTime()) / (1000 * 60 * 60 * 24)));
+    return dias * 50;
+  }
+}
+
+export class PrestamoCorto extends Prestamo {
+  calcularVencimiento(): Date {
+    const venc = new Date(this.fechaInicio);
+    venc.setDate(venc.getDate() + 7);
+    return venc;
+  }
+  calcularMulta(fechaDevolucion: Date): number {
+    const venc = this.calcularVencimiento();
+    const dias = Math.max(0, Math.ceil((fechaDevolucion.getTime() - venc.getTime()) / (1000 * 60 * 60 * 24)));
+    return dias * 100;
+  }
+}
+
+export class PrestamoReferencia extends Prestamo {
+  calcularVencimiento(): Date {
+    return this.fechaInicio; // solo consulta
+  }
+  calcularMulta(fechaDevolucion: Date): number {
+    return 0;
+  }
+}
+
+export class PrestamoDigital extends Prestamo {
+  calcularVencimiento(): Date {
+    return new Date(8640000000000000); // sin límite
+  }
+  calcularMulta(fechaDevolucion: Date): number {
+    return 0;
+  }
+}
