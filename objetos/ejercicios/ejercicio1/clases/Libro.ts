@@ -1,8 +1,10 @@
+import { Autor } from "./Autor";
+
 export class Libro {
   constructor(
     private _titulo: string,
-    private _autor: string,
-    private _isbn: string
+    private _autor: Autor,
+    private _isbn: string,
   ) {}
 
   get titulo() {
@@ -14,4 +16,7 @@ export class Libro {
   get isbn() {
     return this._isbn;
   }
+  
+
+
 }
