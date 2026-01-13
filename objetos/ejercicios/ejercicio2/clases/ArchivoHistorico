@@ -1,0 +1,24 @@
+// ArchivoHistorico.ts
+import { IBuscable } from "./IBuscable";
+export interface DocumentoHistorico {
+  titulo: string;
+  año: number;
+  origen: string;
+  contenido: string;
+}
+
+export class ArchivoHistorico implements IBuscable<DocumentoHistorico> {
+  constructor(private documentos: DocumentoHistorico[]) {}
+
+  buscarPor(criterio: string): DocumentoHistorico[] {
+    const lower = criterio.toLowerCase();
+    return this.documentos.filter(doc =>
+      doc.titulo.toLowerCase().includes(lower) ||
+      doc.origen.toLowerCase().includes(lower)
+    );
+  }
+
+  filtrar(condicion: (doc: DocumentoHistorico) => boolean): DocumentoHistorico[] {
+    return this.documentos.filter(condicion);
+  }
+}

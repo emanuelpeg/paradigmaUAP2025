@@ -40,3 +40,29 @@
 % Queries de ejemplo:
 % ?- temperature(celsius(100), fahrenheit(F)). % F = 212.0
 % ?- temperature(celsius(C), fahrenheit(68)). % C = 20.0
+
+
+1)
+celsius_to_fahrenheit(C, F):-
+    F is C * 9/5 + 32.
+
+fahrenheit_to_celsius(F, C):-
+    C is (F - 32) * 5/9.
+
+2)
+flight(london, paris, 60).
+flight(london, berlin, 110).
+flight(paris, rome, 135).
+flight(berlin, vienna, 80).
+flight(rome, athens, 120).
+flight(vienna, budapest, 45).
+flight(budapest, athens, 90).
+flight(madrid, lisbon, 75).
+
+direct_flight(X, Y):-
+    flight(X,Y, _).
+reachable(X, Y):-
+    flight(X,Y, _).
+reachable(X,Y):-
+    direct_flight(X,Z), reachable(Z,Y).
+    
