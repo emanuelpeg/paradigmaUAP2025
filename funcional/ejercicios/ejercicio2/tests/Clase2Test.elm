@@ -78,19 +78,19 @@ testsMaxMin =
     describe "Tests para max y min"
         [ test "max de lista normal" <|
             \_ ->
-                Clase2.max [ 1, 5, 3, 2, 4 ]
+                Clase2.maxInt [ 1, 5, 3, 2, 4 ]
                     |> Expect.equal 5
         , test "max de lista vacía" <|
             \_ ->
-                Clase2.max []
+                Clase2.maxInt []
                     |> Expect.equal 0
         , test "max de lista con un elemento" <|
             \_ ->
-                Clase2.max [ 42 ]
+                Clase2.maxInt [ 42 ]
                     |> Expect.equal 42
         , test "max con números negativos" <|
             \_ ->
-                Clase2.max [ -5, -1, -10, -3 ]
+                Clase2.maxInt [ -5, -1, -10, -3 ]
                     |> Expect.equal -1
         , test "min de lista normal" <|
             \_ ->
