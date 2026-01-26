@@ -1,0 +1,45 @@
+% Ejercicio 1
+celsius_a_fahrenheit(C, F) :- F is (C * 9/5) + 32.
+fahrenheit_a_celsius(F, C) :- C is (F - 32) * 5/9.
+
+
+% Ejercicio 2 – base de datos de ejemplo (opcional, pero necesaria para probar)
+flight(london, paris, 90).
+flight(paris, rome, 120).
+flight(rome, athens, 150).
+flight(paris, berlin, 100).
+
+
+vuelo_directo(C1, C2) :- flight(C1, C2, _).
+alcanzable(C1, C2) :- vuelo_directo(C1, C2).
+alcanzable(C1, C2) :- vuelo_directo(C1, C3), alcanzable(C3, C2).
+
+
+% Ejercicio 3
+gana_a(rock, scissors).
+gana_a(scissors, paper).
+gana_a(paper, rock).
+
+
+ganador(X, X, draw) :- !.
+ganador(X, Y, player1) :- gana_a(X, Y), !.
+ganador(_, _, player2).
+
+
+jugar_partida(P1, C1, P2, C2, W) :- ganador(C1, C2, Result), (Result = draw -> W = draw ; (Result = player1 -> W = P1 ; W = P2)).
+
+
+% Ejercicio 4
+descuento_sin_corte(A, 20) :- A >= 1000.
+descuento_sin_corte(A, 10) :- A >= 500.
+descuento_sin_corte(A, 5)  :- A < 500.
+
+
+descuento_con_corte(A, 20) :- A >= 1000, !.
+descuento_con_corte(A, 10) :- A >= 500, !.
+descuento_con_corte(_, 5).
+
+
+% Ejercicio 6
+temperatura(celsius(C), fahrenheit(F)) :- nonvar(C), !, F is (C * 9/5) + 32.
+temperatura(celsius(C), fahrenheit(F)) :- nonvar(F), !, C is (F - 32) * 5/9.
