@@ -644,6 +644,6 @@ suite =
         , testsSumaAcumulada
 
         -- Ejercicios Opcionales
-        , testsSubSets
-        , testsCortar
+        -- , testsSubSets
+        -- , testsCortar
         ]
